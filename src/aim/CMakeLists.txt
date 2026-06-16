@@ -217,4 +217,7 @@ if(MSVC)
     target_compile_options(${NAME} PRIVATE /wd4091)
     # /we4062 treats missing enum cases as errors but allows default
     target_compile_options(${NAME} PRIVATE /we4062)
+else()
+    # Apple Clang treats implicit 'this' capture via [=] as deprecated.
+    target_compile_options(${NAME} PRIVATE -Wno-deprecated-this-capture)
 endif()
