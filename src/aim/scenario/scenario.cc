@@ -16,6 +16,7 @@
 #include "aim/core/application.h"
 #include "aim/core/camera.h"
 #include "aim/core/metronome.h"
+#include "aim/i18n/i18n.h"
 #include "aim/core/play_time_manager.h"
 #include "aim/core/playlist_manager.h"
 #include "aim/core/replay_manager.h"
@@ -393,7 +394,7 @@ void Scenario::OnWaitingForClickTick() {
   ImGui::PushStyleColor(ImGuiCol_Text, ToImCol32(theme_.target_color()));
   {
     auto bold = app_.font_manager().UseLargeBold();
-    std::string message = "Click to Start";
+    std::string message = Tr(i18n_key::kClickToStart);
     ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
     ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
     ImGui::SetCursorPosY(app_.screen_info().center.y - text_size.y * 1.75);
@@ -407,7 +408,8 @@ void Scenario::OnWaitingForClickTick() {
 
   float score_target = def_.score_targets().end();
   if (score_target > 0) {
-    std::string message = std::format("Target score: {}", MaybeIntToString(score_target, 2));
+    std::string message =
+        std::format("{}: {}", Tr(i18n_key::kTargetScore), MaybeIntToString(score_target, 2));
     text_size = ImGui::CalcTextSize(message.c_str());
     ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
     ImGui::Text("%s", message.c_str());

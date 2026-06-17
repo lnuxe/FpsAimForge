@@ -11,6 +11,7 @@
 #include "aim/common/imgui_ext.h"
 #include "aim/common/search.h"
 #include "aim/core/settings_manager.h"
+#include "aim/i18n/i18n.h"
 #include "aim/proto/common.pb.h"
 #include "aim/ui/crosshair_editor_screen.h"
 #include "aim/ui/theme_editor_screen.h"
@@ -19,11 +20,12 @@
 namespace aim {
 namespace {
 
-inline const std::vector<std::pair<ScenarioSettingsStoreType, std::string>>
-    kScenarioSettingsStoreTypes{
-        {ScenarioSettingsStoreType::STORE_GLOBALLY, "Global"},
-        {ScenarioSettingsStoreType::STORE_PER_SCENARIO, "Scenario"},
-    };
+std::vector<std::pair<ScenarioSettingsStoreType, std::string>> GetScenarioSettingsStoreTypes() {
+  return {
+      {ScenarioSettingsStoreType::STORE_GLOBALLY, Tr(i18n_key::kGlobal)},
+      {ScenarioSettingsStoreType::STORE_PER_SCENARIO, Tr(i18n_key::kScenario)},
+  };
+}
 
 class SoundInputDialog {
  public:
@@ -90,8 +92,8 @@ class SoundInputDialog {
 };
 
 struct KeybindItem {
-  std::string label;
-  std::string help_text;
+  std::string_view label_key;
+  std::string_view help_key;
   KeyMapping* mapping;
   int is_capturing_index = 0;
 };
@@ -102,11 +104,6 @@ const std::vector<std::pair<PresentMode, std::string>> kPresentModes{
     {PresentMode::PRESENT_MODE_MAILBOX, "Mailbox"},
 };
 
-const char* kQuickSettingsHelpText =
-    "Hold the key to bring up a settings menu which will close when the key is released. Scroll "
-    "wheel can be used to adjust mouse sensitivity.";
-const char* kAdjustCrosshairSizeHelpText =
-    "Hold the key to enable using the scroll wheel to adjust crosshair size.";
 
 class SettingsScreen : public UiScreen {
  public:
@@ -114,19 +111,18 @@ class SettingsScreen : public UiScreen {
       : UiScreen(app), updater_(app.settings_manager().CreateUpdater()), scenario_id_(scenario_id) {
     theme_names_ = app.settings_manager().ListThemes();
     crosshair_names_ = app_.settings_manager().ListCrosshairs();
-    Settings settings = app_.settings_manager().GetCurrentSettings();
 
     keybind_items_ = {
-        {"Fire", "", updater_.settings.mutable_keybinds()->mutable_fire()},
-        {"Restart Scenario", "", updater_.settings.mutable_keybinds()->mutable_restart_scenario()},
-        {"Next Scenario", "", updater_.settings.mutable_keybinds()->mutable_next_scenario()},
-        {"Edit Scenario", "", updater_.settings.mutable_keybinds()->mutable_edit_scenario()},
-        {"Quick Settings",
-         kQuickSettingsHelpText,
+        {i18n_key::kFire, "", updater_.settings.mutable_keybinds()->mutable_fire()},
+        {i18n_key::kRestartScenario, "", updater_.settings.mutable_keybinds()->mutable_restart_scenario()},
+        {i18n_key::kNextScenario, "", updater_.settings.mutable_keybinds()->mutable_next_scenario()},
+        {i18n_key::kEditScenario, "", updater_.settings.mutable_keybinds()->mutable_edit_scenario()},
+        {i18n_key::kQuickSettings,
+         i18n_key::kQuickSettingsHelp,
          updater_.settings.mutable_keybinds()->mutable_quick_settings()},
-        {"Quick Metronome", "", updater_.settings.mutable_keybinds()->mutable_quick_metronome()},
-        {"Adjust Crosshair Size",
-         kAdjustCrosshairSizeHelpText,
+        {i18n_key::kQuickMetronome, "", updater_.settings.mutable_keybinds()->mutable_quick_metronome()},
+        {i18n_key::kAdjustCrosshairSize,
+         i18n_key::kAdjustCrosshairHelp,
          updater_.settings.mutable_keybinds()->mutable_adjust_crosshair_size()},
     };
   }
@@ -136,20 +132,41 @@ class SettingsScreen : public UiScreen {
     if (!ImGui::BeginTabBar("SettingsTabBar")) {
       return;
     }
-    if (ImGui::BeginTabItem("Settings")) {
+    if (ImGui::BeginTabItem(Tr(i18n_key::kSettings))) {
       ImGui::Spacing();
+
+      Language language = GetLanguage();
+      ImGui::AlignTextToFramePadding();
+      ImGui::Text("%s", Tr(i18n_key::kLanguage));
+      ImGui::SameLine();
+      const char* preview = language == Language::kChinese ? Tr(i18n_key::kLanguageChinese)
+                                                           : Tr(i18n_key::kLanguageEnglish);
+      if (ImGui::BeginCombo("LanguageDropdown", preview, ImGuiComboFlags_WidthFitPreview)) {
+        if (ImGui::Selectable(Tr(i18n_key::kLanguageEnglish),
+                              language == Language::kEnglish)) {
+          SaveLanguageToStore(app_.local_store(), Language::kEnglish);
+        }
+        if (ImGui::Selectable(Tr(i18n_key::kLanguageChinese),
+                              language == Language::kChinese)) {
+          SaveLanguageToStore(app_.local_store(), Language::kChinese);
+        }
+        ImGui::EndCombo();
+      }
+
+      ImGui::SpacedSeparator();
+
       ImGui::InputFloat(ImGui::InputFloatParams("CmPer360")
-                            .set_label("cm/360")
+                            .set_label(Tr(i18n_key::kCmPer360))
                             .set_step(1, 5)
                             .set_width(char_x_ * 9)
                             .set_min(1)
                             .set_default(35),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, cm_per_360));
       ImGui::SameLine();
-      ImGui::HelpMarker("Adjust within a run by holding \"s\" and using the scroll wheel");
+      ImGui::HelpMarker(Tr(i18n_key::kCmPer360ScrollHelp));
 
       ImGui::InputFloat(ImGui::InputFloatParams("Dpi")
-                            .set_label("DPI")
+                            .set_label(Tr(i18n_key::kDpi))
                             .set_step(100, 200)
                             .set_width(char_x_ * 10)
                             .set_min(100)
@@ -301,7 +318,7 @@ class SettingsScreen : public UiScreen {
 
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Keybinds")) {
+    if (ImGui::BeginTabItem(Tr(i18n_key::kKeybinds))) {
       ImGui::Spacing();
       DrawKeybinds();
       ImGui::EndTabItem();
@@ -331,11 +348,11 @@ class SettingsScreen : public UiScreen {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(item.label);
+        ImGui::Text("%s", Tr(item.label_key));
 
-        if (item.help_text.size() > 0) {
+        if (item.help_key.size() > 0) {
           ImGui::SameLine();
-          ImGui::HelpMarker(item.help_text);
+          ImGui::HelpMarker(Tr(item.help_key));
         }
 
         ImGui::TableNextColumn();
@@ -378,7 +395,8 @@ class SettingsScreen : public UiScreen {
         type = default_global ? ScenarioSettingsStoreType::STORE_GLOBALLY
                               : ScenarioSettingsStoreType::STORE_PER_SCENARIO;
       }
-      ImGui::SimpleTypeDropdown("##TypeSelector", &type, kScenarioSettingsStoreTypes, char_x * 12);
+      ImGui::SimpleTypeDropdown(
+          "##TypeSelector", &type, GetScenarioSettingsStoreTypes(), char_x * 12);
       type_field.set(type);
     };
 
@@ -567,7 +585,7 @@ class SettingsScreen : public UiScreen {
       value = item->mapping->mapping4();
     }
 
-    if (ImGui::Button(std::format("{}##key{}_{}", value, i, item->label).c_str(),
+    if (ImGui::Button(std::format("{}##key{}_{}", value, i, item->label_key).c_str(),
                       ImVec2(width, 0))) {
       for (KeybindItem& other_item : keybind_items_) {
         other_item.is_capturing_index = 0;
@@ -592,7 +610,7 @@ class SettingsScreen : public UiScreen {
       };
     }
     ImGui::SameLine();
-    if (ImGui::Button(std::format("x##clear_{}_{}", i, item->label).c_str(), ImVec2(0, 0))) {
+    if (ImGui::Button(std::format("x##clear_{}_{}", i, item->label_key).c_str(), ImVec2(0, 0))) {
       if (i == 1) {
         item->mapping->set_mapping1("");
       } else if (i == 2) {

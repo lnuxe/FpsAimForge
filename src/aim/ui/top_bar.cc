@@ -4,6 +4,7 @@
 #include "aim/common/util.h"
 #include "aim/core/scenario_manager.h"
 #include "aim/graphics/textures.h"
+#include "aim/i18n/i18n.h"
 #include "aim/ui/crosshair_editor_screen.h"
 #include "aim/ui/play_time_screen.h"
 #include "aim/ui/reaction_time_screen.h"
@@ -57,7 +58,7 @@ void DrawTopBar(UiScreen* screen) {
     }
     {
       auto normal_font = app.font_manager().UseDefault();
-      ImGui::HelpTooltip("Start new run");
+      ImGui::HelpTooltip(Tr(i18n_key::kStartNewRun));
     }
 
     ImGui::SameLine();
@@ -81,30 +82,30 @@ void DrawTopBar(UiScreen* screen) {
   const char* menu_id = "top_bar_menu";
   if (ImGui::BeginPopupContextItem(menu_id)) {
     auto normal_font = app.font_manager().UseDefault();
-    if (ImGui::Selectable(std::format("{} Settings", icons::kSettings).c_str())) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kSettings, Tr(i18n_key::kMenuSettings)).c_str())) {
       std::string current_scenario_name = current_scenario ? current_scenario->name : "";
       screen->PushNextScreen(CreateSettingsScreen(&app, current_scenario_name));
     }
-    if (ImGui::Selectable(std::format("{} Themes", icons::kPalette).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kPalette, Tr(i18n_key::kMenuThemes)).c_str(), false)) {
       screen->PushNextScreen(CreateThemeEditorScreen(&app));
     }
-    if (ImGui::Selectable(std::format("{} Crosshairs", icons::kMyLocation).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kMyLocation, Tr(i18n_key::kMenuCrosshairs)).c_str(), false)) {
       screen->PushNextScreen(CreateCrosshairEditorScreen(&app));
     }
-    if (ImGui::Selectable(std::format("{} Play time", icons::kHourglassEmpty).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kHourglassEmpty, Tr(i18n_key::kMenuPlayTime)).c_str(), false)) {
       screen->PushNextScreen(CreatePlayTimeScreen(&app));
     }
-    if (ImGui::Selectable(std::format("{} Reaction", icons::kTimer).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kTimer, Tr(i18n_key::kMenuReaction)).c_str(), false)) {
       screen->PushNextScreen(CreateReactionTimeScreen(&app));
     }
 
     ImGui::SpacedSeparator();
 
-    if (ImGui::Selectable(std::format("{} Restart", icons::kRefresh).c_str())) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kRefresh, Tr(i18n_key::kMenuRestart)).c_str())) {
       app.RequestRestart();
     }
 
-    if (ImGui::Selectable(std::format("{} Exit", icons::kLogout).c_str())) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kLogout, Tr(i18n_key::kMenuExit)).c_str())) {
       // Show a screen to confirm?
       app.RequestExit();
     }

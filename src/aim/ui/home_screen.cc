@@ -12,6 +12,7 @@
 #include "aim/core/settings_manager.h"
 #include "aim/core/stats_manager.h"
 #include "aim/core/version.h"
+#include "aim/i18n/i18n.h"
 #include "aim/editor/scenario_editor_common.h"
 #include "aim/editor/scenario_editor_screen.h"
 #include "aim/graphics/textures.h"
@@ -46,9 +47,9 @@ class SetInitialDpiDialog {
     std::optional<int> set_dpi;
     if (popup_.Begin()) {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("What is your mouse DPI?");
+      ImGui::Text("%s", Tr(i18n_key::kDpiPrompt));
       ImGui::SameLine();
-      ImGui::HelpMarker("DPI is used to calculate sensitivity given a cm/360 value.");
+      ImGui::HelpMarker(Tr(i18n_key::kDpiHelp));
 
       if (ImGui::Button("400")) {
         set_dpi = 400;
@@ -77,7 +78,7 @@ class SetInitialDpiDialog {
       if (!is_valid) {
         ImGui::BeginDisabled();
       }
-      if (ImGui::Button("Set")) {
+      if (ImGui::Button(Tr(i18n_key::kSet))) {
         set_dpi = dpi_input_value_;
       }
       if (!is_valid) {
