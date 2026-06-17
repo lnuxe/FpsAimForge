@@ -52,11 +52,11 @@ void DrawWallArcEditor(WallArcScenarioDef& d) {
     d.clear_height_jitter();
   }
 
-  ImGui::InputBool("Reflect", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
+  ImGui::InputBool(Tr("Reflect"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("Turn the arc upside down."));
 
-  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
+  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
 }
 
 void DrawSineEditor(SineScenarioDef& d) {
@@ -72,7 +72,7 @@ void DrawSineEditor(SineScenarioDef& d) {
   ImGui::SameLine();
   DrawRegionLengthEditor("Width", RegionLength::kXPercentValue, d.mutable_width(), 20);
 
-  ImGui::InputBool("Going left", PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
+  ImGui::InputBool(Tr("Going left"), PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
 }
 
 void DrawCircleEditor(CircleScenarioDef& d) {
@@ -104,7 +104,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("0 degrees starts at 3 o'clock and rotates counter clockwise."));
 
-  ImGui::InputBool("Start clockwise", PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
+  ImGui::InputBool(Tr("Start clockwise"), PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
 
   ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Switch direction after time")
                         .set_is_optional()
@@ -547,7 +547,7 @@ void DrawBounceProfile(float char_x, BounceProfile* p) {
                                 .set_default(0)
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(BounceProfile, p, delay_seconds));
-  ImGui::InputBool("Only delay on floor", PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
+  ImGui::InputBool(Tr("Only delay on floor"), PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Float time")
                                 .set_step(0.01, 0.05)
@@ -588,7 +588,7 @@ void DrawBounceEditor(BounceScenarioDef& d) {
                                  RegionLength::kYPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, BounceScenarioDef, &d, floor_height),
                                  0);
-  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
+  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
 
   ImGui::SpacedSeparator();
 
@@ -769,7 +769,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
     for (int i = 2; i < c.wall_points_size(); ++i) {
       ImGui::IdGuard lid("ExtraPoint", i);
       ImGui::AlignTextToFramePadding();
-      ImGui::TextFmt("Point {}", i + 1);
+      ImGui::TextFmt(Tr("Point {}"), i + 1);
       ImGui::SameLine();
       if (ImGui::Button(icons::kCancel)) {
         remove_at_i = i;
@@ -919,7 +919,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         }
       }
       ImGui::SameLine();
-      if (ImGui::Button(std::format("{} Room", icons::kEdit))) {
+      if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("{}")))) {
         *editing_room = true;
       }
     } else {
@@ -953,8 +953,8 @@ void DrawReferenceEditor(ScenarioDef& def,
   if (description_dialog != nullptr) {
     ImGui::SpacedSeparator();
     std::string button_text = r.description().empty()
-                                  ? std::format("{} Set description", icons::kEdit)
-                                  : std::format("{} Edit description", icons::kEdit);
+                                  ? std::format("{} {}", icons::kEdit, Tr("{}"))
+                                  : std::format("{} {}", icons::kEdit, Tr("{}"));
     if (ImGui::Button(button_text)) {
       description_dialog->NotifyOpen(r.description());
     }
@@ -977,7 +977,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         def = ApplyScenarioOverrides(baked_def);
       } else {
         *error_message_out =
-            std::format("Referenced scenario \"{}\" is invalid.", r.scenario_name());
+            std::format("Tr("Referenced scenario \"{}\" is invalid."", r.scenario_name());
       }
     }
     ImGui::SameLine();
@@ -1234,7 +1234,7 @@ void DrawShotTypeEditor(ShotType& s) {
         "The closest target will become a ghost on miss and be removed after the specified time");
     if (s.has_ghost_closest_on_miss()) {
       ImGui::Indent();
-      ImGui::InputBool("Unghost instead of remove",
+      ImGui::InputBool(Tr("Unghost instead of remove"),
                        PROTO_BOOL_FIELD(ShotType, &s, unghost_miss_on_expiration));
       ImGui::SameLine();
       ImGui::HelpMarker(
@@ -1339,7 +1339,7 @@ void DrawShotTypeEditor(ShotType& s) {
         "off the target, it will be removed and you will get partial points. The kill sound is "
         "played when this threshold is passed.");
 
-    ImGui::InputBool("No partial kills", PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
+    ImGui::InputBool(Tr("No partial kills"), PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
   }
 }
 

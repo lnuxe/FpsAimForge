@@ -247,7 +247,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
       }
       if (ImGui::BeginDragDropSource()) {
         ImGui::SetDragDropPayload("PLAYLIST_ITEM_TYPE", &i, sizeof(int));
-        ImGui::Text("Move \"%s\"", scenario_name.c_str());
+        ImGui::Text("%s \"%s\"", Tr("Move"), scenario_name.c_str());
         dragging_i_ = i;
         ImGui::EndDragDropSource();
       }
@@ -396,7 +396,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
       if (!app_.playlist_manager().RenamePlaylist(original_playlist_name_,
                                                   final_name.full_name())) {
         notification_popup_.NotifyOpen(
-            std::format("Playlist with name \"{}\" already exists", final_name.full_name()));
+            std::format("Tr("Playlist with name \"{}\" already exists"", final_name.full_name()));
         return false;
       }
       app_.history_manager().UpdateRecentView(ObjectType::PLAYLIST, final_name.full_name());

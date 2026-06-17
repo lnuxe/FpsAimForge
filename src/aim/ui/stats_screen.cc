@@ -375,22 +375,22 @@ class StatsScreen : public UiScreen {
   }
 
   void DrawLeftNav() {
-    if (ImGui::Selectable(std::format("{} Home", icons::kHome).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kHome, Tr("{}")).c_str(), false)) {
       ReturnHome();
     }
-    if (ImGui::Selectable(std::format("{} Stats", icons::kAssignment).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kAssignment, Tr("{}")).c_str(),
                           selected_screen_ == SelectedScreen::STATS)) {
       selected_screen_ = SelectedScreen::STATS;
     }
-    if (ImGui::Selectable(std::format("{} History", icons::kBarChart).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kBarChart, Tr("{}")).c_str(),
                           selected_screen_ == SelectedScreen::HISTORY)) {
       selected_screen_ = SelectedScreen::HISTORY;
     }
-    if (replay_ && ImGui::Selectable(std::format("{} Replay", icons::kLiveTv).c_str(), false)) {
+    if (replay_ && ImGui::Selectable(std::format("{} {}", icons::kLiveTv, Tr("{}")).c_str(), false)) {
       PushNextScreen(CreateReplayViewerScreen(replay_, &app_));
     }
     if (performance_stats_) {
-      if (ImGui::Selectable(std::format("{} Perf", icons::kSmartToy).c_str(),
+      if (ImGui::Selectable(std::format("{} {}", icons::kSmartToy, Tr("{}")).c_str(),
                             selected_screen_ == SelectedScreen::PERF)) {
         selected_screen_ = SelectedScreen::PERF;
       }
@@ -549,7 +549,7 @@ class StatsScreen : public UiScreen {
     ImGui::AlignTextToFramePadding();
     ImGui::Text("%s", Tr("Worst frame"));
     ImGui::SameLine();
-    ImGui::InfoMarker(std::format("At time {:.1f}s. Frame {:L}",
+    ImGui::InfoMarker(std::format("Tr("At time {:.1f}s. Frame {:L}"",
                                   performance_stats_->worst_times_micros / 1000000.0f,
                                   worst_times_.frame_number));
 
@@ -560,32 +560,32 @@ class StatsScreen : public UiScreen {
     ImGui::SameLine();
     ImGui::Button(MaybeIntToString(1000 / total_ms));
     ImGui::HelpTooltip(Tr("Projected fps if all frames were this bad."));
-    ImGui::TextFmt("Total time: {:.2f}ms", total_ms);
-    ImGui::TextFmt("Process events: {:.2f}ms",
+    ImGui::TextFmt(Tr("Total time: {:.2f}ms"), total_ms);
+    ImGui::TextFmt(Tr("Process events: {:.2f}ms"),
                    (worst_times_.events_end - worst_times_.events_start) / 1000.0);
-    ImGui::TextFmt("Event count: {} (mouse={}, max_seen={})",
+    ImGui::TextFmt(Tr("Event count: {} (mouse={}, max_seen={})"),
                    worst_times_.events_count,
                    worst_times_.mouse_events_count,
                    performance_stats_->top_events_count);
-    ImGui::TextFmt("Update time: {:.2f}ms",
+    ImGui::TextFmt(Tr("Update time: {:.2f}ms"),
                    (worst_times_.update_end - worst_times_.update_start) / 1000.0);
     if (worst_times_.render.start > 0) {
-      ImGui::TextFmt("Render time: {:.2f}ms", worst_times_.render.GetSeconds() * 1000.0);
+      ImGui::TextFmt(Tr("Render time: {:.2f}ms"), worst_times_.render.GetSeconds() * 1000.0);
       ImGui::Indent();
-      ImGui::TextFmt("Build draw data: {:.2f}ms",
+      ImGui::TextFmt(Tr("Build draw data: {:.2f}ms"),
                      worst_times_.build_draw_data.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Pack instance data: {:.2f}ms",
+      ImGui::TextFmt(Tr("Pack instance data: {:.2f}ms"),
                      worst_times_.pack_instance_data.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Upload instance data: {:.2f}ms",
+      ImGui::TextFmt(Tr("Upload instance data: {:.2f}ms"),
                      worst_times_.upload_instance_data.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Upload instance data (copy pass): {:.2f}ms",
+      ImGui::TextFmt(Tr("Upload instance data (copy pass): {:.2f}ms"),
                      worst_times_.upload_instance_data_copy_pass.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Upload instance data (memcpy): {:.2f}ms",
+      ImGui::TextFmt(Tr("Upload instance data (memcpy): {:.2f}ms"),
                      worst_times_.upload_instance_data_memcpy.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Render draw data: {:.2f}ms",
+      ImGui::TextFmt(Tr("Render draw data: {:.2f}ms"),
                      worst_times_.render_draw_data.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Start render: {:.2f}ms", worst_times_.start_render.GetSeconds() * 1000.0);
-      ImGui::TextFmt("Finish render: {:.2f}ms", worst_times_.finish_render.GetSeconds() * 1000.0);
+      ImGui::TextFmt(Tr("Start render: {:.2f}ms"), worst_times_.start_render.GetSeconds() * 1000.0);
+      ImGui::TextFmt(Tr("Finish render: {:.2f}ms"), worst_times_.finish_render.GetSeconds() * 1000.0);
       ImGui::Unindent();
     }
     ImGui::Unindent();
@@ -662,7 +662,7 @@ class StatsScreen : public UiScreen {
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           details_.previous_high_score_stats.epoch_seconds, GetNowEpochSeconds());
       bool is_new_high = percent_diff > 0;
-      std::string prefix = is_new_high ? "Previous high score" : "Current high score";
+      std::string prefix = is_new_high ? Tr("Previous high score") : Tr("Current high score");
       ImGui::HelpTooltip(std::format(
           "{}: {} ({})", prefix, MaybeIntToString(previous_high_score, 2), high_score_time));
     }
@@ -681,7 +681,7 @@ class StatsScreen : public UiScreen {
         ImGui::Button(std::format("{}{}", MaybeIntToString(score_level, 2), icons::kBolt));
         auto font2 = app_.font_manager().UseDefault();
         ImGui::HelpTooltip(
-            std::format("Target score: {}",
+            std::format("Tr("Target score: {}"",
                         MaybeIntToString(evaluated_scenario_def_->score_targets().end(), 1)));
       }
     }
@@ -766,7 +766,7 @@ class StatsScreen : public UiScreen {
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           details_.previous_high_score_stats.epoch_seconds, GetNowEpochSeconds());
       bool is_new_high = percent_diff > 0;
-      std::string prefix = is_new_high ? "Previous high" : "Current high";
+      std::string prefix = is_new_high ? Tr("Previous high") : Tr("Current high");
       ImGui::TextFmt(
           "{}: {} ({})", prefix, MaybeIntToString(previous_high_score, 2), high_score_time);
     }
@@ -781,7 +781,7 @@ class StatsScreen : public UiScreen {
     }
 
     if (all_stats.size() > 1) {
-      ImGui::TextFmt("{} total runs", all_stats.size());
+      ImGui::TextFmt(Tr("{} total runs"), all_stats.size());
     }
   }
 
@@ -920,7 +920,7 @@ class StatsScreen : public UiScreen {
             ImGui::TextFmt(
                 "{} (-{}%)", MaybeIntToString(score, 2), MaybeIntToString(diff_percent * 100, 1));
           } else {
-            ImGui::TextFmt("{} (High)", MaybeIntToString(score, 2));
+            ImGui::TextFmt(Tr("{} (High)"), MaybeIntToString(score, 2));
           }
 
           std::string time_ago =
@@ -937,7 +937,7 @@ class StatsScreen : public UiScreen {
           ImPlotPoint threshold = ImPlot::GetPlotDistanceFromPixels(10);
           if (abs(high_score - mouse_pos.y) < threshold.y) {
             ImGui::BeginTooltip();
-            ImGui::TextFmt("High score: {}", MaybeIntToString(high_score, 2));
+            ImGui::TextFmt(Tr("High score: {}"), MaybeIntToString(high_score, 2));
             ImGui::EndTooltip();
 
             ImPlot::SetNextMarkerStyle(
@@ -947,7 +947,7 @@ class StatsScreen : public UiScreen {
             ImPlot::PlotScatter("HighScoreDot", &mouse_x, &float_high_score, 1);
           } else if (score_target_ > 0 && abs(score_target_ - mouse_pos.y) < threshold.y) {
             ImGui::BeginTooltip();
-            ImGui::TextFmt("Target score: {}", MaybeIntToString(score_target_, 2));
+            ImGui::TextFmt(Tr("Target score: {}"), MaybeIntToString(score_target_, 2));
             ImGui::EndTooltip();
 
             ImPlot::SetNextMarkerStyle(
@@ -970,7 +970,7 @@ class StatsScreen : public UiScreen {
   void DrawHistoryListTable() {
     if (ImGui::Button(Tr("Clear history"))) {
       delete_history_confirmation_dialog_.NotifyOpen(
-          std::format("Delete history for \"{}\"?", scenario_name_), scenario_name_);
+          std::format("Tr("Delete history for \"{}\"?"", scenario_name_), scenario_name_);
     }
     ImGui::AlignTextToFramePadding();
     ImGui::Text("%s", Tr("Sort by score"));

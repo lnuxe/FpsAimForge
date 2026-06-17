@@ -91,7 +91,7 @@ class SingleReactionTimeScreen : public Screen {
       if (options_.is_audio) {
         ScreenInfo screen = app_.screen_info();
         auto bold = app_.font_manager().UseLargeBold();
-        std::string message = "Click after sound";
+        std::string message = Tr("Click after sound");
         ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
         ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
         ImGui::SetCursorPosY(app_.screen_info().center.y - text_size.y * 0.5);
@@ -164,8 +164,8 @@ class ReactionTimeScreen : public UiScreen {
       PopSelf();
     }
 
-    const char* audio_label = "Audio";
-    const char* visual_label = "Visual";
+    const char* audio_label = Tr("Audio");
+    const char* visual_label = Tr("Visual");
     float char_x = ImGui::GetDefaultCharSizeX();
 
     std::string selected_type = options_.is_audio ? audio_label : visual_label;
@@ -192,7 +192,7 @@ class ReactionTimeScreen : public UiScreen {
     ImGui::Spacing();
     if (too_early_) {
       auto font = app_.font_manager().UseLarge();
-      std::string message = "Too soon";
+      std::string message = Tr("Too soon");
       ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
       ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
       ImGui::Text(message);

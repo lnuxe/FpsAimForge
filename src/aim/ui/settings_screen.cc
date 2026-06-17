@@ -312,11 +312,11 @@ class SettingsScreen : public UiScreen {
 
       ImGui::SpacedSeparator();
 
-      if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
+      if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("{}")))) {
         OpenFolderInExplorer(app_.file_system()->GetUserDataPath());
       }
       ImGui::HelpTooltip(
-          std::format("Open \"{}\"", app_.file_system()->GetUserDataPath().string()));
+          std::format("Tr("Open \"{}\""", app_.file_system()->GetUserDataPath().string()));
 
       ImGui::EndTabItem();
     }
@@ -536,10 +536,10 @@ class SettingsScreen : public UiScreen {
     ImGui::SpacedSeparator();
 
     auto sounds_folder = app_.file_system()->GetUserDataPath("resources/sounds");
-    if (ImGui::Button(std::format("{} Sounds folder", icons::kOpenInNew))) {
+    if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("{}")))) {
       OpenFolderInExplorer(sounds_folder);
     }
-    ImGui::HelpTooltip(std::format("Open \"{}\"", sounds_folder.string()));
+    ImGui::HelpTooltip(std::format("Tr("Open \"{}\""", sounds_folder.string()));
   }
 
   void DrawScreen() override {
@@ -646,7 +646,7 @@ class SettingsScreen : public UiScreen {
 
     float start_x = ImGui::GetCursorPosX();
 
-    if (ImGui::Button(std::format("{} Save", icons::kSave))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSave, Tr("{}")))) {
       app_.settings_manager().MarkDirty();
       updater_.SaveIfChangesMade(scenario_id_);
       PopSelf();

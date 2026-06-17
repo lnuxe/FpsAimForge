@@ -49,9 +49,9 @@ class AddBundleDialog {
 
     if (!bundle_name_.empty() && !is_valid) {
       if (name_taken) {
-        ImGui::TextFmt("Bundle name \"{}\" already exists", bundle_name_);
+        ImGui::TextFmt("Tr("Bundle name \"{}\" already exists"", bundle_name_);
       } else {
-        ImGui::TextFmt("Bundle name \"{}\" is invalid. Can only contains letters, numbers, and _",
+        ImGui::TextFmt("Tr("Bundle name \"{}\" is invalid. Can only contains letters, numbers, and _"",
                        bundle_name_);
       }
     }
@@ -110,7 +110,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
       ImGui::Spacing();
 
-      if (ImGui::Button(std::format("{} Bundle", icons::kAdd))) {
+      if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
         add_dialog_.NotifyOpen({});
       }
 
@@ -133,7 +133,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
       DrawSelectedBundle();
     }
 
-    if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
+    if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("{}")))) {
       OpenFolderInExplorer(app_.file_system()->GetUserDataPath("bundles"));
     }
     ImGui::HelpTooltip(Tr("Open bundles folder in file explorer"));
@@ -173,21 +173,21 @@ class BundleUiComponentImpl : public BundleUiComponent {
     ImGui::Spacing();
 
     CachedBundleDetails details = GetBundleDetails(selected_bundle_name_);
-    ImGui::TextFmt("{} scenarios", details.num_scenarios);
+    ImGui::TextFmt(Tr("{} scenarios"), details.num_scenarios);
     if (details.num_playlists > 0) {
-      ImGui::TextFmt("{} playlists", details.num_playlists);
+      ImGui::TextFmt(Tr("{} playlists"), details.num_playlists);
     }
 
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
-    if (ImGui::Button(std::format("{} Copy", icons::kContentCopy))) {
+    if (ImGui::Button(std::format("{} {}", icons::kContentCopy, Tr("{}")))) {
       add_dialog_.NotifyOpen(selected_bundle_name_);
     }
 
-    if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
-      delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", selected_bundle_name_),
+    if (ImGui::Button(std::format("{} {}", icons::kDelete, Tr("{}")))) {
+      delete_confirmation_dialog_.NotifyOpen(std::format("Tr("Delete \"{}\"?"", selected_bundle_name_),
                                              selected_bundle_name_);
     }
 

@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "aim/core/local_store.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

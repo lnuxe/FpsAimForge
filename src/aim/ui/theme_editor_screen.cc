@@ -239,7 +239,7 @@ class ThemeEditor {
     bool is_rename = !is_new_theme && current_theme_name_ != original_theme_name_;
     if (is_new_theme || is_rename) {
       if (theme_exists) {
-        *error_message = std::format("Theme \"{}\" already exists", current_theme_name_);
+        *error_message = std::format("Tr("Theme \"{}\" already exists"", current_theme_name_);
         return false;
       }
     }
@@ -249,7 +249,7 @@ class ThemeEditor {
     }
 
     if (!app_.settings_manager().SaveTheme(current_theme_name_, current_theme_)) {
-      *error_message = std::format("Unable to save theme \"{}\"", current_theme_name_);
+      *error_message = std::format("Tr("Unable to save theme \"{}\""", current_theme_name_);
       return false;
     }
     return true;
@@ -378,7 +378,7 @@ class ThemeEditorScreen : public UiScreen {
     ImGui::SetNextWindowSize(ImVec2(width, -1));
     ImGui::Begin("TopBar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
 
-    if (ImGui::Button(std::format("{} Save", icons::kSave))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSave, Tr("{}")))) {
       std::string error_message = "Could not save theme";
       if (theme_editor_->Save(&error_message)) {
         LoadThemeList();
@@ -388,7 +388,7 @@ class ThemeEditorScreen : public UiScreen {
       }
     }
     ImGui::SameLine();
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
       BackToThemeList();
     }
 
@@ -466,11 +466,11 @@ class ThemeEditorScreen : public UiScreen {
   void DrawThemeListEditor() {
     ImGui::IdGuard cid("ThemeListEditor");
     ImGui::LoopId loop_id;
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
       PopSelf();
     }
     ImGui::SpacedSeparator();
-    if (ImGui::Button(std::format("{} Theme", icons::kAdd))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
       OpenNewTheme();
     }
     ImGui::SpacedSeparator();
@@ -482,7 +482,7 @@ class ThemeEditorScreen : public UiScreen {
     if (ImGui::Button(icons::kOpenInNew)) {
       OpenFolderInExplorer(folder);
     }
-    ImGui::HelpTooltip(std::format("Open \"{}\"", folder.string()));
+    ImGui::HelpTooltip(std::format("Tr("Open \"{}\""", folder.string()));
     ImGui::Indent();
     ImGui::Spacing();
     for (const std::string& name : theme_names_) {
@@ -499,7 +499,7 @@ class ThemeEditorScreen : public UiScreen {
           OpenExistingTheme(name);
         }
         if (ImGui::Selectable(Tr("Delete"))) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", name), name);
+          delete_confirmation_dialog_.NotifyOpen(std::format("Tr("Delete \"{}\"?"", name), name);
         }
         ImGui::EndPopup();
       }

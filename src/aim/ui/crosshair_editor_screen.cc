@@ -89,11 +89,11 @@ class CrosshairEditorScreen : public UiScreen {
   void DrawCrosshairListEditor() {
     ImGui::IdGuard cid("CrosshairListEditor");
     ImGui::LoopId loop_id;
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
       PopSelf();
     }
     Line();
-    if (ImGui::Button(std::format("{} Crosshair", icons::kAdd))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
       OpenNewCrosshair();
     }
     Line();
@@ -105,7 +105,7 @@ class CrosshairEditorScreen : public UiScreen {
     if (ImGui::Button(icons::kOpenInNew)) {
       OpenFolderInExplorer(folder);
     }
-    ImGui::HelpTooltip(std::format("Open \"{}\"", folder.string()));
+    ImGui::HelpTooltip(std::format("Tr("Open \"{}\""", folder.string()));
     ImGui::Spacing();
     ImGui::Indent();
     for (const std::string& crosshair_name : crosshair_names_) {
@@ -122,7 +122,7 @@ class CrosshairEditorScreen : public UiScreen {
           OpenExistingCrosshair(crosshair_name);
         }
         if (ImGui::Selectable(Tr("Delete"))) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", crosshair_name),
+          delete_confirmation_dialog_.NotifyOpen(std::format("Tr("Delete \"{}\"?"", crosshair_name),
                                                  crosshair_name);
         }
         ImGui::EndPopup();
@@ -149,7 +149,7 @@ class CrosshairEditorScreen : public UiScreen {
     if (is_new_crosshair_ || is_rename) {
       if (crosshair_exists) {
         notification_popup_.NotifyOpen(
-            std::format("Crosshair \"{}\" already exists", current_crosshair_name_));
+            std::format("Tr("Crosshair \"{}\" already exists"", current_crosshair_name_));
         return false;
       }
     }
@@ -160,7 +160,7 @@ class CrosshairEditorScreen : public UiScreen {
 
     if (!app_.settings_manager().SaveCrosshair(current_crosshair_name_, crosshair_)) {
       notification_popup_.NotifyOpen(
-          std::format("Unable to save crosshair \"{}\"", current_crosshair_name_));
+          std::format("Tr("Unable to save crosshair \"{}\""", current_crosshair_name_));
       return false;
     }
     LoadCrosshairList();
@@ -181,7 +181,7 @@ class CrosshairEditorScreen : public UiScreen {
   }
 
   void DrawCrosshairEditor() {
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
       BackToCrosshairList();
     }
     Line();
@@ -195,7 +195,7 @@ class CrosshairEditorScreen : public UiScreen {
     ImGui::InputText("##NameInput", &current_crosshair_name_);
 
     ImGui::SameLine();
-    if (ImGui::Button(std::format("{} Save", icons::kSave))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSave, Tr("{}")))) {
       if (SaveCurrentCrosshair()) {
         BackToCrosshairList();
       }
@@ -229,7 +229,7 @@ class CrosshairEditorScreen : public UiScreen {
       }
 
       ImGui::AlignTextToFramePadding();
-      ImGui::TextFmt("Layer {}", i + 1);
+      ImGui::TextFmt(Tr("Layer {}"), i + 1);
       ImGui::SameLine();
       if (ImGui::Selectable(icons::kMoreVert, false, 0, ImVec2(ImGui::GetTextLineHeight(), 0))) {
         ImGui::OpenPopup(item_menu_id);
@@ -240,7 +240,7 @@ class CrosshairEditorScreen : public UiScreen {
       ImGui::Unindent();
     }
 
-    if (ImGui::Button(std::format("{} Layer", icons::kAdd))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
       c.add_layers();
     }
 

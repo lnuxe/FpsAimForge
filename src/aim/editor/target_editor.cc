@@ -188,7 +188,7 @@ void DrawTargetEditor(ScenarioDef& def) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::InputBool("Newest target is ghost",
+  ImGui::InputBool(Tr("Newest target is ghost"),
                    PROTO_BOOL_FIELD(TargetDef, t, newest_target_is_ghost));
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("Ghost targets are unkillable and drawn in a different color."));

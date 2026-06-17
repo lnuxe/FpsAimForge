@@ -26,7 +26,7 @@ class PlayTimeScreen : public UiScreen {
  private:
   void DrawPlayTimeScreen() {
     ImGui::IdGuard cid("PlayTime");
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
       PopSelf();
     }
     ImGui::SpacedSeparator();
@@ -37,7 +37,7 @@ class PlayTimeScreen : public UiScreen {
     float total_partial_play_time_seconds = play_times.total.partial_run_time_seconds;
     ImGui::Spacing();
     ImGui::Text(Tr("Total time: %.1f hours"), total_play_time_seconds / 3600.0f);
-    ImGui::TextFmt("Partial run time: {:.1f} hours ({:.0f}%)",
+    ImGui::TextFmt(Tr("Partial run time: {:.1f} hours ({:.0f}%)"),
                    total_partial_play_time_seconds / 3600.0f,
                    (total_partial_play_time_seconds / total_play_time_seconds) * 100);
     ImGui::SameLine();

@@ -319,13 +319,13 @@ class HomeScreen : public UiScreen {
       ImGui::Spacing();
     }
     ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
-    ImGui::TextFmt("init {:.1f}s", app_.state().initialization_times.total.GetSeconds());
-    ImGui::TextFmt("load {:.1f}s", app_.state().initialization_times.load_bundles.GetSeconds());
-    ImGui::TextFmt("db {:.1f}s", app_.state().initialization_times.db.GetSeconds());
-    ImGui::TextFmt("sdl {:.1f}s", app_.state().initialization_times.sdl.GetSeconds());
-    ImGui::TextFmt("audio {:.1f}s", app_.state().initialization_times.audio.GetSeconds());
-    ImGui::TextFmt("window {:.1f}s", app_.state().initialization_times.window.GetSeconds());
-    // ImGui::TextFmt("scenario count: {}", app_.scenario_manager().scenarios().size());
+    ImGui::TextFmt(Tr("init {:.1f}s"), app_.state().initialization_times.total.GetSeconds());
+    ImGui::TextFmt(Tr("load {:.1f}s"), app_.state().initialization_times.load_bundles.GetSeconds());
+    ImGui::TextFmt(Tr("db {:.1f}s"), app_.state().initialization_times.db.GetSeconds());
+    ImGui::TextFmt(Tr("sdl {:.1f}s"), app_.state().initialization_times.sdl.GetSeconds());
+    ImGui::TextFmt(Tr("audio {:.1f}s"), app_.state().initialization_times.audio.GetSeconds());
+    ImGui::TextFmt(Tr("window {:.1f}s"), app_.state().initialization_times.window.GetSeconds());
+    // ImGui::TextFmt(Tr("scenario count: {}"), app_.scenario_manager().scenarios().size());
     for (const auto& item : app_.state().initialization_times.window_trace.GetTrace()) {
       ImGui::Text(item);
     }
