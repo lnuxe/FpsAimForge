@@ -14,6 +14,7 @@
 #include "aim/scenario/scenario_timer.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
 #include "implot.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -140,8 +141,8 @@ void DrawMouseSpeedsPlot(float now, float t_step, std::span<float> mouse_speeds,
       float x_val = mouse_pos.x;
       float y_val = scores[closest_index];
       ImGui::BeginTooltip();
-      ImGui::Text("Score: %.2f", y_val);
-      ImGui::Text("Time: %.2f", x_val);
+      ImGui::Text(Tr("Score: %.2f"), y_val);
+      ImGui::Text(Tr("Time: %.2f"), x_val);
       ImGui::EndTooltip();
 
       ImPlot::SetNextMarkerStyle(
@@ -436,7 +437,7 @@ class ReplayViewerScreen : public Screen {
 
     float elapsed_seconds = timer_.GetElapsedSeconds();
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+    ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
     ImGui::SameLine();
     ImGui::InfoMarker(
         std::format("Approximate file size: {:.2f}mb", replay_->GetApproximateSizeMb()));
@@ -447,7 +448,7 @@ class ReplayViewerScreen : public Screen {
       PopSelf();
     }
 
-    ImGui::Text("recorded fps: %d", replay_->replay_fps);
+    ImGui::Text(Tr("recorded fps: %d"), replay_->replay_fps);
 
     float score = replay_view_->GetCurrentScore();
     if (score > 0) {
@@ -456,7 +457,7 @@ class ReplayViewerScreen : public Screen {
 
     if (has_click_events_) {
       const auto& durations = replay_view_->GetPreviousClickDurations();
-      ImGui::Text("click times");
+      ImGui::Text("%s", Tr("click times"));
       ImGui::Indent();
       if (durations.size() > 0) {
         for (int i = std::max<int>(0, durations.size() - 20); i < durations.size(); ++i) {

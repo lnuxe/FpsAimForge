@@ -18,6 +18,7 @@
 #include "aim/ui/select_variation_dialog.h"
 #include "aim/ui/stats_screen.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -48,7 +49,7 @@ class CreateLevelsPlaylistDialog {
         ImGui::InputText("##RelativeNameInput", name_.mutable_relative_name());
 
         ImGui::Spacing();
-        if (ImGui::Button("Create playlist")) {
+        if (ImGui::Button(Tr("Create playlist"))) {
           auto taken_names =
               app.playlist_manager().GetAllRelativeNamesInBundle(name_.bundle_name());
           *name_.mutable_relative_name() = MakeUniqueName(name_.relative_name(), taken_names);
@@ -69,7 +70,7 @@ class CreateLevelsPlaylistDialog {
           is_open_ = false;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Cancel")) {
+        if (ImGui::Button(Tr("Cancel"))) {
           is_open_ = false;
           ImGui::CloseCurrentPopup();
         }
@@ -115,21 +116,21 @@ void DrawScenarioRightClickMenu(const char* popup_id,
                                 Application& app) {
   if (ImGui::BeginPopupContextItem(popup_id)) {
     bool is_readonly = app.bundle_manager().IsBundleReadonly(GetBundleName(scenario_name));
-    if (!is_readonly && ImGui::Selectable("Edit")) {
+    if (!is_readonly && ImGui::Selectable(Tr("Edit"))) {
       ScenarioEditorOptions opts;
       opts.scenario_name = scenario_name;
       app.GetCurrentScreen()->PushNextScreen(CreateScenarioEditorScreen(opts, &app));
     }
-    if (ImGui::Selectable("Copy")) {
+    if (ImGui::Selectable(Tr("Copy"))) {
       ScenarioEditorOptions opts;
       opts.scenario_name = scenario_name;
       opts.is_new_copy = true;
       app.GetCurrentScreen()->PushNextScreen(CreateScenarioEditorScreen(opts, &app));
     }
-    if (ImGui::Selectable("Select variation")) {
+    if (ImGui::Selectable(Tr("Select variation"))) {
       dialogs->select_variation_dialog.NotifyOpen(scenario_name);
     }
-    if (ImGui::Selectable("Remove from recents")) {
+    if (ImGui::Selectable(Tr("Remove from recents"))) {
       app.history_manager().DeleteRecentView(ObjectType::SCENARIO, scenario_name);
       dialogs->update_filtered_scenarios = true;
     }
@@ -160,25 +161,25 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Advanced")) {
-      if (ImGui::Selectable("View stats")) {
+      if (ImGui::Selectable(Tr("View stats"))) {
         app.GetCurrentScreen()->PushNextScreen(CreateStatsScreen(
             scenario_name, app.stats_manager().GetLatestRunId(scenario_name), &app));
       }
-      if (ImGui::Selectable("Copy as reference")) {
+      if (ImGui::Selectable(Tr("Copy as reference"))) {
         ScenarioEditorOptions opts;
         opts.scenario_name = scenario_name;
         opts.is_new_copy = true;
         opts.copy_as_reference = true;
         app.GetCurrentScreen()->PushNextScreen(CreateScenarioEditorScreen(opts, &app));
       }
-      if (ImGui::Selectable("Create levels playlist")) {
+      if (ImGui::Selectable(Tr("Create levels playlist"))) {
         dialogs->create_levels_playlist_dialog.NotifyOpen(scenario_name);
       }
       ImGui::EndMenu();
     }
     if (!is_readonly) {
       ImGui::SpacedSeparator();
-      if (ImGui::Selectable("Delete")) {
+      if (ImGui::Selectable(Tr("Delete"))) {
         std::string base_name = GetScenarioNameInfo(scenario_name).base_name;
         dialogs->delete_confirmation_dialog.NotifyOpen(std::format("Delete \"{}\"?", base_name),
                                                        base_name);
@@ -257,7 +258,7 @@ class ScenarioBrowserComponent {
       ImGui::Indent();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Shot type");
+      ImGui::Text("%s", Tr("Shot type"));
       ImGui::SameLine();
       bool shot_type_changed = ImGui::SimpleTypeDropdown(
           "##ShotTypeFilter", &shot_type_filter_, shot_types_, char_x * 15);
@@ -266,7 +267,7 @@ class ScenarioBrowserComponent {
       }
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Scenario type");
+      ImGui::Text("%s", Tr("Scenario type"));
       ImGui::SameLine();
       bool scenario_type_changed = ImGui::SimpleTypeDropdown(
           "##ScenarioTypeFilter", &scenario_type_filter_, scenario_types_, char_x * 12);
@@ -274,7 +275,7 @@ class ScenarioBrowserComponent {
         UpdateFilteredScenarios();
       }
 
-      if (ImGui::Button("Clear filters")) {
+      if (ImGui::Button(Tr("Clear filters"))) {
         shot_type_filter_ = ShotType::TYPE_NOT_SET;
         scenario_type_filter_ = ScenarioDef::TYPE_NOT_SET;
         UpdateFilteredScenarios();
@@ -285,10 +286,10 @@ class ScenarioBrowserComponent {
       ImGui::Spacing();
     } else {
       ImGui::SameLine(0, char_x);
-      if (ImGui::Button("Advanced")) {
+      if (ImGui::Button(Tr("Advanced"))) {
         advanced_filters_open_ = true;
       }
-      ImGui::HelpTooltip("Filter scenarios using advanced filters like by shot type");
+      ImGui::HelpTooltip(Tr("Filter scenarios using advanced filters like by shot type"));
     }
 
     ImGui::SetNextItemWidth(char_x * 31);
@@ -351,7 +352,7 @@ class ScenarioBrowserComponent {
                 app_->history_manager().DeleteRecentView(ObjectType::SCENARIO, scenario_name);
                 UpdateFilteredScenarios();
               }
-              ImGui::HelpTooltip("Delete from recents");
+              ImGui::HelpTooltip(Tr("Delete from recents"));
             }
             if (view_type_ == ScenarioViewType::STARRED) {
               DrawStarItemSelectable(scenario_name);
@@ -601,13 +602,13 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::IdGuard cid("HighScore");
       ImGui::SpacedSeparator();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("High score");
+      ImGui::Text("%s", Tr("High score"));
       ImGui::SameLine();
       if (ImGui::Button(MaybeIntToString(stats.high_score_stats.score))) {
         app_.GetCurrentScreen()->PushNextScreen(
             CreateStatsScreen(item.name, stats.high_score_stats.stats_id, &app_));
       }
-      ImGui::HelpTooltip("View stats for run.");
+      ImGui::HelpTooltip(Tr("View stats for run."));
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           stats.high_score_stats.epoch_seconds, GetNowEpochSeconds());
       ImGui::SameLine();
@@ -643,7 +644,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::SpacedSeparator();
       ImGui::IdGuard cid("ReferencedScenario");
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Referenced scenario");
+      ImGui::Text("%s", Tr("Referenced scenario"));
       ImGui::SameLine();
       ImGui::HelpMarker(
           "This scenario references/extends the following scenario. Editing the referenced "
@@ -659,7 +660,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
 
     if (!referencing_scenarios_.empty()) {
       ImGui::SpacedSeparator();
-      ImGui::Text("Referencing scenarios");
+      ImGui::Text("%s", Tr("Referencing scenarios"));
       ImGui::SameLine();
       ImGui::HelpMarker(
           "Scenarios that extend this scenario. Changing this scenario would change the following "
@@ -680,7 +681,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
 
     if (!matching_playlists_->empty()) {
       ImGui::SpacedSeparator();
-      ImGui::Text("Related playlists");
+      ImGui::Text("%s", Tr("Related playlists"));
       ImGui::Indent();
       for (const std::string& playlist_name : *matching_playlists_) {
         if (ImGui::Button(playlist_name)) {

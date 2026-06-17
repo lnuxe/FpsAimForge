@@ -47,9 +47,9 @@ class SetInitialDpiDialog {
     std::optional<int> set_dpi;
     if (popup_.Begin()) {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("%s", Tr(i18n_key::kDpiPrompt));
+      ImGui::Text("%s", Tr("What is your mouse DPI?"));
       ImGui::SameLine();
-      ImGui::HelpMarker(Tr(i18n_key::kDpiHelp));
+      ImGui::HelpMarker(Tr("DPI is used to calculate sensitivity given a cm/360 value."));
 
       if (ImGui::Button("400")) {
         set_dpi = 400;
@@ -78,7 +78,7 @@ class SetInitialDpiDialog {
       if (!is_valid) {
         ImGui::BeginDisabled();
       }
-      if (ImGui::Button(Tr(i18n_key::kSet))) {
+      if (ImGui::Button(Tr("Set"))) {
         set_dpi = dpi_input_value_;
       }
       if (!is_valid) {
@@ -282,21 +282,21 @@ class HomeScreen : public UiScreen {
 
   void DrawLeftNav() {
     AppScreen original_app_screen = app_screen_;
-    if (ImGui::Selectable(std::format("{} Playlists", icons::kList).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kList, Tr("Playlists")).c_str(),
                           app_screen_ == AppScreen::PLAYLISTS)) {
       app_screen_ = AppScreen::PLAYLISTS;
     }
-    if (ImGui::Selectable(std::format("{} Scenarios", icons::kCenterFocusWeak).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kCenterFocusWeak, Tr("Scenarios")).c_str(),
                           app_screen_ == AppScreen::SCENARIOS)) {
       app_screen_ = AppScreen::SCENARIOS;
     }
-    if (ImGui::Selectable(std::format("{} Bundles", icons::kAutoAwesomeMotion).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kAutoAwesomeMotion, Tr("Bundles")).c_str(),
                           app_screen_ == AppScreen::BUNDLES)) {
       app_screen_ = AppScreen::BUNDLES;
     }
     auto latest_run = app_.stats_manager().GetLatestRun();
     if (latest_run) {
-      if (ImGui::Selectable(std::format("{} Last run", icons::kAssignment).c_str(),
+      if (ImGui::Selectable(std::format("{} {}", icons::kAssignment, Tr("Last run")).c_str(),
                             app_screen_ == AppScreen::BUNDLES)) {
         PushNextScreen(CreateStatsScreen(latest_run->scenario_name, latest_run->run_id, &app_));
       }
@@ -318,7 +318,7 @@ class HomeScreen : public UiScreen {
     for (int i = 0; i < 30; ++i) {
       ImGui::Spacing();
     }
-    ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+    ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
     ImGui::TextFmt("init {:.1f}s", app_.state().initialization_times.total.GetSeconds());
     ImGui::TextFmt("load {:.1f}s", app_.state().initialization_times.load_bundles.GetSeconds());
     ImGui::TextFmt("db {:.1f}s", app_.state().initialization_times.db.GetSeconds());

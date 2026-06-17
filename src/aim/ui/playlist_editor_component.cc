@@ -12,6 +12,7 @@
 #include "aim/ui/search_selector.h"
 #include "aim/ui/select_variation_dialog.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -67,7 +68,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Save")) {
+    if (ImGui::Button(Tr("Save"))) {
       if (SavePlaylist()) {
         result->editor_closed = true;
         result->playlist_updated = true;
@@ -76,7 +77,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       result->editor_closed = true;
       return;
     }
@@ -90,7 +91,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     ImGui::InputText("###PlaylistNameInput", &new_playlist_name_);
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Type");
+    ImGui::Text("%s", Tr("Type"));
     ImGui::SameLine();
     PlaylistType type = levels_.has_value() ? PlaylistType::LEVELS : PlaylistType::DEFAULT;
     if (ImGui::SimpleTypeDropdown("##TypeSelector", &type, kPlaylistTypes, char_x_ * 10)) {
@@ -108,7 +109,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     ImGui::SpacedSeparator();
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Description");
+    ImGui::Text("%s", Tr("Description"));
     ImGui::SameLine();
 
     if (ImGui::Button(icons::kEdit)) {
@@ -149,7 +150,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
     ImGui::IdGuard cid("LevelsEditor");
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Base scenario");
+    ImGui::Text("%s", Tr("Base scenario"));
     ImGui::SameLine();
     ImGui::InputText("###BaseScenarioInput", levels.mutable_base_scenario());
     if (levels.base_scenario().size() > 0) {
@@ -293,19 +294,19 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
       const char* item_menu = "PlaylistItemMenu";
       if (ImGui::BeginPopupContextItem(item_menu)) {
-        if (ImGui::Selectable("Copy")) {
+        if (ImGui::Selectable(Tr("Copy"))) {
           items_to_add.push_back(item);
         }
-        if (ImGui::Selectable("Edit variation")) {
+        if (ImGui::Selectable(Tr("Edit variation"))) {
           editing_variation_i_ = i;
           select_variation_dialog_.NotifyOpen(item.scenario());
         }
-        if (ImGui::Selectable("Edit name")) {
+        if (ImGui::Selectable(Tr("Edit name"))) {
           editing_i_ = i;
           focus_editor_ = true;
         }
         ImGui::SpacedSeparator();
-        if (ImGui::Selectable("Delete")) {
+        if (ImGui::Selectable(Tr("Delete"))) {
           remove_i = i;
         }
         ImGui::EndPopup();
@@ -334,7 +335,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
     ImGui::Spacing();
     ImGui::Spacing();
-    ImGui::Text("Add scenario");
+    ImGui::Text("%s", Tr("Add scenario"));
     ImGui::SameLine();
     ImGui::SetNextItemWidth(char_x_ * 18);
     ImGui::InputText("###AddScenarioInput", &scenario_search_text_);

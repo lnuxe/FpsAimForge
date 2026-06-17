@@ -9,6 +9,7 @@
 #include "aim/ui/quick_settings_screen.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

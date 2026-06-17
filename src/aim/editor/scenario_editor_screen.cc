@@ -33,6 +33,7 @@
 #include "aim/scenario/scenario_overrides.h"
 #include "aim/ui/search_selector.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -142,7 +143,7 @@ class ScenarioEditorScreen : public UiScreen {
     if (ImGui::Button(icons::kPlayArrow)) {
       PlayScenario();
     }
-    ImGui::HelpTooltip("Try playing the edited version of the scenario.");
+    ImGui::HelpTooltip(Tr("Try playing the edited version of the scenario."));
 
     ImGui::SameLine();
     ImGui::SimpleDropdown("BundlePicker", name_.mutable_bundle_name(), bundle_names_, char_x_ * 11);
@@ -160,14 +161,14 @@ class ScenarioEditorScreen : public UiScreen {
       }
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       PopSelf();
     }
 
     const char* advanced_menu_id = "advanced_menu";
     if (ImGui::BeginPopupContextItem(advanced_menu_id)) {
       if (!is_new_scenario_) {
-        if (ImGui::Selectable("Make new copy")) {
+        if (ImGui::Selectable(Tr("Make new copy"))) {
           is_new_scenario_ = true;
           MakeRelativeNameUniqueInBundle();
         }
@@ -177,15 +178,15 @@ class ScenarioEditorScreen : public UiScreen {
             "unchanged.");
       }
 
-      if (ImGui::Selectable("Import Json")) {
+      if (ImGui::Selectable(Tr("Import Json"))) {
         import_from_json_dialog_.NotifyOpen("");
       }
 
-      if (ImGui::Selectable("View Json")) {
+      if (ImGui::Selectable(Tr("View Json"))) {
         view_json_dialog_.NotifyOpen(MessageToJson(def_));
       }
 
-      if (ImGui::Selectable("Compare")) {
+      if (ImGui::Selectable(Tr("Compare"))) {
         comparison_window_open_ = !comparison_window_open_;
       }
       ImGui::SameLine();
@@ -231,7 +232,7 @@ class ScenarioEditorScreen : public UiScreen {
       ImGui::BeginChild("ThirdColumnContainer", ImVec2(0, 0));
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Shot type");
+      ImGui::Text("%s", Tr("Shot type"));
       ImGui::SameLine();
       DrawShotTypeEditor(*def_.mutable_shot_type());
       ImGui::SpacedSeparator();
@@ -327,7 +328,7 @@ class ScenarioEditorScreen : public UiScreen {
   void DrawComparisonWindow() {
     ImGui::IdGuard cid("ComparisonWindow");
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Scenario");
+    ImGui::Text("%s", Tr("Scenario"));
     ImGui::SameLine();
     ScenarioSearchInput(app_, &comparison_scenario_);
     auto maybe_compare_def = app_.scenario_manager().GetEvaluatedScenarioDef(comparison_scenario_);
@@ -340,7 +341,7 @@ class ScenarioEditorScreen : public UiScreen {
     }
     ScenarioDef compare_def = *maybe_compare_def;
 
-    if (ImGui::BeginTabItem("Scenario type")) {
+    if (ImGui::BeginTabItem(Tr("Scenario type"))) {
       ImGui::Spacing();
       std::string error_message;
       bool no_op_editing_room = false;
@@ -350,15 +351,15 @@ class ScenarioEditorScreen : public UiScreen {
       DrawSecondaryScenarioTypeEditor(compare_def);
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Targets")) {
+    if (ImGui::BeginTabItem(Tr("Targets"))) {
       ImGui::Spacing();
       DrawTargetEditor(compare_def);
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Shot type")) {
+    if (ImGui::BeginTabItem(Tr("Shot type"))) {
       ImGui::Spacing();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Shot type");
+      ImGui::Text("%s", Tr("Shot type"));
       ImGui::SameLine();
       DrawShotTypeEditor(*compare_def.mutable_shot_type());
       ImGui::EndTabItem();
@@ -370,7 +371,7 @@ class ScenarioEditorScreen : public UiScreen {
   void DrawDetailsEditor() {
     float duration_seconds = FirstGreaterThanZero(def_.duration_seconds(), 60);
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Duration");
+    ImGui::Text("%s", Tr("Duration"));
     ImGui::SameLine();
     ImGui::SetNextItemWidth(char_x_ * 12);
     ImGui::InputFloat("##DurationSeconds", &duration_seconds, 5, 5, "%.0f");
@@ -380,14 +381,14 @@ class ScenarioEditorScreen : public UiScreen {
 
     ImGui::SpacedSeparator();
 
-    ImGui::Text("Level overrides");
+    ImGui::Text("%s", Tr("Level overrides"));
     ImGui::SameLine();
-    ImGui::HelpMarker("Define how the difficulty of the scenario should be updated per level");
+    ImGui::HelpMarker(Tr("Define how the difficulty of the scenario should be updated per level"));
     ImGui::Indent();
     DrawOverridesEditor("LevelOverrides", def_.mutable_level_overrides(), /*is_levels=*/true);
     ImGui::Unindent();
 
-    if (ImGui::Button("Bake level")) {
+    if (ImGui::Button(Tr("Bake level"))) {
       def_ = ApplyScenarioLevelOverrides(def_, bake_level_);
       bake_level_ = 0;
     }
@@ -404,11 +405,11 @@ class ScenarioEditorScreen : public UiScreen {
     if (ImGui::TreeNodeEx("Overrides",
                           overrides_default_open ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
       DrawOverridesEditor("Overrides", def_.mutable_overrides());
-      if (ImGui::Button("Bake")) {
+      if (ImGui::Button(Tr("Bake"))) {
         def_ = ApplyScenarioOverrides(def_);
       }
       ImGui::SameLine();
-      ImGui::HelpMarker("Apply and remove the overrides.");
+      ImGui::HelpMarker(Tr("Apply and remove the overrides."));
       ImGui::TreePop();
     }
 

@@ -26,6 +26,7 @@
 #include "aim/ui/top_bar.h"
 #include "imgui.h"
 #include "implot.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -111,8 +112,8 @@ void DrawScoresOverTimePlot(const std::string& scenario_name,
       float x_val = mouse_pos.x;
       float y_val = scores[closest_index];
       ImGui::BeginTooltip();
-      ImGui::Text("Score: %.2f", y_val);
-      ImGui::Text("Time: %.2f", x_val);
+      ImGui::Text(Tr("Score: %.2f"), y_val);
+      ImGui::Text(Tr("Time: %.2f"), x_val);
       ImGui::EndTooltip();
 
       ImPlot::SetNextMarkerStyle(
@@ -546,7 +547,7 @@ class StatsScreen : public UiScreen {
   void DrawPerformanceStats() {
     auto& worst_times_ = performance_stats_->worst_times;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Worst frame");
+    ImGui::Text("%s", Tr("Worst frame"));
     ImGui::SameLine();
     ImGui::InfoMarker(std::format("At time {:.1f}s. Frame {:L}",
                                   performance_stats_->worst_times_micros / 1000000.0f,
@@ -555,10 +556,10 @@ class StatsScreen : public UiScreen {
     float total_ms = (worst_times_.end - worst_times_.start) / 1000.0;
     ImGui::Indent();
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Projected fps");
+    ImGui::Text("%s", Tr("Projected fps"));
     ImGui::SameLine();
     ImGui::Button(MaybeIntToString(1000 / total_ms));
-    ImGui::HelpTooltip("Projected fps if all frames were this bad.");
+    ImGui::HelpTooltip(Tr("Projected fps if all frames were this bad."));
     ImGui::TextFmt("Total time: {:.2f}ms", total_ms);
     ImGui::TextFmt("Process events: {:.2f}ms",
                    (worst_times_.events_end - worst_times_.events_start) / 1000.0);
@@ -598,7 +599,7 @@ class StatsScreen : public UiScreen {
     ImGui::Separator();
     ImGui::Spacing();
 
-    ImGui::Text("Total Times (ms)");
+    ImGui::Text("%s", Tr("Total Times (ms)"));
     ImGui::Indent();
     DumpHistogram(performance_stats_->total_time_histogram);
     ImGui::Unindent();
@@ -606,20 +607,20 @@ class StatsScreen : public UiScreen {
     if (worst_times_.render.start > 0) {
       ImGui::SpacedSeparator();
 
-      ImGui::Text("Render Times (ms)");
+      ImGui::Text("%s", Tr("Render Times (ms)"));
       ImGui::Indent();
       DumpHistogram(performance_stats_->render_time_histogram);
       ImGui::Unindent();
     }
 
     ImGui::SpacedSeparator();
-    ImGui::Text("Update Times (ms)");
+    ImGui::Text("%s", Tr("Update Times (ms)"));
     ImGui::Indent();
     DumpHistogram(performance_stats_->update_time_histogram);
     ImGui::Unindent();
 
     ImGui::SpacedSeparator();
-    ImGui::Text("Event Times (ms)");
+    ImGui::Text("%s", Tr("Event Times (ms)"));
     ImGui::Indent();
     DumpHistogram(performance_stats_->events_time_histogram);
     ImGui::Unindent();
@@ -642,12 +643,12 @@ class StatsScreen : public UiScreen {
     ImGui::Spacing();
     if (percent_diff > 0) {
       auto font = app_.font_manager().UseDefault();
-      ImGui::Button("NEW HIGH SCORE");
+      ImGui::Button(Tr("NEW HIGH SCORE"));
     }
     {
       auto font = app_.font_manager().UseLarge();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Score:");
+      ImGui::Text("%s", Tr("Score:"));
       ImGui::SameLine();
       ImGui::Text(MaybeIntToString(stats.score, 2));
     }
@@ -772,7 +773,7 @@ class StatsScreen : public UiScreen {
     if (all_stats.size() > 2) {
       auto avg_comparison = GetStatsComparison(details_.stats, details_.average_stats);
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Average");
+      ImGui::Text("%s", Tr("Average"));
       ImGui::BeginDisabled();
       ImGui::SameLine();
       ImGui::Button(std::format("{}###avg_diff_button", avg_comparison.score_diff_percent_string));
@@ -967,12 +968,12 @@ class StatsScreen : public UiScreen {
   }
 
   void DrawHistoryListTable() {
-    if (ImGui::Button("Clear history")) {
+    if (ImGui::Button(Tr("Clear history"))) {
       delete_history_confirmation_dialog_.NotifyOpen(
           std::format("Delete history for \"{}\"?", scenario_name_), scenario_name_);
     }
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Sort by score");
+    ImGui::Text("%s", Tr("Sort by score"));
     ImGui::SameLine();
     if (ImGui::Checkbox("##HistorySortByScore", &sort_by_score_)) {
       history_rows_ = {};

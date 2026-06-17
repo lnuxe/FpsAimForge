@@ -12,6 +12,7 @@
 #include "aim/core/application.h"
 #include "aim/core/settings_manager.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -158,8 +159,8 @@ class ReactionTimeScreen : public UiScreen {
   }
 
   void DrawScreenInternal() {
-    ImGui::Text("Reaction times");
-    if (ImGui::Button("Cancel")) {
+    ImGui::Text("%s", Tr("Reaction times"));
+    if (ImGui::Button(Tr("Cancel"))) {
       PopSelf();
     }
 
@@ -169,7 +170,7 @@ class ReactionTimeScreen : public UiScreen {
 
     std::string selected_type = options_.is_audio ? audio_label : visual_label;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Type");
+    ImGui::Text("%s", Tr("Type"));
     ImGui::SameLine();
     if (ImGui::SimpleDropdown(
             "TypeSelector", &selected_type, {visual_label, audio_label}, char_x * 10)) {

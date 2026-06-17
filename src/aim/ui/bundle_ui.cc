@@ -8,6 +8,7 @@
 #include "aim/core/scenario_manager.h"
 #include "aim/proto/bundle.pb.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -35,7 +36,7 @@ class AddBundleDialog {
 
     std::optional<std::string> added_name;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Bundle name");
+    ImGui::Text("%s", Tr("Bundle name"));
     ImGui::SameLine();
     ImGui::InputText("##BundleNameInput", &bundle_name_);
 
@@ -71,7 +72,7 @@ class AddBundleDialog {
       ImGui::EndDisabled();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       popup_.Close();
     }
 
@@ -135,18 +136,18 @@ class BundleUiComponentImpl : public BundleUiComponent {
     if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
       OpenFolderInExplorer(app_.file_system()->GetUserDataPath("bundles"));
     }
-    ImGui::HelpTooltip("Open bundles folder in file explorer");
+    ImGui::HelpTooltip(Tr("Open bundles folder in file explorer"));
   }
 
   void DrawSelectedBundle() {
     auto maybe_bundle_info = app_.bundle_manager().GetBundleInfo(selected_bundle_name_);
     if (!maybe_bundle_info) {
-      ImGui::Text("Could not find bundle: %s", selected_bundle_name_.c_str());
+      ImGui::Text(Tr("Could not find bundle: %s"), selected_bundle_name_.c_str());
       return;
     }
     BundleInfo info = *maybe_bundle_info;
 
-    ImGui::Text("Bundle name: %s", selected_bundle_name_.c_str());
+    ImGui::Text(Tr("Bundle name: %s"), selected_bundle_name_.c_str());
 
     bool need_update = false;
 
@@ -159,7 +160,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     } else {
       bool readonly = info.readonly();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Readonly");
+      ImGui::Text("%s", Tr("Readonly"));
       ImGui::SameLine();
       if (ImGui::Checkbox("##ReadonlyInput", &readonly)) {
         info.set_readonly(readonly);

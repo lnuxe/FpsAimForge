@@ -384,17 +384,17 @@ void Scenario::OnWaitingForClickTick() {
   app_.crosshair_manager().Draw(crosshair_, crosshair_size_, theme_, app_.screen_info().center);
 
   ImGui::Text("%s", scenario_name_.c_str());
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
   if (settings_.enable_metronome() && settings_.metronome_bpm() > 0) {
-    ImGui::Text("bpm: %.0f", settings_.metronome_bpm());
+    ImGui::Text(Tr("bpm: %.0f"), settings_.metronome_bpm());
   }
-  ImGui::Text("theme: %s", settings_.theme_name().c_str());
-  ImGui::Text("cm/360: %.0f", effective_cm_per_360_);
+  ImGui::Text(Tr("theme: %s"), settings_.theme_name().c_str());
+  ImGui::Text(Tr("cm/360: %.0f"), effective_cm_per_360_);
 
   ImGui::PushStyleColor(ImGuiCol_Text, ToImCol32(theme_.target_color()));
   {
     auto bold = app_.font_manager().UseLargeBold();
-    std::string message = Tr(i18n_key::kClickToStart);
+    std::string message = Tr("Click to Start");
     ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
     ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
     ImGui::SetCursorPosY(app_.screen_info().center.y - text_size.y * 1.75);
@@ -409,7 +409,7 @@ void Scenario::OnWaitingForClickTick() {
   float score_target = def_.score_targets().end();
   if (score_target > 0) {
     std::string message =
-        std::format("{}: {}", Tr(i18n_key::kTargetScore), MaybeIntToString(score_target, 2));
+        std::format("{}: {}", Tr("Target score"), MaybeIntToString(score_target, 2));
     text_size = ImGui::CalcTextSize(message.c_str());
     ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
     ImGui::Text("%s", message.c_str());
@@ -461,7 +461,7 @@ void Scenario::OnStartCountdownClickTick() {
   app_.crosshair_manager().Draw(crosshair_, crosshair_size_, theme_, app_.screen_info().center);
 
   ImGui::Text("%s", scenario_name_.c_str());
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
 
   {
     // Draw the countdown progress bar.
@@ -578,12 +578,12 @@ void Scenario::OnRunningTick() {
   DrawAdditionalUiElements();
 
   float elapsed_seconds = timer_.GetElapsedSeconds();
-  ImGui::Text("time: %.1f", elapsed_seconds);
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
-  ImGui::Text("ups: %.1fk", state_updates_per_second_);
-  ImGui::Text("cm/360: %.0f", effective_cm_per_360_);
+  ImGui::Text(Tr("time: %.1f"), elapsed_seconds);
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("ups: %.1fk"), state_updates_per_second_);
+  ImGui::Text(Tr("cm/360: %.0f"), effective_cm_per_360_);
   if (settings_.enable_metronome() && settings_.metronome_bpm() > 0) {
-    ImGui::Text("bpm: %.0f", settings_.metronome_bpm());
+    ImGui::Text(Tr("bpm: %.0f"), settings_.metronome_bpm());
   }
 
   ImGui::End();
