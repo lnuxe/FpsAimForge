@@ -22,6 +22,13 @@ const float kBackgroundAlpha = 0.6;
 constexpr const char* kSolidColorItem = "Solid color";
 constexpr const char* kTextureItem = "Texture";
 
+enum class WallMaterialType { SolidColor, Texture };
+
+const std::vector<std::pair<WallMaterialType, std::string>> kWallMaterialTypes = {
+    {WallMaterialType::SolidColor, kSolidColorItem},
+    {WallMaterialType::Texture, kTextureItem},
+};
+
 Room GetDefaultRoom() {
   Room r;
   r.mutable_simple_room()->set_height(130);
@@ -272,25 +279,23 @@ class ThemeEditor {
     ImGui::SetNextItemWidth(char_x * 20);
     ImGui::Text("%s", Tr(header.c_str()));
     ImGui::Indent();
-    std::string selected_type = kSolidColorItem;
-    if (appearance->has_texture()) {
-      selected_type = kTextureItem;
-    }
+    WallMaterialType wall_type =
+        appearance->has_texture() ? WallMaterialType::Texture : WallMaterialType::SolidColor;
 
     bool show_texture_options = is_front || !share_texture_and_scale_;
 
     if (show_texture_options) {
-      std::vector<std::string> types = {kSolidColorItem, kTextureItem};
-      ImGui::SimpleDropdown("WallTypeDropdown", &selected_type, types, char_x * 20);
+      ImGui::SimpleTypeDropdown(
+          "WallTypeDropdown", &wall_type, kWallMaterialTypes, char_x * 20);
     }
 
-    if (selected_type == kSolidColorItem) {
+    if (wall_type == WallMaterialType::SolidColor) {
       ImGui::AlignTextToFramePadding();
       ImGui::Text("%s", Tr("Color"));
       ImGui::SameLine();
       ImGui::InputStoredColor("##Color", appearance->mutable_color(), char_x);
     }
-    if (selected_type == kTextureItem) {
+    if (wall_type == WallMaterialType::Texture) {
       if (show_texture_options) {
         WallTexture* texture = appearance->mutable_texture();
         ImGui::SimpleDropdown(

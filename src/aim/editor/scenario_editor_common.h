@@ -94,7 +94,7 @@ inline const std::vector<std::pair<Direction, std::string>> kUpDownDirections{
 
 inline const std::vector<std::pair<Direction, std::string>> kForwardBackDirections{
     {Direction::DIRECTION_POSITIVE, "Forward"},
-    {Direction::DIRECTION_NEGATIVE, "Back"},
+    {Direction::DIRECTION_NEGATIVE, "Backward"},
     {Direction::DIRECTION_IN, "Towards center"},
     {Direction::DIRECTION_OUT, "Away from center"},
     {Direction::DIRECTION_RANDOM, "Random"},

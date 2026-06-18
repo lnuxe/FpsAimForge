@@ -85,15 +85,15 @@ void DrawScoresOverTimePlot(const std::string& scenario_name,
     return;
   }
 
-  ImPlot::SetupAxis(ImAxis_X1, "Time", ImPlotAxisFlags_NoDecorations);
-  ImPlot::SetupAxis(ImAxis_Y1, "Score", ImPlotAxisFlags_NoDecorations);
+  ImPlot::SetupAxis(ImAxis_X1, Tr("Time"), ImPlotAxisFlags_NoDecorations);
+  ImPlot::SetupAxis(ImAxis_Y1, Tr("Score"), ImPlotAxisFlags_NoDecorations);
 
   ImPlot::SetupAxisLimits(ImAxis_X1, times.front(), times.back(), ImPlotCond_Always);
   ImPlot::SetupAxisLimits(
       ImAxis_Y1, scores_over_time.min_score * 0.95, scores_over_time.max_score * 1.05);
 
   // ImPlot::PlotShaded("Score History", times.data(), scores.data(), scores.size(), 0);
-  ImPlot::PlotLine("Score History", times.data(), scores.data(), scores.size());
+  ImPlot::PlotLine(Tr("Score History"), times.data(), scores.data(), scores.size());
 
   ImPlot::DragLineY(0, &threshold, kTopThresholdColor, 1.0f, ImPlotDragToolFlags_NoInputs);
   if (double_score_target > 0) {
@@ -870,8 +870,8 @@ class StatsScreen : public UiScreen {
       min_score = std::min(score, min_score);
     }
 
-    ImPlot::SetupAxis(ImAxis_X1, "Run number", ImPlotAxisFlags_NoDecorations);
-    ImPlot::SetupAxis(ImAxis_Y1, "Score", ImPlotAxisFlags_NoDecorations);
+    ImPlot::SetupAxis(ImAxis_X1, Tr("Run number"), ImPlotAxisFlags_NoDecorations);
+    ImPlot::SetupAxis(ImAxis_Y1, Tr("Score"), ImPlotAxisFlags_NoDecorations);
 
     ImPlot::SetupAxisLimits(ImAxis_X1, 0.5, stats.size() + 0.5, ImPlotCond_Always);
 
@@ -900,7 +900,7 @@ class StatsScreen : public UiScreen {
     }
 
     // ImPlot::PlotShaded("Score History", times.data(), scores.data(), scores.size(), 0);
-    ImPlot::PlotLineG("Scores", point_getter, &plot_data, stats.size());
+    ImPlot::PlotLineG(Tr("Scores"), point_getter, &plot_data, stats.size());
     ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 3.0f);
     ImPlot::PlotScatterG("ScorePoint", point_getter, &plot_data, stats.size());
 

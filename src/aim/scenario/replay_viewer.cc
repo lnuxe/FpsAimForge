@@ -121,14 +121,14 @@ void DrawMouseSpeedsPlot(float now, float t_step, std::span<float> mouse_speeds,
     return;
   }
 
-  ImPlot::SetupAxis(ImAxis_X1, "Time", ImPlotAxisFlags_NoDecorations);
-  ImPlot::SetupAxis(ImAxis_Y1, "Speed", ImPlotAxisFlags_NoDecorations);
+  ImPlot::SetupAxis(ImAxis_X1, Tr("Time"), ImPlotAxisFlags_NoDecorations);
+  ImPlot::SetupAxis(ImAxis_Y1, Tr("Speed"), ImPlotAxisFlags_NoDecorations);
 
   ImPlot::SetupAxisLimits(ImAxis_X1, 0, t_step * mouse_speeds.size(), ImPlotCond_Always);
   ImPlot::SetupAxisLimits(ImAxis_Y1, 0, max_speed, ImPlotCond_Always);
 
   // ImPlot::PlotShaded("Score History", times.data(), scores.data(), scores.size(), 0);
-  ImPlot::PlotLineG("Speeds", point_getter, &mouse_data, mouse_speeds.size());
+  ImPlot::PlotLineG(Tr("Speeds"), point_getter, &mouse_data, mouse_speeds.size());
 
   /*
   if (ImPlot::IsPlotHovered()) {
