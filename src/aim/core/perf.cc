@@ -44,9 +44,9 @@ void DumpHistogram(const TimeHistogram& h) {
       ImGui::IdGuard id(i);
       ImGui::TableNextColumn();
       if (i == values.size() - 1) {
-        ImGui::TextFmt(Tr("{} ({} fps)"), current_label, current_fps_label);
+        ImGui::Text("%s", TrFormat("{} ({} fps)", current_label, current_fps_label).c_str());
       } else if (i == 0) {
-        ImGui::TextFmt(Tr("0ms - {} ({}+ fps)"), current_label, current_fps_label);
+        ImGui::Text("%s", TrFormat("0ms - {} ({}+ fps)", current_label, current_fps_label).c_str());
       } else {
         ImGui::TextFmt(
             "{} - {} ({} - {} fps)", prev_label, current_label, current_fps_label, prev_fps_label);

@@ -769,7 +769,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
     for (int i = 2; i < c.wall_points_size(); ++i) {
       ImGui::IdGuard lid("ExtraPoint", i);
       ImGui::AlignTextToFramePadding();
-      ImGui::TextFmt(Tr("Point {}"), i + 1);
+      ImGui::Text("%s", TrFormat("Point {}", i + 1).c_str());
       ImGui::SameLine();
       if (ImGui::Button(icons::kCancel)) {
         remove_at_i = i;
@@ -919,7 +919,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         }
       }
       ImGui::SameLine();
-      if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("{}")))) {
+      if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("Room")))) {
         *editing_room = true;
       }
     } else {
@@ -953,8 +953,8 @@ void DrawReferenceEditor(ScenarioDef& def,
   if (description_dialog != nullptr) {
     ImGui::SpacedSeparator();
     std::string button_text = r.description().empty()
-                                  ? std::format("{} {}", icons::kEdit, Tr("{}"))
-                                  : std::format("{} {}", icons::kEdit, Tr("{}"));
+                                  ? std::format("{} {}", icons::kEdit, Tr("Set description"))
+                                  : std::format("{} {}", icons::kEdit, Tr("Edit description"));
     if (ImGui::Button(button_text)) {
       description_dialog->NotifyOpen(r.description());
     }
@@ -977,7 +977,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         def = ApplyScenarioOverrides(baked_def);
       } else {
         *error_message_out =
-            std::format("Tr("Referenced scenario \"{}\" is invalid."", r.scenario_name());
+            TrFormat("Referenced scenario \"{}\" is invalid.", r.scenario_name());
       }
     }
     ImGui::SameLine();

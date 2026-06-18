@@ -396,7 +396,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
       if (!app_.playlist_manager().RenamePlaylist(original_playlist_name_,
                                                   final_name.full_name())) {
         notification_popup_.NotifyOpen(
-            std::format("Tr("Playlist with name \"{}\" already exists"", final_name.full_name()));
+            TrFormat("Playlist with name \"{}\" already exists", final_name.full_name()));
         return false;
       }
       app_.history_manager().UpdateRecentView(ObjectType::PLAYLIST, final_name.full_name());

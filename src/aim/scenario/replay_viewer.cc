@@ -440,7 +440,7 @@ class ReplayViewerScreen : public Screen {
     ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
     ImGui::SameLine();
     ImGui::InfoMarker(
-        std::format("Approximate file size: {:.2f}mb", replay_->GetApproximateSizeMb()));
+        TrFormat("Approximate file size: {:.2f}mb", replay_->GetApproximateSizeMb()));
 
     ImGui::SameLine();
     ImGui::SetButtonCursorAtRight(icons::kLogout);
@@ -452,7 +452,7 @@ class ReplayViewerScreen : public Screen {
 
     float score = replay_view_->GetCurrentScore();
     if (score > 0) {
-      ImGui::TextFmt(Tr("score: {}"), MaybeIntToString(score, 2));
+      ImGui::Text("%s", TrFormat("score: {}", MaybeIntToString(score, 2)).c_str());
     }
 
     if (has_click_events_) {
@@ -487,7 +487,7 @@ class ReplayViewerScreen : public Screen {
 
     i64 frame_number = replay_view_->GetCurrentFrameNumber();
     if (IsValidIndex(mouse_speeds_, frame_number)) {
-      ImGui::TextFmt(Tr("mouse speed: {}"), MaybeIntToString(mouse_speeds_[frame_number], 0));
+      ImGui::Text("%s", TrFormat("mouse speed: {}", MaybeIntToString(mouse_speeds_[frame_number], 0)).c_str());
     }
 
     ImGui::SetCursorAtBottom(ImGui::GetFrameHeight() * 1.5);

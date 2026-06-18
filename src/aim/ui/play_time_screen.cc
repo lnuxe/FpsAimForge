@@ -26,7 +26,7 @@ class PlayTimeScreen : public UiScreen {
  private:
   void DrawPlayTimeScreen() {
     ImGui::IdGuard cid("PlayTime");
-    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("Back")))) {
       PopSelf();
     }
     ImGui::SpacedSeparator();
@@ -37,9 +37,9 @@ class PlayTimeScreen : public UiScreen {
     float total_partial_play_time_seconds = play_times.total.partial_run_time_seconds;
     ImGui::Spacing();
     ImGui::Text(Tr("Total time: %.1f hours"), total_play_time_seconds / 3600.0f);
-    ImGui::TextFmt(Tr("Partial run time: {:.1f} hours ({:.0f}%)"),
+    ImGui::Text("%s", TrFormat("Partial run time: {:.1f} hours ({:.0f}%)",
                    total_partial_play_time_seconds / 3600.0f,
-                   (total_partial_play_time_seconds / total_play_time_seconds) * 100);
+                   (total_partial_play_time_seconds / total_play_time_seconds) * 100).c_str());
     ImGui::SameLine();
     ImGui::HelpMarker(Tr("Total time spent on runs that are restarted before completion"));
 
@@ -48,7 +48,7 @@ class PlayTimeScreen : public UiScreen {
     auto sort_and_print_values = [](std::vector<std::pair<int, std::string>>& values) {
       absl::c_sort(values);
       for (const auto& entry : std::views::reverse(values)) {
-        ImGui::TextFmt("{}: {:.1f} hours", entry.second, entry.first / 3600.0f);
+        ImGui::Text("%s", TrFormat("{}: {:.1f} hours", entry.second, entry.first / 3600.0f).c_str());
       }
     };
 

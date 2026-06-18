@@ -112,7 +112,7 @@ class QuickSettingsScreen : public UiScreen {
   void DrawScreenInternal() {
     const ScreenInfo& screen = app_.screen_info();
     auto medium_font = app_.font_manager().UseMedium();
-    if (ImGui::Button(std::format("{} {}", icons::kSettings, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSettings, Tr("Settings")))) {
       PushNextScreen(CreateSettingsScreen(&app_, scenario_name_));
       went_to_settings_ = true;
     }

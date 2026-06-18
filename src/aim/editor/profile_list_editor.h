@@ -6,6 +6,7 @@
 #include "aim/common/field.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/proto_util.h"
+#include "aim/i18n/i18n.h"
 #include "aim/proto/scenario.pb.h"
 #include "google/protobuf/message.h"
 #include "imgui.h"
@@ -133,7 +134,7 @@ void DrawProfileList(const std::string& id,
 
   std::string lower_type_name = absl::AsciiStrToLower(type_name);
   ImGui::AlignTextToFramePadding();
-  ImGui::TextFmt("Explicit {} selection order", lower_type_name);
+  ImGui::Text("%s", TrFormat("Explicit {} selection order", lower_type_name).c_str());
 
   ProfileListInfo* profile_list_info = profile_list_info_field.get_mutable();
   google::protobuf::RepeatedField<int>* order_list = profile_list_info->mutable_explicit_order();
@@ -158,7 +159,7 @@ void DrawProfileList(const std::string& id,
   google::protobuf::RepeatedField<int>* start_order_list = profile_list_info->mutable_start_order();
   bool has_start_order = start_order_list->size() > 0;
   ImGui::AlignTextToFramePadding();
-  ImGui::TextFmt("Initial {} selection order", lower_type_name);
+  ImGui::Text("%s", TrFormat("Initial {} selection order", lower_type_name).c_str());
   ImGui::SameLine();
   ImGui::Checkbox("##HasStartOrder", &has_start_order);
   ImGui::SameLine();
@@ -249,7 +250,7 @@ void DrawProfileList(const std::string& id,
                           .set_width(char_x * 10),
                       PROTO_INT_FIELD(ProfileInfo, p->mutable_info(), next_profile));
       ImGui::SameLine();
-      ImGui::HelpMarker("If this profile is selected, always select the specified profile next.");
+      ImGui::HelpMarker(Tr("If this profile is selected, always select the specified profile next."));
 
       ImGui::InputInt(ImGui::InputIntParams("MinSelectionGap")
                           .set_label("Selection gap")

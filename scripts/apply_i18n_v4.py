@@ -101,27 +101,11 @@ ASSIGN_STRINGS = [
 
 
 def wrap_icon_buttons(text: str) -> str:
-    for word in sorted(ICON_BUTTON_WORDS, key=len, reverse=True):
-        old = f'std::format("{{}} {word}",'
-        new = f'std::format("{{}} {{}}", Tr("{word}"),'
-        # wrong order - icon first
-        old = f'std::format("{{}} {word}", icons::'
-        # Actually pattern is std::format("{} Back", icons::kArrowBack)
-        pass
-    for word in sorted(ICON_BUTTON_WORDS, key=len, reverse=True):
-        pat = f'std::format("{{}} {word}", icons::'
-        if pat in text:
-            # find icon name until )
-            text = text.replace(
-                f'std::format("{{}} {word}", ',
-                f'std::format("{{}} {{}}", ',
-            )
-            # Need per-icon fix - do regex
     pattern = r'std::format\("\{\} ([^"]+)", (icons::\w+)\)'
     def repl(m):
         word = m.group(1)
         icon = m.group(2)
-        if word.startswith("##") or "Tr(" in m.group(0):
+        if word in ("{}", "##") or word.startswith("##") or "Tr(" in m.group(0):
             return m.group(0)
         return f'std::format("{{}} {{}}", {icon}, Tr("{word}"))'
     return re.sub(pattern, repl, text)
@@ -130,8 +114,13 @@ def wrap_icon_buttons(text: str) -> str:
 def wrap_textfmt(text: str) -> str:
     for s in sorted(TEXTFMT_STRINGS, key=len, reverse=True):
         old = f'ImGui::TextFmt("{s}"'
-        if old in text and f'Tr("{s}"' not in text:
-            text = text.replace(old, f'ImGui::TextFmt(Tr("{s}")')
+        if old in text and 'TrFormat("' not in text:
+            text = text.replace(old, f'ImGui::Text("%s", TrFormat("{s}"')
+            text = re.sub(
+                rf'ImGui::Text\("%s", TrFormat\("{re.escape(s)}"([^)]*)\);',
+                rf'ImGui::Text("%s", TrFormat("{s}"\1).c_str());',
+                text,
+            )
     return text
 
 
@@ -146,26 +135,29 @@ def wrap_input_bool(text: str) -> str:
 def wrap_error_formats(text: str) -> str:
     for s in sorted(ERROR_FORMAT_STRINGS, key=len, reverse=True):
         esc = s.replace('\\', '\\\\').replace('"', '\\"')
-        # std::format("Delete \"{}\"?", x) patterns
-        for prefix in ['std::format("', 'ImGui::TextFmt("', 'ImGui::HelpTooltip(std::format("',
-                       '*error_message = std::format("', 'SetErrorMessage(std::format("',
-                       'delete_confirmation_dialog_.NotifyOpen(std::format("',
-                       'NotifyOpen(std::format("', 'ImGui::InfoMarker(std::format("']:
-            old = prefix + esc
-            if old in text and 'Tr("' not in old:
-                text = text.replace(old, prefix + 'Tr("' + esc + '"')
+        replacements = [
+            (f'std::format("{esc}"', f'TrFormat("{esc}"'),
+            (f'ImGui::TextFmt("{esc}"', f'ImGui::Text("%s", TrFormat("{esc}"'),
+            (f'ImGui::HelpTooltip(std::format("{esc}"', f'ImGui::HelpTooltip(TrFormat("{esc}"'),
+            (f'*error_message = std::format("{esc}"', f'*error_message = TrFormat("{esc}"'),
+            (f'SetErrorMessage(std::format("{esc}"', f'SetErrorMessage(TrFormat("{esc}"'),
+            (f'delete_confirmation_dialog_.NotifyOpen(std::format("{esc}"',
+             f'delete_confirmation_dialog_.NotifyOpen(TrFormat("{esc}"'),
+            (f'NotifyOpen(std::format("{esc}"', f'NotifyOpen(TrFormat("{esc}"'),
+            (f'ImGui::InfoMarker(std::format("{esc}"', f'ImGui::InfoMarker(TrFormat("{esc}"'),
+            (f'dialogs->delete_confirmation_dialog.NotifyOpen(std::format("{esc}"',
+             f'dialogs->delete_confirmation_dialog.NotifyOpen(TrFormat("{esc}"'),
+        ]
+        for old, new in replacements:
+            if old in text:
+                text = text.replace(old, new)
     return text
 
 
 def wrap_scenario_format(text: str) -> str:
     text = text.replace(
         'std::format("cm/360: {}",',
-        'std::format("{}", Tr("cm/360: {}"),',
-    )
-    # fix to proper order
-    text = text.replace(
-        'std::format("{}", Tr("cm/360: {}"),',
-        'std::format(Tr("cm/360: {}"),',
+        'TrFormat("cm/360: {}",',
     )
     return text
 

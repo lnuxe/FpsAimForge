@@ -415,7 +415,7 @@ void Scenario::OnWaitingForClickTick() {
     ImGui::Text("%s", message.c_str());
   }
 
-  std::string message = std::format(Tr("cm/360: {}"), MaybeIntToString(effective_cm_per_360_, 1));
+  std::string message = TrFormat("cm/360: {}", MaybeIntToString(effective_cm_per_360_, 1));
   text_size = ImGui::CalcTextSize(message.c_str());
   ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
   ImGui::Text("%s", message.c_str());

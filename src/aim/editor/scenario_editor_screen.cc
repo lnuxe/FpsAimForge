@@ -73,7 +73,7 @@ class ScenarioEditorScreen : public UiScreen {
         }
       } else {
         notification_popup_.NotifyOpen(
-            std::format("Tr("Scenario \"{}\" does not exist."", opts.scenario_name));
+            TrFormat("Scenario \"{}\" does not exist.", opts.scenario_name));
         exit_after_notification_ = true;
       }
     }
@@ -153,8 +153,8 @@ class ScenarioEditorScreen : public UiScreen {
     ImGui::InputText("##RelativeNameInput", name_.mutable_relative_name());
 
     ImGui::SameLine();
-    std::string save_text = is_new_scenario_ ? std::format("{} {}", icons::kSave, Tr("{}"))
-                                             : std::format("{} {}", icons::kSave, Tr("{}"));
+    std::string save_text = is_new_scenario_ ? std::format("{} {}", icons::kSave, Tr("Create"))
+                                             : std::format("{} {}", icons::kSave, Tr("Update"));
     if (ImGui::Button(save_text, ImVec2(char_x_ * 8, 0))) {
       if (SaveScenario()) {
         PopSelf();
@@ -415,12 +415,12 @@ class ScenarioEditorScreen : public UiScreen {
 
     ImGui::SpacedSeparator();
 
-    if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("Room")))) {
       editing_room_ = true;
     }
 
     ImGui::SameLine();
-    if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("Description")))) {
       description_dialog_.NotifyOpen(def_.description());
     }
   }
@@ -450,7 +450,7 @@ class ScenarioEditorScreen : public UiScreen {
       // Make sure new name is not taken.
       auto existing_scenario_with_name = mgr.GetScenario(name_.full_name());
       if (existing_scenario_with_name.has_value()) {
-        SetErrorMessage(std::format("Tr("Scenario \"{}\" already exists"", name_.full_name()));
+        SetErrorMessage(TrFormat("Scenario \"{}\" already exists", name_.full_name()));
         return false;
       }
     }
@@ -516,7 +516,7 @@ class ScenarioEditorScreen : public UiScreen {
     ImGui::SetNextWindowPos(ImVec2(char_x_ * 0.3, (app_.screen_info().height - height) / 2.0));
     ImGui::SetNextWindowSize(ImVec2(width, height));
     if (ImGui::Begin("Room", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove)) {
-      if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("{}")))) {
+      if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("Back to editor")))) {
         editing_room_ = false;
       }
       ImGui::SpacedSeparator();
@@ -584,7 +584,7 @@ class ScenarioEditorScreen : public UiScreen {
       auto base_scenario =
           app_.scenario_manager().GetEvaluatedScenarioDef(def_.reference_def().scenario_name());
       if (!base_scenario) {
-        SetErrorMessage(std::format("Tr("Unable to find referenced scenario \"{}\""",
+        SetErrorMessage(TrFormat("Unable to find referenced scenario \"{}\"",
                                     def_.reference_def().scenario_name()));
         return;
       }

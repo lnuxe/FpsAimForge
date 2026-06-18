@@ -17,7 +17,7 @@ bool CopyPlaylistDialog::Draw(Application& app) {
   bool show_popup = source_.has_value();
   if (show_popup) {
     if (ImGui::BeginDefaultPopupModal(id_.c_str(), &show_popup)) {
-      ImGui::TextFmt("Copy \"{}\" to", source_->name);
+      ImGui::Text("%s", TrFormat("Copy \"{}\" to", source_->name).c_str());
       ImGui::SimpleDropdown("BundlePicker",
                             new_name_.mutable_bundle_name(),
                             bundle_names_,
@@ -40,8 +40,8 @@ bool CopyPlaylistDialog::Draw(Application& app) {
         ImGui::Checkbox("##AsReferences", &as_references_);
         ImGui::SameLine();
         ImGui::HelpMarker(
-            "Versions in new playlist will have a different name (stats, settings, ..), but will "
-            "change when the underlying scenario changes.");
+            Tr("Versions in new playlist will have a different name (stats, settings, ..), but will "
+            "change when the underlying scenario changes."));
 
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", Tr("Add name prefix*"));
@@ -49,8 +49,8 @@ bool CopyPlaylistDialog::Draw(Application& app) {
         ImGui::InputText("##AddPrefix", &add_prefix_);
         ImGui::SameLine();
         ImGui::HelpMarker(
-            "Adds the following prefix to all newly created scenario names after the bundle "
-            "name");
+            Tr("Adds the following prefix to all newly created scenario names after the bundle "
+            "name"));
 
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", Tr("Remove name prefix"));

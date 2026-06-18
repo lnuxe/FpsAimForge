@@ -160,7 +160,7 @@ class PlaylistComponentImpl : public PlaylistComponent {
         ImGui::HelpTooltip(Tr("Cannot edit playlist with dynamic suffix like 25cm or 5%Faster."));
       } else {
         ImGui::HelpTooltip(
-            std::format("Tr("Bundle \"{}\" is readonly."", GetBundleName(run->playlist.name)));
+            TrFormat("Bundle \"{}\" is readonly.", GetBundleName(run->playlist.name)));
       }
     }
 
@@ -185,7 +185,7 @@ class PlaylistComponentImpl : public PlaylistComponent {
         ImGui::Separator();
         ImGui::Spacing();
         if (ImGui::Selectable(Tr("Delete"))) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Tr("Delete \"{}\"?"", playlist_name),
+          delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", playlist_name),
                                                  run->playlist);
         }
       }
@@ -267,7 +267,7 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
     ImVec2 char_size = ImGui::CalcTextSize("A");
 
     ImGui::Spacing();
-    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("Playlist")))) {
       add_dialog_.NotifyOpen();
     }
 
@@ -375,7 +375,7 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
       if (ImGui::Selectable(Tr("Delete"))) {
         auto playlist = app_.playlist_manager().GetPlaylist(playlist_name);
         if (playlist) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Tr("Delete \"{}\"?"", playlist_name),
+          delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", playlist_name),
                                                  *playlist);
         }
       }

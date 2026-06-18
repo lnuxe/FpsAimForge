@@ -181,7 +181,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       ImGui::SpacedSeparator();
       if (ImGui::Selectable(Tr("Delete"))) {
         std::string base_name = GetScenarioNameInfo(scenario_name).base_name;
-        dialogs->delete_confirmation_dialog.NotifyOpen(std::format("Tr("Delete \"{}\"?"", base_name),
+        dialogs->delete_confirmation_dialog.NotifyOpen(TrFormat("Delete \"{}\"?", base_name),
                                                        base_name);
       }
     }
@@ -230,7 +230,7 @@ class ScenarioBrowserComponent {
     ImGui::IdGuard cid(id_);
 
     ImGui::Spacing();
-    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("{}")))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("Scenario")))) {
       ScenarioEditorOptions opts;
       opts.scenario_name = "";
       opts.is_new_copy = true;
@@ -612,14 +612,14 @@ class ScenariosComponentImpl : public ScenariosComponent {
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           stats.high_score_stats.epoch_seconds, GetNowEpochSeconds());
       ImGui::SameLine();
-      ImGui::TextFmt(Tr("({})"), high_score_time);
+      ImGui::Text("%s", TrFormat("({})", high_score_time).c_str());
 
       std::string last_run_str = GetHowLongAgoStringFromEpochSeconds(
           stats.last_run_stats.epoch_seconds, GetNowEpochSeconds());
       if (stats.total_runs == 1) {
-        ImGui::TextFmt(Tr("1 run ({})"), last_run_str);
+        ImGui::Text("%s", TrFormat("1 run ({})", last_run_str).c_str());
       } else {
-        ImGui::TextFmt(Tr("{} runs ({})"), stats.total_runs, last_run_str);
+        ImGui::Text("%s", TrFormat("{} runs ({})", stats.total_runs, last_run_str).c_str());
       }
     }
 
