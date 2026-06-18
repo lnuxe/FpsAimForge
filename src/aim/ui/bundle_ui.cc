@@ -93,7 +93,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
   void Show() override {
     ImGui::IdGuard cid("BundleUiComponent");
 
-    auto to_delete = delete_confirmation_dialog_.Draw("Delete");
+    auto to_delete = delete_confirmation_dialog_.Draw(Tr("Delete"));
     if (to_delete) {
       screen_.app().bundle_manager().DeleteBundle(*to_delete);
       selected_bundle_name_ = "";

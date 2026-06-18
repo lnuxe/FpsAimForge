@@ -510,7 +510,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
 
   void Show() override {
     std::optional<std::string> scenario_to_delete =
-        dialogs_.delete_confirmation_dialog.Draw("Delete");
+        dialogs_.delete_confirmation_dialog.Draw(Tr("Delete"));
     if (scenario_to_delete) {
       auto maybe_scenario = app_.scenario_manager().GetScenario(*scenario_to_delete);
       if (maybe_scenario.has_value()) {
@@ -646,9 +646,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::AlignTextToFramePadding();
       ImGui::Text("%s", Tr("Referenced scenario"));
       ImGui::SameLine();
-      ImGui::HelpMarker(
-          "This scenario references/extends the following scenario. Editing the referenced "
-          "scenario will alter the behavior of this scenario.");
+      ImGui::HelpMarker(Tr("This scenario references/extends the following scenario. Editing the referenced scenario will alter the behavior of this scenario."));
       ImGui::SameLine();
       if (ImGui::Button(referenced_scenario)) {
         app_.scenario_manager().SetCurrentScenario(referenced_scenario);
@@ -662,9 +660,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::SpacedSeparator();
       ImGui::Text("%s", Tr("Referencing scenarios"));
       ImGui::SameLine();
-      ImGui::HelpMarker(
-          "Scenarios that extend this scenario. Changing this scenario would change the following "
-          "ones too.");
+      ImGui::HelpMarker(Tr("Scenarios that extend this scenario. Changing this scenario would change the following ones too."));
       ImGui::Indent();
       ImGui::LoopId loop_id;
       for (const std::string& name : referencing_scenarios_) {

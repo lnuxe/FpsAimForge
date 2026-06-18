@@ -95,7 +95,7 @@ void DrawOrderListEditor(const std::string& type_name,
       }
     }
   }
-  if (ImGui::Button("Add##Order")) {
+  if (ImGui::Button((std::string(Tr("Add")) + "##Order").c_str())) {
     order_list->Add(0);
   }
   if (remove_at_i >= 0) {

@@ -610,6 +610,119 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Left Click", "左键"},
     {"Middle Click", "中键"},
     {"Right Click", "右键"},
+
+    // Sixth pass: HelpMarker texts and editor labels
+    {"Unknown", "未知"},
+    {"Unable to save scenario with name ending in 'L#' or '#cm'. These scenarios are "
+     "automatically defined.",
+     "无法保存名称以 'L#' 或 '#cm' 结尾的场景，这些场景会自动生成。"},
+    {"Save the current changes in a new copy of the scenario leaving the original unchanged.",
+     "将当前修改保存为新副本，原场景保持不变。"},
+    {"Open a window displaying values from another scenario. Useful if you want to copy the "
+     "strafe patterns from another scenario.",
+     "打开窗口显示另一场景的值，便于复制其横移模式。"},
+    {"Fully evaluate the specified level updating values within the scenario being edited.",
+     "完全评估指定等级，并更新正在编辑的场景中的数值。"},
+    {"Override the target score for the scenario when playing using this playlist.",
+     "使用此播放列表训练时覆盖场景的目标分数。"},
+    {"This scenario references/extends the following scenario. Editing the referenced scenario "
+     "will alter the behavior of this scenario.",
+     "此场景引用/扩展以下场景。编辑被引用场景会改变此场景的行为。"},
+    {"Scenarios that extend this scenario. Changing this scenario would change the following "
+     "ones too.",
+     "扩展此场景的场景。修改此场景也会改变以下场景。"},
+    {"Use settings from another theme. Useful when you using per scenario theme settings and "
+     "you want to create a \"Default Static\" theme which you can change and have all static "
+     "scenarios use the new theme.",
+     "使用另一主题的设置。适用于按场景设置主题时，创建可修改的「Default Static」主题，"
+     "让所有静态场景使用新主题。"},
+    {"Define up for the camera (usually the z axis). This allows you to rotate the entire "
+     "scenario. (1, 0, 1) would be a 45 degree rotation.",
+     "定义相机上方向（通常为 Z 轴），可旋转整个场景。(1, 0, 1) 约为 45 度旋转。"},
+    {"The distance away from the wall towards the camera. The greater the value, the further it is "
+     "from the wall.",
+     "目标与墙面之间、朝向相机的距离。数值越大，离墙越远。"},
+    {"New target will be placed at a fixed distance from the last target that was added.",
+     "新目标将放置在距上一个添加目标的固定距离处。"},
+    {"Defines a target for scores. Hitting the target gives a 5.0. 95% of target gives a 4.0. "
+     "Each 5% goes down 1 more score level.",
+     "定义分数目标。命中目标得 5.0 分，95% 命中得 4.0 分，每少 5% 降 1 分。"},
+    {"The radius will change to this value over the duration of the scenario (or until direction "
+     "change)",
+     "半径将在场景持续时间内（或直到变向）变化到此值"},
+    {"The number of degrees to turn per second. The turn rate will accelerate smoothly between "
+     "turns base on turn time.",
+     "每秒转向的角度。转向速率会在转向间隔之间平滑加速。"},
+    {"When the target collides with the wall it will be redirected in the direction of a random "
+     "point within the specified portion of the center. The smaller the radius the more it will be "
+     "redirected towards the center of the circle.",
+     "目标撞墙时会朝圆心指定范围内随机点重定向。半径越小，越偏向圆心。"},
+    {"If close to the edge will shorten/lengthen the next strafe to encourage moving towards the "
+     "center. 0.10 means lengthen the strafe by 10%",
+     "靠近边缘时会缩短/加长下一次横移以鼓励向中心移动。0.10 表示加长 10%。"},
+    {"Specify just the angle of movement and how far to travel. Typically used with Barrel rooms.",
+     "仅指定移动角度和距离，通常用于桶形房间。"},
+    {"Provide an explicit radius for the target. Useful for providing a stable size for a base "
+     "level.",
+     "为 target 指定明确半径，便于为基础等级提供稳定大小。"},
+    {"The closest target will become a ghost on miss and be removed after the specified time",
+     "未命中时最近的目标会变为幽灵，并在指定时间后移除"},
+    {"When the time expires the target will become clickable agazin instead of being removed",
+     "时间到期后目标会再次可点击，而不是被移除"},
+    {"There is no accuracy penalty but you will have to reload if you miss too many consecutive "
+     "shots",
+     "没有精度惩罚，但连续未命中太多时需要换弹"},
+    {"The rate health is regenerated if you switch off target before killing. 1 means regen at same "
+     "rate as health is taken away for hits.",
+     "击杀前脱靶时生命恢复速率。1 表示恢复速率与命中扣血相同。"},
+    {"If the target has less than the specified amount of health left (in seconds) and you move "
+     "off the target, it will be removed and you will get partial points. The kill sound is played "
+     "when this threshold is passed.",
+     "目标剩余生命（秒）低于指定值且你脱靶时，目标会被移除并获得部分分数。越过阈值时播放击杀音效。"},
+    {"Target will grow to a certain size over some duration. If it is not killed by then, it will "
+     "be removed.",
+     "目标会在一定时间内长到指定大小。若未在此之前击杀，将被移除。"},
+    {"Time target will stay at final size before being removed. Defaults to 0. i.e. remove "
+     "immediately upon reaching final size. This time is in addition to the pulse time.",
+     "目标保持最终大小的时长，默认为 0（到达最终大小后立即移除）。此时间不含脉冲时间。"},
+    {"The radius of the target will change to the specified value incrementally based on how much "
+     "health remains",
+     "目标半径会根据剩余生命逐步变化到指定值"},
+    {"If the target gets within the specified percent distance from the wall, it will become a "
+     "ghost.",
+     "目标进入距墙面指定百分比距离内时会变为幽灵。"},
+    {"Time in seconds between each target being added at the start of the scenario.",
+     "场景开始时每个目标添加的间隔秒数。"},
+    {"Targets will only be added for the first time after the specified delay. If num_targets=3 "
+     "and there are two delays in the list, 1 target will be added immediately, 1 target after the "
+     "first time in the list, and 1 target after the second time in the list.",
+     "目标首次添加会延迟指定时间。若 num_targets=3 且列表有两个延迟，则立即添加 1 个，"
+     "第一个延迟后添加 1 个，第二个延迟后再添加 1 个。"},
+    {"Displays percentage of time within the specified middle % of the target. The 3 values "
+     "displayed are 100% (anywhere on target), 50%, 20%. 50% means time in the center half of the "
+     "target.",
+     "显示在目标指定中心区域内的时长百分比。三个值为 100%（任意命中）、50%、20%。"
+     "50% 表示在目标中心一半区域内的时间。"},
+    {"Max level", "最大等级"},
+    {"Min level", "最小等级"},
+    {"Step", "步进"},
+    {"Switch direction after time", "该时间后切换方向"},
+    {"Center bias", "中心偏移"},
+    {"Pause time", "暂停时间"},
+    {"Pause chance", "暂停概率"},
+    {"Bounce delay", "弹跳延迟"},
+    {"Float time", "浮空时间"},
+    {"Speed multiplier", "速度倍率"},
+    {"Acceleration multiplier", "加速度倍率"},
+    {"Target radius", "目标半径"},
+    {"ClickCount", "点击次数"},
+    {"Click rate", "点击速率"},
+    {"Health forgiveness time", "生命宽恕时间"},
+    {"Speed", "速度"},
+    {"Acceleration", "加速度"},
+    {"Time at final size", "最终大小持续时间"},
+    {"Ghost wall border", "幽灵墙边界"},
+    {"Pitch modifier", "音高修正"},
 };
 
 const char* Lookup(const char* english) {

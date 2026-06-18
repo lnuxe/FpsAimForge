@@ -95,7 +95,7 @@ class PlaylistComponentImpl : public PlaylistComponent {
 
     const std::string& playlist_name = run->playlist.name;
 
-    auto playlist_to_delete = delete_confirmation_dialog_.Draw("Delete");
+    auto playlist_to_delete = delete_confirmation_dialog_.Draw(Tr("Delete"));
     if (playlist_to_delete) {
       screen_.app().playlist_manager().DeletePlaylist(playlist_to_delete->name);
       screen_.app().bundle_manager().SaveDirtyBundles();
@@ -251,7 +251,7 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
   }
 
   void Show(PlaylistListResult* result) override {
-    auto playlist_to_delete = delete_confirmation_dialog_.Draw("Delete");
+    auto playlist_to_delete = delete_confirmation_dialog_.Draw(Tr("Delete"));
     if (playlist_to_delete) {
       screen_.app().playlist_manager().DeletePlaylist(playlist_to_delete->name);
       screen_.app().bundle_manager().SaveDirtyBundles();

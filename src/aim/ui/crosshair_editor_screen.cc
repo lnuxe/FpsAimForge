@@ -40,7 +40,7 @@ class CrosshairEditorScreen : public UiScreen {
 
     BeginMainWindow("CrosshairEditor");
     notification_popup_.Draw();
-    auto to_delete = delete_confirmation_dialog_.Draw("Delete");
+    auto to_delete = delete_confirmation_dialog_.Draw(Tr("Delete"));
     if (to_delete) {
       app_.settings_manager().DeleteCrosshair(*to_delete);
       LoadCrosshairList();

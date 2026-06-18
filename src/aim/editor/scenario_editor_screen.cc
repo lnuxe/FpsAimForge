@@ -173,9 +173,7 @@ class ScenarioEditorScreen : public UiScreen {
           MakeRelativeNameUniqueInBundle();
         }
         ImGui::SameLine();
-        ImGui::HelpMarker(
-            "Save the current changes in a new copy of the scenario leaving the original "
-            "unchanged.");
+        ImGui::HelpMarker(Tr("Save the current changes in a new copy of the scenario leaving the original unchanged."));
       }
 
       if (ImGui::Selectable(Tr("Import Json"))) {
@@ -190,9 +188,7 @@ class ScenarioEditorScreen : public UiScreen {
         comparison_window_open_ = !comparison_window_open_;
       }
       ImGui::SameLine();
-      ImGui::HelpMarker(
-          "Open a window displaying values from another scenario. Useful if you want to copy the "
-          "strafe patterns from another scenario.");
+      ImGui::HelpMarker(Tr("Open a window displaying values from another scenario. Useful if you want to copy the strafe patterns from another scenario."));
       ImGui::EndPopup();
     }
     ImGui::SameLine();
@@ -396,8 +392,7 @@ class ScenarioEditorScreen : public UiScreen {
     ImGui::InputFloat(ImGui::InputFloatParams("BakeLevel").set_step(1, 2).set_width(char_x_ * 8),
                       CreateFloatField(&bake_level_));
     ImGui::SameLine();
-    ImGui::HelpMarker(
-        "Fully evaluate the specified level updating values within the scenario being edited.");
+    ImGui::HelpMarker(Tr("Fully evaluate the specified level updating values within the scenario being edited."));
 
     ImGui::SpacedSeparator();
 
@@ -437,8 +432,8 @@ class ScenarioEditorScreen : public UiScreen {
     NameInfo name_info = GetScenarioNameInfo(name_.full_name());
     if (name_info.HasDynamicSuffix()) {
       SetErrorMessage(
-          "Unable to save scenario with name ending in 'L#' or '#cm'. These scenarios are "
-          "automatically defined.");
+          Tr("Unable to save scenario with name ending in 'L#' or '#cm'. These scenarios are "
+             "automatically defined."));
       return false;
     }
 

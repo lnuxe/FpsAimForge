@@ -431,7 +431,7 @@ class ConfirmationDialog {
     std::optional<T> confirmed_result;
     ImGui::Text(text_);
 
-    float button_width = ImGui::CalcTextSize("OK").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+    float button_width = ImGui::CalcTextSize(aim::Tr("Ok")).x + ImGui::GetStyle().FramePadding.x * 2.0f;
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x - button_width) * 0.5f);
 
     if (ImGui::Button(confirm_text.c_str())) {

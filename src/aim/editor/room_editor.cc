@@ -175,9 +175,7 @@ void DrawRoomEditorInputs(Room& room, CameraUpdates* camera_updates) {
   ImGui::SameLine();
   ImGui::Checkbox("##CameraUp", &has_camera_up);
   ImGui::SameLine();
-  ImGui::HelpMarker(
-      "Define up for the camera (usually the z axis). This allows you to rotate the entire "
-      "scenario. (1, 0, 1) would be a 45 degree rotation.");
+  ImGui::HelpMarker(Tr("Define up for the camera (usually the z axis). This allows you to rotate the entire scenario. (1, 0, 1) would be a 45 degree rotation."));
   if (has_camera_up) {
     if (IsZero(room.camera_up())) {
       room.mutable_camera_up()->set_z(1);

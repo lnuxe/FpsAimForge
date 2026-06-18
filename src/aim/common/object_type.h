@@ -2,6 +2,8 @@
 
 #include <assert.h>
 
+#include "aim/i18n/i18n.h"
+
 namespace aim {
 
 enum class ObjectType : int {
@@ -14,13 +16,13 @@ enum class ObjectType : int {
 static std::string ObjectTypeToString(ObjectType t) {
   switch (t) {
     case ObjectType::PLAYLIST:
-      return "Playlist";
+      return Tr("Playlist");
     case ObjectType::SCENARIO:
-      return "Scenario";
+      return Tr("Scenario");
     case ObjectType::THEME:
-      return "Theme";
+      return Tr("Theme");
     case ObjectType::CROSSHAIR:
-      return "Crosshair";
+      return Tr("Crosshair");
   }
 
   assert(false && "Unhandled ObjectType");

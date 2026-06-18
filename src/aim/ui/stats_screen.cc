@@ -398,7 +398,7 @@ class StatsScreen : public UiScreen {
   }
 
   void DrawHistoryPanel() {
-    auto scenario_history_to_delete = delete_history_confirmation_dialog_.Draw("Delete");
+    auto scenario_history_to_delete = delete_history_confirmation_dialog_.Draw(Tr("Delete"));
     if (scenario_history_to_delete) {
       app_.stats_manager().DeleteAllStats(*scenario_history_to_delete);
       PopSelf();
@@ -750,10 +750,7 @@ class StatsScreen : public UiScreen {
 
           ImGui::SameLine();
           ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset);
-          ImGui::HelpMarker(
-              "Displays percentage of time within the specified middle % of the target. The 3 "
-              "values displayed are 100% (anywhere on target), 50%, 20%. 50% "
-              "means time in the center half of the target.");
+          ImGui::HelpMarker(Tr("Displays percentage of time within the specified middle % of the target. The 3 values displayed are 100% (anywhere on target), 50%, 20%. 50% means time in the center half of the target."));
         }
       } else {
         std::string hit_percent = GetHitPercentageString(stats);

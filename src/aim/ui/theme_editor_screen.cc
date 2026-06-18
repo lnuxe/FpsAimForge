@@ -84,10 +84,7 @@ class ThemeEditor {
     ImGui::Checkbox("##ReferenceCheck", &is_reference);
     ImGui::SameLine();
     // TODO: Improve help text to be more clear
-    ImGui::HelpMarker(
-        "Use settings from another theme. Useful when you using per scenario theme settings and "
-        "you want to create a \"Default Static\" theme which you can change and have all static "
-        "scenarios use the new theme.");
+    ImGui::HelpMarker(Tr("Use settings from another theme. Useful when you using per scenario theme settings and you want to create a \\\"Default Static\\\" theme which you can change and have all static scenarios use the new theme."));
 
     ImGui::SpacedSeparator();
 
@@ -414,7 +411,7 @@ class ThemeEditorScreen : public UiScreen {
     if (!theme_editor_) {
       BeginMainWindow("ThemeList");
       notification_popup_.Draw();
-      auto to_delete = delete_confirmation_dialog_.Draw("Delete");
+      auto to_delete = delete_confirmation_dialog_.Draw(Tr("Delete"));
       if (to_delete) {
         app_.settings_manager().DeleteTheme(*to_delete);
         LoadThemeList();
