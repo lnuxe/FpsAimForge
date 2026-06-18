@@ -375,7 +375,7 @@ class ScenarioBrowserComponent {
   }
 
   void DrawScenarioItem(const ScenarioItem& scenario, ScenarioDialogs* dialogs) {
-    if (ImGui::Button(scenario.name)) {
+    if (ImGui::Button(ScenarioButtonLabel(scenario.name).c_str())) {
       // If already selected and clicked again, start the scenario. i.e. double click to start
       // TODO: Improve this UX
       if (app_->scenario_manager().GetCurrentScenarioName() == scenario.name) {
@@ -559,7 +559,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       app_.state().scenario_run_option = ScenarioRunOption::START_CURRENT;
     }
     ImGui::SameLine();
-    ImGui::Text(item.name);
+    ImGui::Text("%s", GetScenarioDisplayName(item.name).c_str());
 
     ImGui::SameLine();
     const char* popup_id = "CurrentScenarioMenu";
@@ -648,7 +648,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::SameLine();
       ImGui::HelpMarker(Tr("This scenario references/extends the following scenario. Editing the referenced scenario will alter the behavior of this scenario."));
       ImGui::SameLine();
-      if (ImGui::Button(referenced_scenario)) {
+      if (ImGui::Button(ScenarioButtonLabel(referenced_scenario).c_str())) {
         app_.scenario_manager().SetCurrentScenario(referenced_scenario);
       }
       const char* popup_id = "ReferencedScenarioMenu";
@@ -665,7 +665,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::LoopId loop_id;
       for (const std::string& name : referencing_scenarios_) {
         auto lid = loop_id.Get();
-        if (ImGui::Button(name)) {
+        if (ImGui::Button(ScenarioButtonLabel(name).c_str())) {
           app_.scenario_manager().SetCurrentScenario(name);
         }
         const char* popup_id = "ReferencingScenarioMenu";

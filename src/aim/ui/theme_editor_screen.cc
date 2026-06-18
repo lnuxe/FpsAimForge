@@ -270,7 +270,7 @@ class ThemeEditor {
 
     float char_x = ImGui::GetDefaultCharSizeX();
     ImGui::SetNextItemWidth(char_x * 20);
-    ImGui::Text(header);
+    ImGui::Text("%s", Tr(header.c_str()));
     ImGui::Indent();
     std::string selected_type = kSolidColorItem;
     if (appearance->has_texture()) {

@@ -232,8 +232,8 @@ class SettingsScreen : public UiScreen {
         PushNextScreen(CreateThemeEditorScreen(&app_, opts));
       }
       ImGui::HelpTooltip(
-          "Edit the color of the crosshair in the current theme. Crosshair colors are stored with "
-          "the theme.");
+          Tr("Edit the color of the crosshair in the current theme. Crosshair colors are stored with "
+             "the theme."));
 
       ImGui::InputFloat(ImGui::InputFloatParams("CrosshairSize")
                             .set_label(Tr("Crosshair size"))
@@ -257,7 +257,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputBool(
-          "Use \"Click to Start\"",
+          Tr("Use \"Click to Start\""),
           InvertBoolField(PROTO_BOOL_FIELD(Settings, &updater_.settings, disable_click_to_start)));
 
       ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Start countdown time")
@@ -476,7 +476,7 @@ class SettingsScreen : public UiScreen {
         ImGui::TableNextColumn();
 
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(label);
+        ImGui::Text("%s", Tr(label.c_str()));
 
         std::string* sound_name = item->mutable_name();
 
@@ -583,7 +583,7 @@ class SettingsScreen : public UiScreen {
       value = item->mapping->mapping4();
     }
 
-    if (ImGui::Button(std::format("{}##key{}_{}", value, i, item->label_key).c_str(),
+    if (ImGui::Button(std::format("{}##key{}_{}", Tr(value.c_str()), i, item->label_key).c_str(),
                       ImVec2(width, 0))) {
       for (KeybindItem& other_item : keybind_items_) {
         other_item.is_capturing_index = 0;

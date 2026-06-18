@@ -53,7 +53,7 @@ void DrawOrderListEditor(const std::string& type_name,
     u32 number = order_list->at(i);
     u32 step = 1;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text(type_name);
+    ImGui::Text("%s", Tr(type_name.c_str()));
     ImGui::SameLine();
     ImGui::SetNextItemWidth(char_x * 8);
     ImGui::InputScalar("##OrderItemInput", ImGuiDataType_U32, &number, &step, nullptr, "%u");
@@ -192,7 +192,7 @@ void DrawProfileList(const std::string& id,
     auto* p = &profile_list->at(i);
     ImGui::SpacedSeparator();
     ImGui::AlignTextToFramePadding();
-    ImGui::TextFmt("{} #{}", type_name, i);
+    ImGui::TextFmt("{} #{}", Tr(type_name.c_str()), i);
     const char* item_menu_id = "profile_item_menu";
     if (ImGui::BeginPopupContextItem(item_menu_id)) {
       if (ImGui::Selectable(Tr("Move up"))) {

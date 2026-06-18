@@ -109,6 +109,10 @@ std::string GetScenarioDisplayName(const std::string& full_name) {
   return GetScenarioNameInfo(full_name).GetDisplayName();
 }
 
+std::string ScenarioButtonLabel(const std::string& full_name) {
+  return std::format("{}###{}", GetScenarioDisplayName(full_name), full_name);
+}
+
 NameInfo GetPlaylistNameInfo(const std::string& name) {
   return GetNameInfo(name, true);
 }

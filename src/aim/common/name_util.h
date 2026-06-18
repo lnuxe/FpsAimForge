@@ -49,6 +49,9 @@ NameInfo GetScenarioNameInfo(const std::string& name);
 
 std::string GetScenarioDisplayName(const std::string& full_name);
 
+// ImGui button label: localized display text with stable id suffix.
+std::string ScenarioButtonLabel(const std::string& full_name);
+
 std::string GetBundleName(const std::string& name);
 
 // Returns the level number from single words like L1, L-1.

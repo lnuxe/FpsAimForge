@@ -4,6 +4,7 @@
 
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
+#include "aim/common/name_util.h"
 #include "aim/common/search.h"
 #include "aim/core/application.h"
 #include "aim/core/scenario_manager.h"
@@ -41,7 +42,7 @@ std::optional<std::string> SearchSelector(const std::string& search_text,
       }
 
       num_matches++;
-      if (ImGui::Button(actual_name.c_str())) {
+      if (ImGui::Button(ScenarioButtonLabel(actual_name).c_str())) {
         selected_item = actual_name;
       }
     }

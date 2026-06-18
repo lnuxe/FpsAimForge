@@ -222,7 +222,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
       if (i == dragging_i_) {
         ImGui::BeginDisabled();
-        ImGui::Button(scenario_name);
+        ImGui::Button(ScenarioButtonLabel(scenario_name).c_str());
         ImGui::EndDisabled();
       } else if (i == editing_i_) {
         if (focus_editor_) {
@@ -240,7 +240,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
           editing_i_ = -1;
         }
       } else {
-        if (ImGui::Button(scenario_name)) {
+        if (ImGui::Button(ScenarioButtonLabel(scenario_name).c_str())) {
           editing_i_ = -1;
         }
       }

@@ -11,7 +11,6 @@
 #include "aim/common/name_util.h"
 #include "aim/common/proto_util.h"
 #include "aim/common/util.h"
-#include "aim/i18n/i18n.h"
 #include "aim/proto/settings.pb.h"
 #include "aim/proto/theme.pb.h"
 #include "google/protobuf/json/json.h"
@@ -469,13 +468,13 @@ class SettingsManagerImpl : public SettingsManager {
 
 std::string GetMouseButtonName(u8 button) {
   if (button == SDL_BUTTON_LEFT) {
-    return Tr("Left Click");
+    return "Left Click";
   }
   if (button == SDL_BUTTON_MIDDLE) {
-    return Tr("Middle Click");
+    return "Middle Click";
   }
   if (button == SDL_BUTTON_RIGHT) {
-    return Tr("Right Click");
+    return "Right Click";
   }
   return "";
 }

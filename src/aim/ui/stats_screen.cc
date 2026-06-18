@@ -825,7 +825,7 @@ class StatsScreen : public UiScreen {
 
   void DrawPlaylistItem(int i, const PlaylistItemProgress& progress, PlaylistRun* run) {
     bool allow_click = IsScreenOlderThan(500);
-    if (ImGui::Button(progress.item.scenario()) && allow_click) {
+    if (ImGui::Button(ScenarioButtonLabel(progress.item.scenario()).c_str()) && allow_click) {
       app_.scenario_manager().SetCurrentScenario(progress.item.scenario());
       state_.scenario_run_option = ScenarioRunOption::START_CURRENT;
       run->current_index = i;

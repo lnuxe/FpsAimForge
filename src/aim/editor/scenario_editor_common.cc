@@ -253,7 +253,7 @@ void DrawJitteredRegionLengthEditor(const std::string& id,
 
   ImGui::InputFloat(params, field);
   ImGui::SameLine();
-  ImGui::Text("+/-");
+  ImGui::Text("%s", Tr("+/-"));
   ImGui::SameLine();
   params.set_id("JitteredValueInput").set_step(0.5, 2.5);
   ImGui::InputFloat(params, jitter_field);
