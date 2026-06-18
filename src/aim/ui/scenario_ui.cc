@@ -344,7 +344,7 @@ class ScenarioBrowserComponent {
             DrawScenarioItem(*maybe_scenario, dialogs);
           } else {
             ImGui::AlignTextToFramePadding();
-            ImGui::Text(scenario_name);
+            ImGui::Text("%s", GetScenarioDisplayName(scenario_name).c_str());
             ImGui::SameLine();
             if (view_type_ == ScenarioViewType::RECENT) {
               if (ImGui::Selectable(
@@ -573,12 +573,12 @@ class ScenariosComponentImpl : public ScenariosComponent {
       std::vector<std::string> chips;
       auto type_it = kScenarioTypeDisplayNameMap.find(evaluated_def->type_case());
       if (type_it != kScenarioTypeDisplayNameMap.end()) {
-        chips.push_back(type_it->second);
+        chips.push_back(Tr(type_it->second.c_str()));
       }
 
       auto shot_type_it = kShotTypeDisplayNameMap.find(evaluated_def->shot_type().type_case());
       if (shot_type_it != kShotTypeDisplayNameMap.end()) {
-        chips.push_back(shot_type_it->second);
+        chips.push_back(Tr(shot_type_it->second.c_str()));
       }
 
       if (chips.size() > 0) {

@@ -386,7 +386,7 @@ class SettingsScreen : public UiScreen {
                          bool default_global = false) {
       ImGui::IdGuard cid(name);
       ImGui::AlignTextToFramePadding();
-      ImGui::Text(name);
+      ImGui::Text("%s", Tr(name.c_str()));
       ImGui::SameLine();
       auto type = type_field.get();
       if (!type_field.has()) {

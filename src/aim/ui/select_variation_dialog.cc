@@ -59,7 +59,7 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
   bool is_scenario = !is_playlist_;
   if (popup_.Begin()) {
     ImGui::Spacing();
-    ImGui::Text(name_info_.GetFullName());
+    ImGui::Text("%s", name_info_.GetDisplayName().c_str());
 
     ImGui::Spacing();
 

@@ -30,6 +30,9 @@ struct NameInfo {
   // Combines the base name and suffixes into the final name.
   std::string GetFullName() const;
 
+  // Same as GetFullName but with localized suffix labels for UI display.
+  std::string GetDisplayName() const;
+
   bool HasDynamicSuffix() const {
     return cm_per_360 || level || duration || fov || radius_smaller || radius_larger || faster ||
            slower || wider || taller || is_poke || wall_smaller || wall_larger;
@@ -43,6 +46,8 @@ struct NameInfo {
 
 NameInfo GetPlaylistNameInfo(const std::string& name);
 NameInfo GetScenarioNameInfo(const std::string& name);
+
+std::string GetScenarioDisplayName(const std::string& full_name);
 
 std::string GetBundleName(const std::string& name);
 

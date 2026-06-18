@@ -108,12 +108,12 @@ bool SimpleTypeDropdown(const std::string& id,
 
   bool item_was_selected = false;
   ImGuiComboFlags combo_flags = ImGuiComboFlags_HeightLarge;
-  if (ImGui::BeginCombo("##Combo", initial_value.c_str(), combo_flags)) {
+  if (ImGui::BeginCombo("##Combo", aim::Tr(initial_value.c_str()), combo_flags)) {
     ImGui::LoopId loop_id;
     for (const auto& item : values) {
       auto id = loop_id.Get();
       bool is_selected = item.first == *value;
-      if (ImGui::Selectable(item.second.c_str(), is_selected)) {
+      if (ImGui::Selectable(aim::Tr(item.second.c_str()), is_selected)) {
         *value = item.first;
         item_was_selected = true;
       }

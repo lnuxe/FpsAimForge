@@ -723,6 +723,32 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Time at final size", "最终大小持续时间"},
     {"Ghost wall border", "幽灵墙边界"},
     {"Pitch modifier", "音高修正"},
+
+    // Seventh pass: dropdown labels, scenario suffixes, errors
+    {"Unable to parse bundles.json", "无法解析 bundles.json"},
+    {"Instant poke", "即时戳击"},
+    {"Multi click", "多次点击"},
+    {"Towards center", "朝向中心"},
+    {"Away from center", "远离中心"},
+    {"Sine", "正弦"},
+    {"Ellipse", "椭圆"},
+    {"Point", "点"},
+    {"value", "值"},
+    {"width%", "宽度%"},
+    {"height%", "高度%"},
+    {"depth%", "深度%"},
+    {" L{}", " L{}"},
+    {" {}%Smaller", " {}%更小"},
+    {" {}%Larger", " {}%更大"},
+    {" {}%Faster", " {}%更快"},
+    {" {}%Slower", " {}%更慢"},
+    {" {}fov", " {}fov"},
+    {" {}%Wider", " {}%更宽"},
+    {" {}%Taller", " {}%更高"},
+    {" {}%SmallerWall", " {}%墙更小"},
+    {" {}%LargerWall", " {}%墙更大"},
+    {" {}s", " {}秒"},
+    {" {}cm", " {}cm"},
 };
 
 const char* Lookup(const char* english) {

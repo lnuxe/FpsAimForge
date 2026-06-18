@@ -95,7 +95,7 @@ class BundleManagerImpl : public BundleManager {
     BundleInfoFile bundle_info_file;
     if (std::filesystem::exists(bundle_info_file_path_)) {
       if (!ReadJsonMessageFromFile(bundle_info_file_path_, &bundle_info_file)) {
-        error_messages.push_back("Unable to parse bundles.json");
+        error_messages.push_back(Tr("Unable to parse bundles.json"));
         return error_messages;
       }
     }

@@ -48,7 +48,7 @@ class PlayTimeScreen : public UiScreen {
     auto sort_and_print_values = [](std::vector<std::pair<int, std::string>>& values) {
       absl::c_sort(values);
       for (const auto& entry : std::views::reverse(values)) {
-        ImGui::Text("%s", TrFormat("{}: {:.1f} hours", entry.second, entry.first / 3600.0f).c_str());
+        ImGui::Text("%s", TrFormat("{}: {:.1f} hours", Tr(entry.second.c_str()), entry.first / 3600.0f).c_str());
       }
     };
 

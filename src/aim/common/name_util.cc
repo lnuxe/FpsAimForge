@@ -20,6 +20,7 @@
 #include "absl/strings/strip.h"
 #include "aim/common/simple_types.h"
 #include "aim/common/util.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -102,6 +103,10 @@ std::optional<float> GetLevelFromWord(const std::string_view& word) {
 
 NameInfo GetScenarioNameInfo(const std::string& name) {
   return GetNameInfo(name, true);
+}
+
+std::string GetScenarioDisplayName(const std::string& full_name) {
+  return GetScenarioNameInfo(full_name).GetDisplayName();
 }
 
 NameInfo GetPlaylistNameInfo(const std::string& name) {
@@ -290,6 +295,54 @@ std::string NameInfo::GetFullName() const {
   }
   if (cm_per_360) {
     result.append(std::format(" {}cm", MaybeIntToString(*cm_per_360, 1)));
+  }
+  return result;
+}
+
+std::string NameInfo::GetDisplayName() const {
+  std::string result;
+  result.reserve(base_name.size() + 30);
+  result.append(base_name);
+
+  if (is_poke) {
+    result.append(" ");
+    result.append(Tr("Poke"));
+  }
+  if (level && *level != 0) {
+    result.append(TrFormat(" L{}", MaybeIntToString(*level, 2)));
+  }
+  if (radius_smaller) {
+    result.append(TrFormat(" {}%Smaller", MaybeIntToString(*radius_smaller, 2)));
+  }
+  if (radius_larger) {
+    result.append(TrFormat(" {}%Larger", MaybeIntToString(*radius_larger, 2)));
+  }
+  if (faster) {
+    result.append(TrFormat(" {}%Faster", MaybeIntToString(*faster, 2)));
+  }
+  if (slower) {
+    result.append(TrFormat(" {}%Slower", MaybeIntToString(*slower, 2)));
+  }
+  if (fov) {
+    result.append(TrFormat(" {}fov", MaybeIntToString(*fov, 0)));
+  }
+  if (wider) {
+    result.append(TrFormat(" {}%Wider", MaybeIntToString(*wider, 2)));
+  }
+  if (taller) {
+    result.append(TrFormat(" {}%Taller", MaybeIntToString(*taller, 2)));
+  }
+  if (wall_smaller) {
+    result.append(TrFormat(" {}%SmallerWall", MaybeIntToString(*wall_smaller, 2)));
+  }
+  if (wall_larger) {
+    result.append(TrFormat(" {}%LargerWall", MaybeIntToString(*wall_larger, 2)));
+  }
+  if (duration) {
+    result.append(TrFormat(" {}s", MaybeIntToString(*duration, 0)));
+  }
+  if (cm_per_360) {
+    result.append(TrFormat(" {}cm", MaybeIntToString(*cm_per_360, 1)));
   }
   return result;
 }

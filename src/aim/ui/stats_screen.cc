@@ -480,9 +480,9 @@ class StatsScreen : public UiScreen {
 
     ImGui::TableNextColumn();
     if (name == scenario_name_) {
-      ImGui::Text("*" + name);
+      ImGui::Text("*%s", GetScenarioDisplayName(name).c_str());
     } else {
-      ImGui::Text(name);
+      ImGui::Text("%s", GetScenarioDisplayName(name).c_str());
     }
 
     auto comparison = GetStatsComparison(current_stats, comparison_stats);

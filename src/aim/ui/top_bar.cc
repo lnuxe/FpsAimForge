@@ -1,6 +1,7 @@
 #include "top_bar.h"
 
 #include "aim/common/mat_icons.h"
+#include "aim/common/name_util.h"
 #include "aim/common/util.h"
 #include "aim/core/scenario_manager.h"
 #include "aim/graphics/textures.h"
@@ -62,7 +63,7 @@ void DrawTopBar(UiScreen* screen) {
     }
 
     ImGui::SameLine();
-    ImGui::Text(current_scenario->name);
+    ImGui::Text("%s", GetScenarioDisplayName(current_scenario->name).c_str());
 
     /*
     ImGui::SameLine();
