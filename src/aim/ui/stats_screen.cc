@@ -457,7 +457,7 @@ class StatsScreen : public UiScreen {
               break;
             }
             DrawStatsTableRow(
-                std::format("Previous{}", prev_index), details_.stats, details_.all_stats[i]);
+                TrFormat("Previous{}", prev_index), details_.stats, details_.all_stats[i]);
             prev_index++;
           }
         }

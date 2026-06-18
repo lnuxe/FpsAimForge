@@ -11,6 +11,7 @@
 #include "aim/common/util.h"
 #include "aim/core/playlist_manager.h"
 #include "aim/core/scenario_manager.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -38,7 +39,7 @@ void AddBundlesFromDirectory(
     if (IsValidBundleName(bundle_name)) {
       (*bundle_path_map)[bundle_name] = entry.path();
     } else {
-      error_messages->push_back(std::format("Invalid bundle name \"{}\"", bundle_name));
+      error_messages->push_back(TrFormat("Invalid bundle name \"{}\"", bundle_name));
     }
   }
 }
@@ -121,7 +122,7 @@ class BundleManagerImpl : public BundleManager {
         scenario_manager_->LoadScenariosFromBundle(bundle_name, bundle_file);
         playlist_manager_->LoadPlaylistsFromBundle(bundle_name, bundle_file);
       } else {
-        error_messages.push_back(std::format("Unable to parse bundle \"{}\"", bundle_name));
+        error_messages.push_back(TrFormat("Unable to parse bundle \"{}\"", bundle_name));
       }
     }
     scenario_manager_->FinishReload();

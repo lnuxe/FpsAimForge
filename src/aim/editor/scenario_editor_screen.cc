@@ -278,7 +278,7 @@ class ScenarioEditorScreen : public UiScreen {
         std::string def_str = imported_def.DebugString();
         def_ = imported_def;
       } else {
-        SetErrorMessage("Failed to parse provided json");
+        SetErrorMessage(Tr("Failed to parse provided json"));
       }
     }
 
@@ -428,7 +428,7 @@ class ScenarioEditorScreen : public UiScreen {
   // Returns whether the screen should close
   bool SaveScenario() {
     if (name_.bundle_name().size() == 0 || name_.relative_name().size() == 0) {
-      SetErrorMessage("Missing scenario name");
+      SetErrorMessage(Tr("Missing scenario name"));
       return false;
     }
 
@@ -465,7 +465,7 @@ class ScenarioEditorScreen : public UiScreen {
 
     mgr.UpdateScenario(name_.full_name(), def_);
     if (!app_.bundle_manager().SaveDirtyBundles()) {
-      SetErrorMessage("Unable to save bundle to disk.");
+      SetErrorMessage(Tr("Unable to save bundle to disk."));
       return false;
     }
 

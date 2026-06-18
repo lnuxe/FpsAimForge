@@ -58,17 +58,17 @@ void CopyInitialDirIfNotExists(const std::string& dir_name,
 std::optional<std::string> InitializeAimForgeFolder(FileSystem* fs) {
   auto resources_path = fs->GetUserDataPath("resources");
   if (!CreateDirectories(resources_path)) {
-    return std::format("Unable to create folder \"{}\"", resources_path.string());
+    return TrFormat("Unable to create folder \"{}\"", resources_path.string());
   }
 
   auto db_path = fs->GetUserDataPath("db");
   if (!CreateDirectories(db_path)) {
-    return std::format("Unable to create folder \"{}\"", db_path.string());
+    return TrFormat("Unable to create folder \"{}\"", db_path.string());
   }
 
   auto bundles_path = fs->GetUserDataPath("bundles");
   if (!CreateDirectories(bundles_path)) {
-    return std::format("Unable to create folder \"{}\"", bundles_path.string());
+    return TrFormat("Unable to create folder \"{}\"", bundles_path.string());
   }
 
   auto ini_path = fs->GetUserDataPath(kImguiIniFile);
@@ -211,19 +211,19 @@ std::optional<std::string> Application::InitializeWindow(const Stopwatch& stopwa
 
   trace.Add("SDL_Init");
   if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMEPAD)) {
-    return std::format("SDL initialization failed: {}", SDL_GetError());
+    return TrFormat("SDL initialization failed: {}", SDL_GetError());
   }
 
   state_->initialization_times.audio.start = stopwatch.GetElapsedMicros();
   trace.Add("MIX_Init");
   if (!MIX_Init()) {
-    return std::format("SDL audio initialization failed: {}", SDL_GetError());
+    return TrFormat("SDL audio initialization failed: {}", SDL_GetError());
   }
 
   trace.Add("MIX_CreateMixerDevice");
   sdl_mixer_ = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
   if (!sdl_mixer_) {
-    return std::format("Could not open audio device: {}", SDL_GetError());
+    return TrFormat("Could not open audio device: {}", SDL_GetError());
   }
 
   state_->initialization_times.audio.end = stopwatch.GetElapsedMicros();
@@ -233,7 +233,7 @@ std::optional<std::string> Application::InitializeWindow(const Stopwatch& stopwa
   trace.Add("SDL_CreateWindow");
   sdl_window_ = SDL_CreateWindow("FpsAimForge", 0, 0, window_flags);
   if (sdl_window_ == nullptr) {
-    return std::format("Failed to create window: {}", SDL_GetError());
+    return TrFormat("Failed to create window: {}", SDL_GetError());
   }
 
   trace.Add("SDL_CreateGPUDevice");
@@ -253,12 +253,12 @@ std::optional<std::string> Application::InitializeWindow(const Stopwatch& stopwa
         nullptr);
   }
   if (gpu_device_ == nullptr) {
-    return std::format("Failed to create GPU device: {}", SDL_GetError());
+    return TrFormat("Failed to create GPU device: {}", SDL_GetError());
   }
 
   trace.Add("SDL_ClaimWindowForGPUDevice");
   if (!SDL_ClaimWindowForGPUDevice(gpu_device_, sdl_window_)) {
-    return std::format("Failed to claim window for GPU device: {}", SDL_GetError());
+    return TrFormat("Failed to claim window for GPU device: {}", SDL_GetError());
   }
   EnableVsync();
 
@@ -369,12 +369,12 @@ std::optional<std::string> Application::InitializeCritical(const Stopwatch& stop
   auto fonts_path = file_system_->GetBasePath("resources/fonts");
   font_manager_ = std::make_unique<FontManager>(fonts_path);
   if (!font_manager_->LoadFonts()) {
-    return std::format("Unable to load fonts from \"{}\"", fonts_path.string());
+    return TrFormat("Unable to load fonts from \"{}\"", fonts_path.string());
   }
 
   auto settings_status = settings_manager_->Initialize();
   if (!settings_status.ok()) {
-    return "Unable to load settings.json";
+    return Tr("Unable to load settings.json");
   }
 
   std::vector<std::filesystem::path> texture_dirs = {
@@ -383,11 +383,11 @@ std::optional<std::string> Application::InitializeCritical(const Stopwatch& stop
   };
   std::filesystem::path shader_dir = file_system_->GetBasePath("shaders/compiled");
   if (!std::filesystem::exists(shader_dir)) {
-    return std::format("Compiled shader folder missing at \"{}\".", shader_dir.string());
+    return TrFormat("Compiled shader folder missing at \"{}\".", shader_dir.string());
   }
   renderer_ = CreateRenderer(texture_dirs, shader_dir, gpu_device_, sdl_window_);
   if (!renderer_) {
-    return "Failed to initialize renderer.";
+    return Tr("Failed to initialize renderer.");
   }
 
   crosshair_manager_ = std::make_unique<CrosshairManager>(
@@ -604,7 +604,7 @@ std::unique_ptr<Application> Application::Create() {
   auto maybe_error = application->InitializeWindow(stopwatch);
   if (maybe_error) {
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                             "FpsAimForge Window Initialization Error",
+                             Tr("FpsAimForge Window Initialization Error"),
                              maybe_error->c_str(),
                              nullptr);
     return {};
@@ -613,7 +613,7 @@ std::unique_ptr<Application> Application::Create() {
   maybe_error = application->InitializeCritical(stopwatch);
   if (maybe_error) {
     SDL_ShowSimpleMessageBox(
-        SDL_MESSAGEBOX_ERROR, "FpsAimForge Initialization Error", maybe_error->c_str(), nullptr);
+        SDL_MESSAGEBOX_ERROR, Tr("FpsAimForge Initialization Error"), maybe_error->c_str(), nullptr);
     return {};
   }
 

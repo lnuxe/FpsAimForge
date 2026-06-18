@@ -9,6 +9,7 @@
 #include "aim/common/name_util.h"
 #include "aim/common/times.h"
 #include "aim/database/sqlite_util.h"
+#include "aim/i18n/i18n.h"
 #include "sqlite3.h"
 
 namespace aim {
@@ -283,7 +284,7 @@ class AimDbImpl : public AimDb {
 
     if (rc != SQLITE_OK) {
       Logger::get()->warn("Cannot open aim db: {}", sqlite3_errmsg(db_));
-      initialization_error_ = std::format("Cannot open AimDb at path \"{}\".\nsqlite_error: {}",
+      initialization_error_ = TrFormat("Cannot open AimDb at path \"{}\".\nsqlite_error: {}",
                                           db_path.string(),
                                           sqlite3_errmsg(db_));
       sqlite3_close(db_);
@@ -326,7 +327,7 @@ class AimDbImpl : public AimDb {
       return initialization_error_;
     }
     if (db_ == nullptr) {
-      return "Unable to create AimDb.";
+      return Tr("Unable to create AimDb.");
     }
     return {};
   }

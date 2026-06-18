@@ -383,7 +383,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     ResourceName final_name(bundle_name_, new_playlist_name_);
     NameInfo final_name_info = GetPlaylistNameInfo(final_name.full_name());
     if (final_name_info.HasDynamicSuffix()) {
-      notification_popup_.NotifyOpen("Cannot name playlist with explicit cm/360 suffix.");
+      notification_popup_.NotifyOpen(Tr("Cannot name playlist with explicit cm/360 suffix."));
       return false;
     }
 
@@ -409,7 +409,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     app_.playlist_manager().UpdatePlaylist(final_name.full_name(), playlist);
     bool saved = app_.bundle_manager().SaveDirtyBundles();
     if (!saved) {
-      notification_popup_.NotifyOpen("Failed to save playlist to disk");
+      notification_popup_.NotifyOpen(Tr("Failed to save playlist to disk"));
     }
     return saved;
   }

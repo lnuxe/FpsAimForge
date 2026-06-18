@@ -3,6 +3,7 @@
 #include <string>
 
 #include "aim/common/log.h"
+#include "aim/i18n/i18n.h"
 #include "sqlite3.h"
 
 namespace aim {
@@ -15,7 +16,7 @@ static bool ExecuteSqliteQuery(sqlite3* db,
   if (rc != SQLITE_OK) {
     Logger::get()->warn("SQL error: {}", err_msg);
     if (error_message_out != nullptr) {
-      *error_message_out = std::format("SQL error: {}", err_msg);
+      *error_message_out = TrFormat("SQL error: {}", err_msg);
     }
     sqlite3_free(err_msg);
     return false;

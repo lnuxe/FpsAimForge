@@ -9,6 +9,7 @@
 #include "aim/common/field.h"
 #include "aim/common/mat_icons.h"
 #include "aim/common/util.h"
+#include "aim/i18n/i18n.h"
 #include "aim/proto/common.pb.h"
 #include "imgui.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
@@ -438,7 +439,7 @@ class ConfirmationDialog {
       popup_.Close();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(aim::Tr("Cancel"))) {
       popup_.Close();
     }
     popup_.End();
