@@ -97,7 +97,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   if (has_growth) {
     ImGui::Indent();
     ImGui::InputFloat(ImGui::InputFloatParams("GrowthTime")
-                          .set_label(Tr("Time seconds"))
+                          .set_label("Time seconds")
                           .set_default(2)
                           .set_width(char_x * 10)
                           .set_step(0.1, 0.5)
@@ -105,7 +105,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
                       PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_growth_time_seconds));
 
     ImGui::InputFloat(ImGui::InputFloatParams("GrowthRadius")
-                          .set_label(Tr("Final radius"))
+                          .set_label("Final radius")
                           .set_default(3)
                           .set_width(char_x * 10)
                           .set_step(0.1, 0.5)
@@ -132,7 +132,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   if (def.shot_type().type_case() == ShotType::kClickMulti ||
       def.shot_type().type_case() == ShotType::kTrackingKill) {
     ImGui::InputFloat(ImGui::InputFloatParams("TargetRadiusAtill")
-                          .set_label(Tr("Target radius at kill"))
+                          .set_label("Target radius at kill")
                           .set_step(0.1, 0.5)
                           .set_min(0.1)
                           .set_default(profile->target_radius())
@@ -182,7 +182,7 @@ void DrawTargetEditor(ScenarioDef& def) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::InputBool(Tr("Newest target is ghost"),
+  ImGui::InputBool("Newest target is ghost",
                    PROTO_BOOL_FIELD(TargetDef, t, newest_target_is_ghost));
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("Ghost targets are unkillable and drawn in a different color."));
@@ -198,7 +198,7 @@ void DrawTargetEditor(ScenarioDef& def) {
   ImGui::HelpMarker(Tr("If the target gets within the specified percent distance from the wall, it will become a ghost."));
 
   ImGui::InputFloat(ImGui::InputFloatParams("NewTargetDelaySeconds")
-                        .set_label(Tr("New target delay"))
+                        .set_label("New target delay")
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)
@@ -208,7 +208,7 @@ void DrawTargetEditor(ScenarioDef& def) {
                     PROTO_FLOAT_FIELD(TargetDef, t, new_target_delay_seconds));
 
   ImGui::InputFloat(ImGui::InputFloatParams("RemoveTargetAfterSeconds")
-                        .set_label(Tr("Remove after time"))
+                        .set_label("Remove after time")
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)
@@ -218,7 +218,7 @@ void DrawTargetEditor(ScenarioDef& def) {
                     PROTO_FLOAT_FIELD(TargetDef, t, remove_target_after_seconds));
 
   ImGui::InputFloat(ImGui::InputFloatParams("StaggerInitialTargetsSeconds")
-                        .set_label(Tr("Initial stagger time"))
+                        .set_label("Initial stagger time")
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)

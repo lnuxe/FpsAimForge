@@ -1,7 +1,5 @@
 #include "process_lock.h"
 
-#include "aim/i18n/i18n.h"
-
 #ifdef _WIN32
 // clang-format off
 #include <windows.h>
@@ -138,7 +136,7 @@ std::string GetProcessNameFromPid(i64 pid) {
     return fullPath.substr(fullPath.find_last_of("/") + 1);
   }
 #endif
-  return Tr("Unknown");
+  return "Unknown";
 }
 
 }  // namespace aim

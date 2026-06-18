@@ -22,8 +22,8 @@ namespace {
 
 std::vector<std::pair<ScenarioSettingsStoreType, std::string>> GetScenarioSettingsStoreTypes() {
   return {
-      {ScenarioSettingsStoreType::STORE_GLOBALLY, Tr("Global")},
-      {ScenarioSettingsStoreType::STORE_PER_SCENARIO, Tr("Scenario")},
+      {ScenarioSettingsStoreType::STORE_GLOBALLY, "Global"},
+      {ScenarioSettingsStoreType::STORE_PER_SCENARIO, "Scenario"},
   };
 }
 
@@ -100,9 +100,9 @@ struct KeybindItem {
 
 std::vector<std::pair<PresentMode, std::string>> GetPresentModes() {
   return {
-      {PresentMode::PRESENT_MODE_IMMEDIATE, Tr("Immediate")},
-      {PresentMode::PRESENT_MODE_VSYNC, Tr("Vsync")},
-      {PresentMode::PRESENT_MODE_MAILBOX, Tr("Mailbox")},
+      {PresentMode::PRESENT_MODE_IMMEDIATE, "Immediate"},
+      {PresentMode::PRESENT_MODE_VSYNC, "Vsync"},
+      {PresentMode::PRESENT_MODE_MAILBOX, "Mailbox"},
   };
 }
 
@@ -156,7 +156,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputFloat(ImGui::InputFloatParams("CmPer360")
-                            .set_label(Tr("cm/360"))
+                            .set_label("cm/360")
                             .set_step(1, 5)
                             .set_width(char_x_ * 9)
                             .set_min(1)
@@ -167,7 +167,7 @@ class SettingsScreen : public UiScreen {
           Tr("Adjust within a run by holding \"s\" and using the scroll wheel"));
 
       ImGui::InputFloat(ImGui::InputFloatParams("Dpi")
-                            .set_label(Tr("DPI"))
+                            .set_label("DPI")
                             .set_step(100, 200)
                             .set_width(char_x_ * 10)
                             .set_min(100)
@@ -177,7 +177,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputFloat(ImGui::InputFloatParams("Fps")
-                            .set_label(Tr("Max render fps"))
+                            .set_label("Max render fps")
                             .set_is_optional()
                             .set_step(10, 100)
                             .set_width(char_x_ * 10)
@@ -236,7 +236,7 @@ class SettingsScreen : public UiScreen {
              "the theme."));
 
       ImGui::InputFloat(ImGui::InputFloatParams("CrosshairSize")
-                            .set_label(Tr("Crosshair size"))
+                            .set_label("Crosshair size")
                             .set_min(0.1)
                             .set_step(0.1, 1)
                             .set_default(15)
@@ -247,17 +247,16 @@ class SettingsScreen : public UiScreen {
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool(Tr("Save settings per scenario"),
+      ImGui::InputBool("Save settings per scenario",
                        InvertBoolField(PROTO_BOOL_FIELD(
                            Settings, &updater_.settings, disable_per_scenario_settings)));
 
-      ImGui::InputBool(Tr("Auto hold tracking"),
+      ImGui::InputBool("Auto hold tracking",
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, auto_hold_tracking));
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool(
-          Tr("Use \"Click to Start\""),
+      ImGui::InputBool("Use \"Click to Start\"",
           InvertBoolField(PROTO_BOOL_FIELD(Settings, &updater_.settings, disable_click_to_start)));
 
       ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Start countdown time")
@@ -271,10 +270,10 @@ class SettingsScreen : public UiScreen {
       ImGui::HelpMarker(Tr("A countdown will be shown whenever a scenario is about to start"));
 
       ImGui::SpacedSeparator();
-      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label(Tr("Enable metronome")),
+      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label("Enable metronome"),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, enable_metronome));
       ImGui::InputFloat(ImGui::InputFloatParams("MetronomeBpm")
-                            .set_label(Tr("Metronome BPM"))
+                            .set_label("Metronome BPM")
                             .set_min(0)
                             .set_zero_is_unset()
                             .set_step(1, 5)
@@ -286,13 +285,13 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputBool(
-          ImGui::InputBoolParams("ShowHealthBars").set_label(Tr("Show health bars")),
+          ImGui::InputBoolParams("ShowHealthBars").set_label("Show health bars"),
           PROTO_BOOL_FIELD(HealthBarSettings, updater_.settings.mutable_health_bar(), show));
       if (updater_.settings.health_bar().show()) {
         ImGui::Indent();
 
         ImGui::InputBool(
-            ImGui::InputBoolParams("OnlyDamaged").set_label(Tr("Only damaged")),
+            ImGui::InputBoolParams("OnlyDamaged").set_label("Only damaged"),
             PROTO_BOOL_FIELD(
                 HealthBarSettings, updater_.settings.mutable_health_bar(), only_damaged));
 
@@ -371,7 +370,7 @@ class SettingsScreen : public UiScreen {
   }
 
   void DrawScenarioSettingsConfig() {
-    ImGui::InputBool(Tr("Save settings per scenario"),
+    ImGui::InputBool("Save settings per scenario",
                      InvertBoolField(PROTO_BOOL_FIELD(
                          Settings, &updater_.settings, disable_per_scenario_settings)));
     ImGui::SameLine();

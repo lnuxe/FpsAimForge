@@ -52,11 +52,11 @@ void DrawWallArcEditor(WallArcScenarioDef& d) {
     d.clear_height_jitter();
   }
 
-  ImGui::InputBool(Tr("Reflect"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
+  ImGui::InputBool("Reflect", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("Turn the arc upside down."));
 
-  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
+  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
 }
 
 void DrawSineEditor(SineScenarioDef& d) {
@@ -72,7 +72,7 @@ void DrawSineEditor(SineScenarioDef& d) {
   ImGui::SameLine();
   DrawRegionLengthEditor("Width", RegionLength::kXPercentValue, d.mutable_width(), 20);
 
-  ImGui::InputBool(Tr("Going left"), PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
+  ImGui::InputBool("Going left", PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
 }
 
 void DrawCircleEditor(CircleScenarioDef& d) {
@@ -95,14 +95,14 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::HelpMarker(Tr("The radius will change to this value over the duration of the scenario (or until direction change)"));
 
   ImGui::InputFloat(ImGui::InputFloatParams("StartDegrees")
-                        .set_label(Tr("Start degrees"))
+                        .set_label("Start degrees")
                         .set_step(5, 30)
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(CircleScenarioDef, &d, start_degrees));
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("0 degrees starts at 3 o'clock and rotates counter clockwise."));
 
-  ImGui::InputBool(Tr("Start clockwise"), PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
+  ImGui::InputBool("Start clockwise", PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
 
   ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Switch direction after time")
                         .set_is_optional()
@@ -115,7 +115,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::SpacedSeparator();
 
   ImGui::InputFloat(ImGui::InputFloatParams("StretchY")
-                        .set_label(Tr("Stretch Y"))
+                        .set_label("Stretch Y")
                         .set_step(0.05, 0.1)
                         .set_default(0.8)
                         .set_min(0.1)
@@ -123,7 +123,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(CircleScenarioDef, &d, stretch_y));
   ImGui::InputFloat(ImGui::InputFloatParams("StretchX")
-                        .set_label(Tr("Stretch X"))
+                        .set_label("Stretch X")
                         .set_step(0.05, 0.1)
                         .set_default(0.8)
                         .set_min(0.1)
@@ -143,7 +143,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
 
 void DrawWallWanderProfile(float char_x, WallWanderProfile* p) {
   ImGui::InputJitteredFloat(ImGui::InputFloatParams("TimeBetweenTurns")
-                                .set_label(Tr("Time between turns"))
+                                .set_label("Time between turns")
                                 .set_step(0.1, 2)
                                 .set_min(0.1)
                                 .set_default(2)
@@ -153,7 +153,7 @@ void DrawWallWanderProfile(float char_x, WallWanderProfile* p) {
   ImGui::HelpMarker(Tr("The amount of time to turn in a single direction before switching."));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams("TurnRate")
-                                .set_label(Tr("Turn rate"))
+                                .set_label("Turn rate")
                                 .set_step(10, 30)
                                 .set_default(300)
                                 .set_min(0)
@@ -234,7 +234,7 @@ void DrawBarrelEditor(ScenarioDef& def) {
   }
 
   ImGui::InputFloat(ImGui::InputFloatParams("DirectionRadiusPercent")
-                        .set_label(Tr("Redirect to percent of center"))
+                        .set_label("Redirect to percent of center")
                         .set_step(1, 5)
                         .set_min(1)
                         .set_default(40)
@@ -535,7 +535,7 @@ void DrawBounceProfile(float char_x, BounceProfile* p) {
                                 .set_default(0)
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(BounceProfile, p, delay_seconds));
-  ImGui::InputBool(Tr("Only delay on floor"), PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
+  ImGui::InputBool("Only delay on floor", PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Float time")
                                 .set_step(0.01, 0.05)
@@ -576,7 +576,7 @@ void DrawBounceEditor(BounceScenarioDef& d) {
                                  RegionLength::kYPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, BounceScenarioDef, &d, floor_height),
                                  0);
-  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
+  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
 
   ImGui::SpacedSeparator();
 
@@ -645,7 +645,7 @@ void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
 
   if (p->angle() > 0 || p->angle_jitter() > 0) {
     ImGui::InputFloat(ImGui::InputFloatParams("DirectionChangePercent")
-                          .set_label(Tr("Direction change chance"))
+                          .set_label("Direction change chance")
                           .set_step(1, 5)
                           .set_range(0, 100)
                           .set_default(50)
@@ -725,7 +725,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
   if (use_angle) {
     ImGui::Indent();
     ImGui::InputJitteredFloat(ImGui::InputFloatParams("Angle")
-                                  .set_label(Tr("Angle degrees"))
+                                  .set_label("Angle degrees")
                                   .set_step(1, 5)
                                   .set_width(char_x * 12),
                               PROTO_JITTERED_FIELD(CenteringScenarioDef, &c, angle));
@@ -1185,7 +1185,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kPoke) {
     ImGui::InputFloat(ImGui::InputFloatParams("PokeKillTime")
-                          .set_label(Tr("Poke kill time"))
+                          .set_label("Poke kill time")
                           .set_step(0.01, 0.1)
                           .set_min(0.01)
                           .set_default(0.1)
@@ -1196,7 +1196,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kClickMulti) {
     ImGui::InputInt(ImGui::InputIntParams("ClickCount")
-                        .set_label(Tr("Clicks to kill"))
+                        .set_label("Clicks to kill")
                         .set_step(1, 2)
                         .set_min(2)
                         .set_default(3)
@@ -1205,7 +1205,7 @@ void DrawShotTypeEditor(ShotType& s) {
   }
 
   if (type == ShotType::kClickMulti || type == ShotType::kClickSingle) {
-    ImGui::InputBool(Tr("Remove on miss"), PROTO_BOOL_FIELD(ShotType, &s, remove_closest_on_miss));
+    ImGui::InputBool("Remove on miss", PROTO_BOOL_FIELD(ShotType, &s, remove_closest_on_miss));
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Ghost on miss")
                           .set_is_optional()
                           .set_step(0.05, 0.2)
@@ -1217,7 +1217,7 @@ void DrawShotTypeEditor(ShotType& s) {
     ImGui::HelpMarker(Tr("The closest target will become a ghost on miss and be removed after the specified time"));
     if (s.has_ghost_closest_on_miss()) {
       ImGui::Indent();
-      ImGui::InputBool(Tr("Unghost instead of remove"),
+      ImGui::InputBool("Unghost instead of remove",
                        PROTO_BOOL_FIELD(ShotType, &s, unghost_miss_on_expiration));
       ImGui::SameLine();
       ImGui::HelpMarker(Tr("When the time expires the target will become clickable agazin instead of being removed"));
@@ -1283,7 +1283,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kTrackingKill) {
     ImGui::InputFloat(ImGui::InputFloatParams("HealthSeconds")
-                          .set_label(Tr("Health time"))
+                          .set_label("Health time")
                           .set_step(0.01, 0.1)
                           .set_min(0.01)
                           .set_default(0.4)
@@ -1293,7 +1293,7 @@ void DrawShotTypeEditor(ShotType& s) {
     ImGui::HelpMarker(Tr("The amount of time in seconds to kill the target."));
 
     ImGui::InputFloat(ImGui::InputFloatParams("HealthRegenRate")
-                          .set_label(Tr("Health regen rate"))
+                          .set_label("Health regen rate")
                           .set_step(0.1, 0.5)
                           .set_min(0.1)
                           .set_default(1)
@@ -1314,7 +1314,7 @@ void DrawShotTypeEditor(ShotType& s) {
     ImGui::SameLine();
     ImGui::HelpMarker(Tr("If the target has less than the specified amount of health left (in seconds) and you move off the target, it will be removed and you will get partial points. The kill sound is played when this threshold is passed."));
 
-    ImGui::InputBool(Tr("No partial kills"), PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
+    ImGui::InputBool("No partial kills", PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
   }
 }
 

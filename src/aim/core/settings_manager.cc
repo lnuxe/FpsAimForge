@@ -466,6 +466,26 @@ class SettingsManagerImpl : public SettingsManager {
 
 }  // namespace
 
+namespace {
+
+// Normalize key names for matching. Settings should store English canonical names,
+// but also accept legacy localized names saved during an i18n regression.
+std::string CanonicalizeKeyName(std::string name) {
+  std::string lower = absl::AsciiStrToLower(name);
+  if (lower == "left click" || name == "左键") {
+    return "left click";
+  }
+  if (lower == "middle click" || name == "中键") {
+    return "middle click";
+  }
+  if (lower == "right click" || name == "右键") {
+    return "right click";
+  }
+  return lower;
+}
+
+}  // namespace
+
 std::string GetMouseButtonName(u8 button) {
   if (button == SDL_BUTTON_LEFT) {
     return "Left Click";
@@ -505,7 +525,7 @@ bool KeyNameMatchesEvent(const SDL_Event& event, const std::string& name) {
   if (name.size() == 0) {
     return false;
   }
-  return absl::AsciiStrToLower(name) == absl::AsciiStrToLower(GetKeyNameForEvent(event));
+  return CanonicalizeKeyName(name) == CanonicalizeKeyName(GetKeyNameForEvent(event));
 }
 
 bool KeyMappingMatchesEvent(const SDL_Event& event, const KeyMapping& mapping) {
@@ -517,16 +537,23 @@ bool KeyMappingMatchesEvent(const std::string& event_name, const KeyMapping& map
   if (event_name.size() == 0) {
     return false;
   }
-  if (absl::AsciiStrToLower(mapping.mapping1()) == event_name) {
+  std::string canonical_event = CanonicalizeKeyName(event_name);
+  auto matches = [&](const std::string& mapping_value) {
+    if (mapping_value.empty()) {
+      return false;
+    }
+    return CanonicalizeKeyName(mapping_value) == canonical_event;
+  };
+  if (matches(mapping.mapping1())) {
     return true;
   }
-  if (absl::AsciiStrToLower(mapping.mapping2()) == event_name) {
+  if (matches(mapping.mapping2())) {
     return true;
   }
-  if (absl::AsciiStrToLower(mapping.mapping3()) == event_name) {
+  if (matches(mapping.mapping3())) {
     return true;
   }
-  if (absl::AsciiStrToLower(mapping.mapping4()) == event_name) {
+  if (matches(mapping.mapping4())) {
     return true;
   }
   return false;
