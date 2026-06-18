@@ -421,14 +421,14 @@ class StatsScreen : public UiScreen {
     }
     if (ImGui::BeginTable("StatsTable", num_cols, flags, table_size)) {
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);
-      ImGui::TableSetupColumn("Diff", ImGuiTableColumnFlags_WidthStretch);
-      ImGui::TableSetupColumn("Score", ImGuiTableColumnFlags_WidthStretch);
-      ImGui::TableSetupColumn("Accuracy", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn(Tr("Diff"), ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn(Tr("Score"), ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn(Tr("Accuracy"), ImGuiTableColumnFlags_WidthStretch);
       if (HasAccuracyPenalty()) {
-        ImGui::TableSetupColumn("Penalty", ImGuiTableColumnFlags_WidthStretch);
+        ImGui::TableSetupColumn(Tr("Penalty"), ImGuiTableColumnFlags_WidthStretch);
       }
-      ImGui::TableSetupColumn("CM", ImGuiTableColumnFlags_WidthStretch);
-      ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn(Tr("CM"), ImGuiTableColumnFlags_WidthStretch);
+      ImGui::TableSetupColumn(Tr("Time"), ImGuiTableColumnFlags_WidthStretch);
 
       // Always pin current at top for scrolling.
       ImGui::TableSetupScrollFreeze(0, 2);
@@ -481,8 +481,13 @@ class StatsScreen : public UiScreen {
     ImGui::TableNextColumn();
     if (name == scenario_name_) {
       ImGui::Text("*%s", GetScenarioDisplayName(name).c_str());
-    } else {
+    } else if (name == "Current" || name == "High score" || name == "Average" ||
+               name == "Previous") {
+      ImGui::Text("%s", Tr(name.c_str()));
+    } else if (app_.scenario_manager().GetScenario(name).has_value()) {
       ImGui::Text("%s", GetScenarioDisplayName(name).c_str());
+    } else {
+      ImGui::Text("%s", name.c_str());
     }
 
     auto comparison = GetStatsComparison(current_stats, comparison_stats);
@@ -590,7 +595,7 @@ class StatsScreen : public UiScreen {
     }
     ImGui::Unindent();
 
-    if (ImGui::TreeNode("Frame timeline")) {
+    if (ImGui::TreeNodeEx("FrameTimeline", ImGuiTreeNodeFlags_None, "%s", Tr("Frame timeline"))) {
       DumpFrameTimeline(worst_times_);
       ImGui::TreePop();
     }
@@ -799,7 +804,8 @@ class StatsScreen : public UiScreen {
 
       if (scores_over_time_) {
         ImGui::SpacedSeparator();
-        if (ImGui::TreeNode("Score over time")) {
+        if (ImGui::TreeNodeEx("ScoreOverTime", ImGuiTreeNodeFlags_None, "%s",
+                              Tr("Score over time"))) {
           DrawScoresOverTimePlot(scenario_name_, run_id_, *scores_over_time_, score_target_);
           ImGui::TreePop();
         }
@@ -807,7 +813,8 @@ class StatsScreen : public UiScreen {
 
       if (compare_to_scenarios_.size() > 0) {
         ImGui::SpacedSeparator();
-        if (ImGui::TreeNode("More comparisons")) {
+        if (ImGui::TreeNodeEx("MoreComparisons", ImGuiTreeNodeFlags_None, "%s",
+                              Tr("More comparisons"))) {
           ImGui::IdGuard cid("MoreComparisons");
           DrawStatsTable(/*is_comparisons=*/true);
           ImGui::TreePop();
@@ -1011,10 +1018,10 @@ class StatsScreen : public UiScreen {
     ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg |
                             ImGuiTableFlags_BordersV | ImGuiTableFlags_ScrollY;
     if (ImGui::BeginTable("HistoryTable", 5, flags, ImVec2(0, remaining_height))) {
-      ImGui::TableSetupColumn("Run", ImGuiTableColumnFlags_WidthFixed, char_x_ * 4);
-      ImGui::TableSetupColumn("Score", ImGuiTableColumnFlags_WidthFixed, char_x_ * 8);
-      ImGui::TableSetupColumn("CM", ImGuiTableColumnFlags_WidthFixed, char_x_ * 5);
-      ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, char_x_ * 12);
+      ImGui::TableSetupColumn(Tr("Run"), ImGuiTableColumnFlags_WidthFixed, char_x_ * 4);
+      ImGui::TableSetupColumn(Tr("Score"), ImGuiTableColumnFlags_WidthFixed, char_x_ * 8);
+      ImGui::TableSetupColumn(Tr("CM"), ImGuiTableColumnFlags_WidthFixed, char_x_ * 5);
+      ImGui::TableSetupColumn(Tr("Time"), ImGuiTableColumnFlags_WidthFixed, char_x_ * 12);
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, char_x_ * 10);
       ImGui::TableHeadersRow();
 

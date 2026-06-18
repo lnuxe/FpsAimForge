@@ -227,6 +227,7 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Score", "分数"},
     {"Score:", "分数："},
     {"Time", "时间"},
+    {"CM", "厘米"},
     {"Worst frame", "最差帧"},
     {"Projected fps", "预估帧率"},
     {"Projected fps if all frames were this bad.", "若所有帧都如此差的预估帧率。"},
