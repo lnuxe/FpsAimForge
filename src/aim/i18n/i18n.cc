@@ -737,6 +737,23 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Ghost wall border", "幽灵墙边界"},
     {"Pitch modifier", "音高修正"},
 
+    // Eighth pass: override multipliers and misc format strings
+    {"Target radius multiplier", "目标半径倍率"},
+    {"Time scale multiplier", "时间缩放倍率"},
+    {"Distance multiplier", "距离倍率"},
+    {"Pulse time multiplier", "脉冲时间倍率"},
+    {"Remove after time multiplier", "移除时间倍率"},
+    {"Min distance between targets multiplier", "目标最小间距倍率"},
+    {"Fixed distance from last target multiplier", "距上一目标固定距离倍率"},
+    {"Wall width multiplier", "墙宽度倍率"},
+    {"Wall height multiplier", "墙高度倍率"},
+    {"Downward speed multiplier", "下落速度倍率"},
+    {"Downward acceleration multiplier", "下落加速度倍率"},
+    {"{}/{} ({:.1f}%)", "{}/{}（{:.1f}%）"},
+    {"{:.2f}ms: {} -> {}", "{:.2f}ms：{} -> {}"},
+    {"{} Fps {}", "{} 帧率 {}"},
+    {"{} (-{}%)", "{}（-{}%）"},
+
     // Seventh pass: dropdown labels, scenario suffixes, errors
     {"Unable to parse bundles.json", "无法解析 bundles.json"},
     {"Instant poke", "即时戳击"},

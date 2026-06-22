@@ -176,7 +176,12 @@ void DumpFrameTimeline(const FrameTimes& t) {
 
     i64 duration_micros = time - last_time;
 
-    ImGui::TextFmt("{:.2f}ms: {} -> {}", duration_micros / 1000.0f, last_label, label);
+    ImGui::Text("%s",
+                TrFormat("{:.2f}ms: {} -> {}",
+                         duration_micros / 1000.0f,
+                         last_label,
+                         label)
+                    .c_str());
     last_time = time;
     last_label = label;
   }
@@ -204,10 +209,10 @@ std::string GetHitPercentageString(const StatsDbRow& stats) {
   float num_hits = stats.info.num_hits();
   if (num_shots > 0) {
     float hit_percent = num_hits / num_shots;
-    return std::format("{}/{} ({:.1f}%)",
-                       MaybeIntToString(num_hits, 1),
-                       MaybeIntToString(num_shots, 1),
-                       hit_percent * 100);
+    return TrFormat("{}/{} ({:.1f}%)",
+                    MaybeIntToString(num_hits, 1),
+                    MaybeIntToString(num_shots, 1),
+                    hit_percent * 100);
   }
   return "";
 }
@@ -921,8 +926,12 @@ class StatsScreen : public UiScreen {
 
           if (score < high_score) {
             float diff_percent = (high_score - score) / high_score;
-            ImGui::TextFmt(
-                "{} (-{}%)", MaybeIntToString(score, 2), MaybeIntToString(diff_percent * 100, 1));
+            ImGui::Text(
+                "%s",
+                TrFormat("{} (-{}%)",
+                         MaybeIntToString(score, 2),
+                         MaybeIntToString(diff_percent * 100, 1))
+                    .c_str());
           } else {
             ImGui::Text("%s", TrFormat("{} (High)", MaybeIntToString(score, 2)).c_str());
           }
