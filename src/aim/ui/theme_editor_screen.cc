@@ -19,8 +19,8 @@ namespace aim {
 namespace {
 
 const float kBackgroundAlpha = 0.6;
-constexpr const char* kSolidColorItem = "Solid color";
-constexpr const char* kTextureItem = "Texture";
+const char* kSolidColorItem = Tr("Solid color");
+const char* kTextureItem = Tr("Texture");
 
 enum class WallMaterialType { SolidColor, Texture };
 
@@ -163,7 +163,7 @@ class ThemeEditor {
       ImGui::SameLine();
       DrawStoredColorEditor("HealthColor", health_bar.mutable_health_color());
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Health alpha")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Health alpha"))
                             .set_is_optional()
                             .set_step(0.05, 0.2)
                             .set_min(0)
@@ -176,7 +176,7 @@ class ThemeEditor {
       ImGui::SameLine();
       DrawStoredColorEditor("HealthBackgroundColor", health_bar.mutable_background_color());
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Background alpha")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Background alpha"))
                             .set_is_optional()
                             .set_step(0.05, 0.2)
                             .set_min(0)
@@ -200,11 +200,11 @@ class ThemeEditor {
         share_texture_and_scale_ = false;
       }
 
-      DrawWallAppearanceEditor(
-          "Front", current_theme_.mutable_front_appearance(), /*is_front=*/true);
-      DrawWallAppearanceEditor("Sides", current_theme_.mutable_side_appearance());
-      DrawWallAppearanceEditor("Floor", current_theme_.mutable_floor_appearance());
-      DrawWallAppearanceEditor("Roof", current_theme_.mutable_roof_appearance());
+  DrawWallAppearanceEditor(
+      Tr("Front"), current_theme_.mutable_front_appearance(), /*is_front=*/true);
+  DrawWallAppearanceEditor(Tr("Sides"), current_theme_.mutable_side_appearance());
+  DrawWallAppearanceEditor(Tr("Floor"), current_theme_.mutable_floor_appearance());
+  DrawWallAppearanceEditor(Tr("Roof"), current_theme_.mutable_roof_appearance());
 
       if (share_texture_and_scale_) {
         const WallAppearance& front = current_theme_.front_appearance();
@@ -301,7 +301,7 @@ class ThemeEditor {
         ImGui::SimpleDropdown(
             "TextureNameDropdown", texture->mutable_texture_name(), texture_names_, char_x * 20);
 
-        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Scale")
+        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Scale"))
                               .set_step(0.05, 0.2)
                               .set_is_optional()
                               .set_min(0.05)
@@ -525,7 +525,7 @@ class ThemeEditorScreen : public UiScreen {
   }
 
   void OpenNewTheme() {
-    std::string name = MakeUniqueName("New theme", theme_names_);
+    std::string name = MakeUniqueName(Tr("New theme"), theme_names_);
     Theme current_theme = app_.settings_manager().GetThemeNoReferenceFollow(name);
     theme_editor_ =
         std::make_unique<ThemeEditor>(name, current_theme, theme_names_, texture_names_, app_);

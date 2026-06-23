@@ -22,8 +22,8 @@ namespace {
 
 std::vector<std::pair<ScenarioSettingsStoreType, std::string>> GetScenarioSettingsStoreTypes() {
   return {
-      {ScenarioSettingsStoreType::STORE_GLOBALLY, "Global"},
-      {ScenarioSettingsStoreType::STORE_PER_SCENARIO, "Scenario"},
+      {ScenarioSettingsStoreType::STORE_GLOBALLY, Tr("Global")},
+      {ScenarioSettingsStoreType::STORE_PER_SCENARIO, Tr("Scenario")},
   };
 }
 
@@ -100,9 +100,9 @@ struct KeybindItem {
 
 std::vector<std::pair<PresentMode, std::string>> GetPresentModes() {
   return {
-      {PresentMode::PRESENT_MODE_IMMEDIATE, "Immediate"},
-      {PresentMode::PRESENT_MODE_VSYNC, "Vsync"},
-      {PresentMode::PRESENT_MODE_MAILBOX, "Mailbox"},
+      {PresentMode::PRESENT_MODE_IMMEDIATE, Tr("Immediate")},
+      {PresentMode::PRESENT_MODE_VSYNC, Tr("Vsync")},
+      {PresentMode::PRESENT_MODE_MAILBOX, Tr("Mailbox")},
   };
 }
 
@@ -115,17 +115,17 @@ class SettingsScreen : public UiScreen {
     crosshair_names_ = app_.settings_manager().ListCrosshairs();
 
     keybind_items_ = {
-        {"Fire", "", updater_.settings.mutable_keybinds()->mutable_fire()},
-        {"Restart Scenario", "", updater_.settings.mutable_keybinds()->mutable_restart_scenario()},
-        {"Next Scenario", "", updater_.settings.mutable_keybinds()->mutable_next_scenario()},
-        {"Edit Scenario", "", updater_.settings.mutable_keybinds()->mutable_edit_scenario()},
-        {"Quick Settings",
-         "Hold the key to bring up a settings menu which will close when the key is released. "
-         "Scroll wheel can be used to adjust mouse sensitivity.",
+        {Tr("Fire"), "", updater_.settings.mutable_keybinds()->mutable_fire()},
+        {Tr("Restart Scenario"), "", updater_.settings.mutable_keybinds()->mutable_restart_scenario()},
+        {Tr("Next Scenario"), "", updater_.settings.mutable_keybinds()->mutable_next_scenario()},
+        {Tr("Edit Scenario"), "", updater_.settings.mutable_keybinds()->mutable_edit_scenario()},
+        {Tr("Quick Settings"),
+         Tr("Hold the key to bring up a settings menu which will close when the key is released. "
+         "Scroll wheel can be used to adjust mouse sensitivity."),
          updater_.settings.mutable_keybinds()->mutable_quick_settings()},
-        {"Quick Metronome", "", updater_.settings.mutable_keybinds()->mutable_quick_metronome()},
-        {"Adjust Crosshair Size",
-         "Hold the key to enable using the scroll wheel to adjust crosshair size.",
+        {Tr("Quick Metronome"), "", updater_.settings.mutable_keybinds()->mutable_quick_metronome()},
+        {Tr("Adjust Crosshair Size"),
+         Tr("Hold the key to enable using the scroll wheel to adjust crosshair size."),
          updater_.settings.mutable_keybinds()->mutable_adjust_crosshair_size()},
     };
   }
@@ -156,7 +156,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputFloat(ImGui::InputFloatParams("CmPer360")
-                            .set_label("cm/360")
+                            .set_label(Tr("cm/360"))
                             .set_step(1, 5)
                             .set_width(char_x_ * 9)
                             .set_min(1)
@@ -167,7 +167,7 @@ class SettingsScreen : public UiScreen {
           Tr("Adjust within a run by holding \"s\" and using the scroll wheel"));
 
       ImGui::InputFloat(ImGui::InputFloatParams("Dpi")
-                            .set_label("DPI")
+                            .set_label(Tr("DPI"))
                             .set_step(100, 200)
                             .set_width(char_x_ * 10)
                             .set_min(100)
@@ -177,7 +177,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputFloat(ImGui::InputFloatParams("Fps")
-                            .set_label("Max render fps")
+                            .set_label(Tr("Max render fps"))
                             .set_is_optional()
                             .set_step(10, 100)
                             .set_width(char_x_ * 10)
@@ -236,7 +236,7 @@ class SettingsScreen : public UiScreen {
              "the theme."));
 
       ImGui::InputFloat(ImGui::InputFloatParams("CrosshairSize")
-                            .set_label("Crosshair size")
+                            .set_label(Tr("Crosshair size"))
                             .set_min(0.1)
                             .set_step(0.1, 1)
                             .set_default(15)
@@ -247,19 +247,19 @@ class SettingsScreen : public UiScreen {
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool("Save settings per scenario",
+      ImGui::InputBool(Tr("Save settings per scenario"),
                        InvertBoolField(PROTO_BOOL_FIELD(
                            Settings, &updater_.settings, disable_per_scenario_settings)));
 
-      ImGui::InputBool("Auto hold tracking",
+      ImGui::InputBool(Tr("Auto hold tracking"),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, auto_hold_tracking));
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool("Use \"Click to Start\"",
+      ImGui::InputBool(Tr("Use \"Click to Start\""),
           InvertBoolField(PROTO_BOOL_FIELD(Settings, &updater_.settings, disable_click_to_start)));
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Start countdown time")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Start countdown time"))
                             .set_min(0.01)
                             .set_is_optional()
                             .set_default(0.4)
@@ -270,10 +270,10 @@ class SettingsScreen : public UiScreen {
       ImGui::HelpMarker(Tr("A countdown will be shown whenever a scenario is about to start"));
 
       ImGui::SpacedSeparator();
-      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label("Enable metronome"),
+      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label(Tr("Enable metronome")),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, enable_metronome));
       ImGui::InputFloat(ImGui::InputFloatParams("MetronomeBpm")
-                            .set_label("Metronome BPM")
+                            .set_label(Tr("Metronome BPM"))
                             .set_min(0)
                             .set_zero_is_unset()
                             .set_step(1, 5)
@@ -285,18 +285,18 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputBool(
-          ImGui::InputBoolParams("ShowHealthBars").set_label("Show health bars"),
+          ImGui::InputBoolParams("ShowHealthBars").set_label(Tr("Show health bars")),
           PROTO_BOOL_FIELD(HealthBarSettings, updater_.settings.mutable_health_bar(), show));
       if (updater_.settings.health_bar().show()) {
         ImGui::Indent();
 
         ImGui::InputBool(
-            ImGui::InputBoolParams("OnlyDamaged").set_label("Only damaged"),
+            ImGui::InputBoolParams("OnlyDamaged").set_label(Tr("Only damaged")),
             PROTO_BOOL_FIELD(
                 HealthBarSettings, updater_.settings.mutable_health_bar(), only_damaged));
 
         ImGui::InputFloat(
-            ImGui::InputFloatParams::WithLabelAsId("Size")
+            ImGui::InputFloatParams::WithLabelAsId(Tr("Size"))
                 .set_min(0.1)
                 .set_max(3.0)
                 .set_step(0.1, 1)
@@ -370,7 +370,7 @@ class SettingsScreen : public UiScreen {
   }
 
   void DrawScenarioSettingsConfig() {
-    ImGui::InputBool("Save settings per scenario",
+    ImGui::InputBool(Tr("Save settings per scenario"),
                      InvertBoolField(PROTO_BOOL_FIELD(
                          Settings, &updater_.settings, disable_per_scenario_settings)));
     ImGui::SameLine();
@@ -404,30 +404,30 @@ class SettingsScreen : public UiScreen {
            "scenarios share the same value."));
 
     ImGui::Indent();
-    draw_item("cm/360",
+    draw_item(Tr("cm/360"),
               PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, cm_per_360));
-    draw_item("Theme",
+    draw_item(Tr("Theme"),
               PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, theme_name));
     draw_item(
-        "Crosshair",
+        Tr("Crosshair"),
         PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, crosshair_name));
     draw_item(
-        "Crosshair size",
+        Tr("Crosshair size"),
         PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, crosshair_size));
     draw_item(
-        "Auto hold tracking",
+        Tr("Auto hold tracking"),
         PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, auto_hold_tracking),
         /*default_global=*/true);
-    draw_item("Health bar",
+    draw_item(Tr("Health bar"),
               PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, health_bar));
     draw_item(
-        "Enable metronome",
+        Tr("Enable metronome"),
         PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, enable_metronome));
     draw_item(
-        "Metronome BPM",
+        Tr("Metronome BPM"),
         PROTO_FIELD(ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, enable_metronome));
     draw_item(
-        "Tracking shots per second",
+        Tr("Tracking shots per second"),
         PROTO_FIELD(
             ScenarioSettingsStoreType, ScenarioSettingsConfig, &config, tracking_shots_per_second),
         /*default_global=*/true);
@@ -439,7 +439,7 @@ class SettingsScreen : public UiScreen {
 
     sound_input_dialog_.Draw(app_);
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Tracking shots per second")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Tracking shots per second"))
                           .set_step(0.5, 5)
                           .set_width(char_x_ * 9)
                           .set_is_optional()
@@ -510,7 +510,7 @@ class SettingsScreen : public UiScreen {
         }
 
         ImGui::SameLine();
-        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Pitch modifier")
+        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Pitch modifier"))
                               .set_is_optional()
                               .set_range(0.01, 100)
                               .set_step(0.02, 0.2)
@@ -519,11 +519,11 @@ class SettingsScreen : public UiScreen {
                           PROTO_FLOAT_FIELD(SoundItem, item, pitch_modifier));
       };
 
-      sound_input("Shoot", s.mutable_shoot());
-      sound_input("Hit", s.mutable_hit());
-      sound_input("Kill", s.mutable_kill());
-      sound_input("Metronome", s.mutable_metronome());
-      sound_input("Reload", s.mutable_reload());
+      sound_input(Tr("Shoot"), s.mutable_shoot());
+      sound_input(Tr("Hit"), s.mutable_hit());
+      sound_input(Tr("Kill"), s.mutable_kill());
+      sound_input(Tr("Metronome"), s.mutable_metronome());
+      sound_input(Tr("Reload"), s.mutable_reload());
 
       ImGui::EndTable();
     }

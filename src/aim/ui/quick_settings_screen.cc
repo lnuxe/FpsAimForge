@@ -188,7 +188,7 @@ class QuickSettingsScreen : public UiScreen {
       ImGui::Spacing();
 
       ImGui::InputFloat(ImGui::InputFloatParams("CmPer360")
-                            .set_label("cm/360")
+                            .set_label(Tr("cm/360"))
                             .set_step(1, 10)
                             .set_width(char_size.x * 9)
                             .set_min(1)
@@ -209,13 +209,13 @@ class QuickSettingsScreen : public UiScreen {
                             crosshair_names_,
                             char_size.x * 18);
 
-      ImGui::InputBool("Auto hold tracking",
+      ImGui::InputBool(Tr("Auto hold tracking"),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, auto_hold_tracking));
       ImGui::InputBool(
-          "Show health bars",
+          Tr("Show health bars"),
           PROTO_BOOL_FIELD(HealthBarSettings, updater_.settings.mutable_health_bar(), show));
 
-      ImGui::InputBool("Save settings per scenario",
+      ImGui::InputBool(Tr("Save settings per scenario"),
                        InvertBoolField(PROTO_BOOL_FIELD(
                            Settings, &updater_.settings, disable_per_scenario_settings)));
     }
@@ -232,11 +232,11 @@ class QuickSettingsScreen : public UiScreen {
 
       ImGui::Spacing();
 
-      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label("Enable metronome"),
+      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label(Tr("Enable metronome")),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, enable_metronome));
 
       ImGui::InputFloat(ImGui::InputFloatParams("MetronomeBpm")
-                            .set_label("BPM")
+                            .set_label(Tr("BPM"))
                             .set_min(0)
                             .set_zero_is_unset()
                             .set_step(1, 10)

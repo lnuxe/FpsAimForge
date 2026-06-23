@@ -134,7 +134,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       app.history_manager().DeleteRecentView(ObjectType::SCENARIO, scenario_name);
       dialogs->update_filtered_scenarios = true;
     }
-    if (ImGui::BeginMenu("Add to")) {
+      if (ImGui::BeginMenu(Tr("Add to"))) {
       ImGui::LoopId playlist_loop_id;
       std::string selected_playlist;
       const auto& recent_playlists = app.history_manager().recent_playlists();
@@ -160,7 +160,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       }
       ImGui::EndMenu();
     }
-    if (ImGui::BeginMenu("Advanced")) {
+      if (ImGui::BeginMenu(Tr("Advanced"))) {
       if (ImGui::Selectable(Tr("View stats"))) {
         app.GetCurrentScreen()->PushNextScreen(CreateStatsScreen(
             scenario_name, app.stats_manager().GetLatestRunId(scenario_name), &app));
@@ -201,10 +201,10 @@ class ScenarioBrowserComponent {
 
     search_text_ = app_->local_store().Get(GetSearchTextKey());
 
-    shot_types_.push_back({ShotType::TYPE_NOT_SET, "None"});
+    shot_types_.push_back({ShotType::TYPE_NOT_SET, Tr("None")});
     shot_types_.insert(shot_types_.end(), kShotTypes.begin(), kShotTypes.end());
 
-    scenario_types_.push_back({ScenarioDef::TYPE_NOT_SET, "None"});
+    scenario_types_.push_back({ScenarioDef::TYPE_NOT_SET, Tr("None")});
     scenario_types_.insert(scenario_types_.end(), kScenarioTypes.begin(), kScenarioTypes.end());
 
     UpdateFilteredScenarios();
@@ -245,9 +245,9 @@ class ScenarioBrowserComponent {
     bool view_type_changed = ImGui::ChipSelector("##ScenarioViewType",
                                                  &view_type_,
                                                  {
-                                                     {ScenarioViewType::ALL, "All"},
-                                                     {ScenarioViewType::RECENT, "Recent"},
-                                                     {ScenarioViewType::STARRED, "Starred"},
+                                                     {ScenarioViewType::ALL, Tr("All")},
+                                                     {ScenarioViewType::RECENT, Tr("Recent")},
+                                                     {ScenarioViewType::STARRED, Tr("Starred")},
                                                  });
     if (view_type_changed) {
       app_->local_store().PutInt(GetViewTypeKey(), (int)view_type_);
