@@ -88,7 +88,7 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
     float char_x = ImGui::GetDefaultCharSizeX();
 
     ImGui::SpacedSeparator();
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Level")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Level"))
                           .set_is_optional()
                           .set_step(1, 2)
                           .set_default(1)
@@ -134,14 +134,14 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
 
     ImGui::InputBool(Tr("Poke"), CreateBoolField(&name_info_.is_poke));
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Duration")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Duration"))
                           .set_is_optional()
                           .set_step(5, 10)
                           .set_default(45)
                           .set_width(char_x * 10),
                       CreateOptionalFloatField(&name_info_.duration));
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("FOV")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("FOV"))
                           .set_is_optional()
                           .set_step(1, 2)
                           .set_default(103)
@@ -153,7 +153,7 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
     ImGui::Text(Tr("%s"), Tr("Sensitivity"));
     ImGui::Indent();
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("cm/360")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("cm/360"))
                           .set_is_optional()
                           .set_step(1, 5)
                           .set_width(char_x * 10)

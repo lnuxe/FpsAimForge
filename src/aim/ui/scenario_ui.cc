@@ -136,7 +136,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       app.history_manager().DeleteRecentView(ObjectType::SCENARIO, scenario_name);
       dialogs->update_filtered_scenarios = true;
     }
-    if (ImGui::BeginMenu("Add to")) {
+    if (ImGui::BeginMenu(Tr("Add to"))) {
       ImGui::LoopId playlist_loop_id;
       std::string selected_playlist;
       const auto& recent_playlists = app.history_manager().recent_playlists();
@@ -162,7 +162,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
       }
       ImGui::EndMenu();
     }
-    if (ImGui::BeginMenu("Advanced")) {
+    if (ImGui::BeginMenu(Tr("Advanced"))) {
       if (ImGui::Selectable(Tr("View stats"))) {
         app.GetCurrentScreen()->PushNextScreen(CreateStatsScreen(
             scenario_name, app.stats_manager().GetLatestRunId(scenario_name), false, &app));

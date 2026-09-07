@@ -29,7 +29,7 @@ const std::unordered_set<ScenarioDef::TypeCase> kAccelerationDisabledScenarioTyp
 };
 
 void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Radius")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Radius"))
                                 .set_step(0.05, 0.5)
                                 .set_min(0.01)
                                 .set_default(2)
@@ -40,7 +40,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
     profile->clear_speed();
     profile->clear_acceleration();
   } else {
-    ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Speed")
+    ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Speed"))
                                   .set_step(1, 10)
                                   .set_min(0.1)
                                   .set_default(100)
@@ -51,7 +51,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
     if (kAccelerationDisabledScenarioTypes.contains(def.type_case())) {
       profile->clear_acceleration();
     } else {
-      ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Acceleration")
+      ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Acceleration"))
                                     .set_step(5, 50)
                                     .set_min(1)
                                     .set_default(200)
@@ -70,7 +70,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   ImGui::HelpMarker(Tr("Switch from sphere target to a pill (capsule) shaped target."));
   if (use_pill) {
     ImGui::Indent();
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Height")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Height"))
                           .set_default(20)
                           .set_min(0.1)
                           .set_width(char_x * 12)
@@ -109,7 +109,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
                       PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_growth_size));
 
     ImGui::InputFloat(
-        ImGui::InputFloatParams::WithLabelAsId("Time at final size")
+        ImGui::InputFloatParams::WithLabelAsId(Tr("Time at final size"))
             .set_step(0.1, 0.5)
             .set_min(0)
             .set_default(0)
@@ -187,7 +187,7 @@ void DrawTargetEditor(ScenarioDef& def) {
   ImGui::SameLine();
   ImGui::HelpMarker(Tr("Ghost targets are unkillable and drawn in a different color."));
 
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Ghost wall border")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Ghost wall border"))
                         .set_is_optional()
                         .set_default(15)
                         .set_min(1)

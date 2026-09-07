@@ -478,7 +478,7 @@ void PlaylistRunRightClickMenu(const std::string& scenario_name, PlaylistRun& ru
         screen.PushNextScreen(CreateScenarioEditorScreen(opts, &screen.app()));
       }
     }
-    if (ImGui::BeginMenu("Add to")) {
+    if (ImGui::BeginMenu(Tr("Add to"))) {
       std::string selected_playlist;
       int playlist_count = 0;
       const auto& recent_playlists = screen.app().history_manager().recent_playlists();

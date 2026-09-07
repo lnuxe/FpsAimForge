@@ -270,7 +270,7 @@ class SettingsScreen : public UiScreen {
           "Use \"Click to Start\"",
           InvertBoolField(PROTO_BOOL_FIELD(Settings, &updater_.settings, disable_click_to_start)));
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Start countdown time")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Start countdown time"))
                             .set_min(0.01)
                             .set_is_optional()
                             .set_default(0.4)
@@ -307,7 +307,7 @@ class SettingsScreen : public UiScreen {
                 HealthBarSettings, updater_.settings.mutable_health_bar(), only_damaged));
 
         ImGui::InputFloat(
-            ImGui::InputFloatParams::WithLabelAsId("Size")
+            ImGui::InputFloatParams::WithLabelAsId(Tr("Size"))
                 .set_min(0.1)
                 .set_max(3.0)
                 .set_step(0.1, 1)
@@ -457,7 +457,7 @@ class SettingsScreen : public UiScreen {
 
     sound_input_dialog_.Draw(app_);
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Tracking shots per second")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Tracking shots per second"))
                           .set_step(0.5, 5)
                           .set_width(char_x_ * 9)
                           .set_is_optional()
@@ -475,14 +475,14 @@ class SettingsScreen : public UiScreen {
     if (has_proximity_sounds) {
       ImGui::Indent();
       ImGui::InputFloat(
-          ImGui::InputFloatParams::WithLabelAsId("Slow")
+          ImGui::InputFloatParams::WithLabelAsId(Tr("Slow"))
               .set_step(0.5, 5)
               .set_width(char_x_ * 9)
               .set_min(0.1)
               .set_default(4),
           PROTO_FLOAT_FIELD(Settings, &updater_.settings, proximity_min_shots_per_second));
       ImGui::InputFloat(
-          ImGui::InputFloatParams::WithLabelAsId("Fast")
+          ImGui::InputFloatParams::WithLabelAsId(Tr("Fast"))
               .set_step(0.5, 5)
               .set_width(char_x_ * 9)
               .set_min(0.1)
@@ -557,7 +557,7 @@ class SettingsScreen : public UiScreen {
         }
 
         ImGui::SameLine();
-        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Pitch modifier")
+        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Pitch modifier"))
                               .set_is_optional()
                               .set_range(0.01, 100)
                               .set_step(0.02, 0.2)

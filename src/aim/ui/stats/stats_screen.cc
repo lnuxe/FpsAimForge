@@ -372,13 +372,13 @@ class StatsScreen : public UiScreen {
 
       ImGui::TableHeadersRow();
 
-      DrawStatsTableRow("Current", details_.stats, details_.stats);
+      DrawStatsTableRow(Tr("Current"), details_.stats, details_.stats);
       if (!is_comparisons) {
         if (details_.all_stats.size() > 1) {
-          DrawStatsTableRow("High score", details_.stats, details_.previous_high_score_stats);
+          DrawStatsTableRow(Tr("High score"), details_.stats, details_.previous_high_score_stats);
         }
         if (details_.all_stats.size() > 2) {
-          DrawStatsTableRow("Average", details_.stats, details_.average_stats);
+          DrawStatsTableRow(Tr("Average"), details_.stats, details_.average_stats);
         }
 
         if (details_.all_stats.size() > 1) {

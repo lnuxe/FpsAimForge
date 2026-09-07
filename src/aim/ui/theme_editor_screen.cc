@@ -160,7 +160,7 @@ class ThemeEditor {
       ImGui::SameLine();
       DrawStoredColorEditor("HealthColor", health_bar.mutable_health_color());
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Health alpha")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Health alpha"))
                             .set_is_optional()
                             .set_step(0.05, 0.2)
                             .set_min(0)
@@ -173,7 +173,7 @@ class ThemeEditor {
       ImGui::SameLine();
       DrawStoredColorEditor("HealthBackgroundColor", health_bar.mutable_background_color());
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Background alpha")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Background alpha"))
                             .set_is_optional()
                             .set_step(0.05, 0.2)
                             .set_min(0)
@@ -300,7 +300,7 @@ class ThemeEditor {
         ImGui::SimpleDropdown(
             "TextureNameDropdown", texture->mutable_texture_name(), texture_names_, char_x * 20);
 
-        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Scale")
+        ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Scale"))
                               .set_step(0.05, 0.2)
                               .set_is_optional()
                               .set_min(0.05)

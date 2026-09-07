@@ -101,7 +101,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
 
   ImGui::InputBool(Tr("Start clockwise"), PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
 
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Switch direction after time")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Switch direction after time"))
                         .set_is_optional()
                         .set_step(1, 5)
                         .set_min(5)
@@ -186,7 +186,7 @@ void DrawLinearEditor(LinearScenarioDef& d) {
   float char_x = ImGui::GetDefaultCharSizeX();
   ImGui::IdGuard cid("LinearEditor");
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Angle")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Angle"))
                                 .set_step(1, 3)
                                 .set_min(0)
                                 .set_max(90)
@@ -294,7 +294,7 @@ void DrawStrafeProfile(float char_x,
                                 .set_is_optional()
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(StrafeProfile, p, acceleration_multiplier));
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Start speed percent")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Start speed percent"))
                         .set_is_optional()
                         .set_step(1, 10)
                         .set_min(1)
@@ -305,7 +305,7 @@ void DrawStrafeProfile(float char_x,
   ImGui::HelpMarker(
       "For a new target with acceleartion. What percent of max speed to start at. The default is "
       "to start at 0 speed.");
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Center bias")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Center bias"))
                         .set_is_optional()
                         .set_step(0.1, 0.5)
                         .set_min(0.1)
@@ -317,7 +317,7 @@ void DrawStrafeProfile(float char_x,
       "If close to the edge will shorten/lengthen the next strafe to encourage moving towards the "
       "center. 0.10 means lengthen the strafe by 10%");
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Pause time")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Pause time"))
                                 .set_is_optional()
                                 .set_step(0.1, 0.2)
                                 .set_min(0)
@@ -329,7 +329,7 @@ void DrawStrafeProfile(float char_x,
 
   if (p->has_pause_time()) {
     ImGui::Indent();
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Pause chance")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Pause chance"))
                           .set_is_optional()
                           .set_step(1, 10)
                           .set_min(1)
@@ -546,7 +546,7 @@ void DrawBounceProfile(float char_x, BounceProfile* p) {
                                  p->mutable_height_jitter(),
                                  30);
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Bounce delay")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Bounce delay"))
                                 .set_step(0.01, 0.05)
                                 .set_zero_is_unset()
                                 .set_min(0)
@@ -555,7 +555,7 @@ void DrawBounceProfile(float char_x, BounceProfile* p) {
                             PROTO_JITTERED_FIELD(BounceProfile, p, delay_seconds));
   ImGui::InputBool(Tr("Only delay on floor"), PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Float time")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Float time"))
                                 .set_step(0.01, 0.05)
                                 .set_zero_is_unset()
                                 .set_min(0)
@@ -653,7 +653,7 @@ void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
                                  p->mutable_distance_jitter(),
                                  30);
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Angle")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Angle"))
                                 .set_step(1, 3)
                                 .set_min(0)
                                 .set_max(60)
@@ -673,14 +673,14 @@ void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
     p->clear_direction_change_percent();
   }
 
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Speed multiplier")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Speed multiplier"))
                                 .set_is_optional()
                                 .set_step(0.05, 0.2)
                                 .set_min(0)
                                 .set_default(1)
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(AngleStrafeProfile, p, speed_multiplier));
-  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Acceleration multiplier")
+  ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Acceleration multiplier"))
                                 .set_is_optional()
                                 .set_step(0.05, 0.2)
                                 .set_min(0)
@@ -880,7 +880,7 @@ void DrawReferenceEditor(ScenarioDef& def,
 
   ImGui::SpacedSeparator();
 
-  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Duration")
+  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId(Tr("Duration"))
                       .set_is_optional()
                       .set_default(60)
                       .set_min(5)
@@ -888,7 +888,7 @@ void DrawReferenceEditor(ScenarioDef& def,
                       .set_width(char_x * 12),
                   PROTO_INT_FIELD(ReferenceScenarioDef, &r, duration_seconds));
 
-  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Number of targets")
+  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId(Tr("Number of targets"))
                       .set_is_optional()
                       .set_default(3)
                       .set_min(1)
@@ -896,7 +896,7 @@ void DrawReferenceEditor(ScenarioDef& def,
                       .set_width(char_x * 12),
                   PROTO_INT_FIELD(ReferenceScenarioDef, &r, num_targets));
 
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Target radius")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Target radius"))
                         .set_is_optional()
                         .set_default(2)
                         .set_min(0.01)
@@ -933,7 +933,7 @@ void DrawReferenceEditor(ScenarioDef& def,
     }
   }
 
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Horizontal FOV")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Horizontal FOV"))
                         .set_is_optional()
                         .set_step(1, 5)
                         .set_min(1)
@@ -1228,7 +1228,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kClickMulti || type == ShotType::kClickSingle) {
     ImGui::InputBool("Remove on miss", PROTO_BOOL_FIELD(ShotType, &s, remove_closest_on_miss));
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Ghost on miss")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Ghost on miss"))
                           .set_is_optional()
                           .set_step(0.05, 0.2)
                           .set_min(0.05)
@@ -1250,7 +1250,7 @@ void DrawShotTypeEditor(ShotType& s) {
       s.clear_unghost_miss_on_expiration();
     }
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Click rate")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Click rate"))
                           .set_is_optional()
                           .set_step(0.05, 0.2)
                           .set_min(0.05)
@@ -1272,13 +1272,13 @@ void DrawShotTypeEditor(ShotType& s) {
     if (has_reload) {
       s.set_accuracy_penalty(AccuracyPenalty::ACCURACY_PENALTY_NONE);
       ImGui::Indent();
-      ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Max shots")
+      ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId(Tr("Max shots"))
                           .set_step(1, 1)
                           .set_default(3)
                           .set_min(1)
                           .set_width(char_x * 10),
                       PROTO_INT_FIELD(ReloadInfo, s.mutable_reload(), max_shots));
-      ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Reload on hit")
+      ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId(Tr("Reload on hit"))
                           .set_step(1, 1)
                           .set_default(3)
                           .set_min(1)
@@ -1287,7 +1287,7 @@ void DrawShotTypeEditor(ShotType& s) {
       ImGui::SameLine();
       ImGui::HelpMarker(Tr("Number of shots to reload on a hit up to the \"max shots\"."));
 
-      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Reload time")
+      ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Reload time"))
                             .set_step(0.05, 0.2)
                             .set_min(0.01)
                             .set_default(0.5)
@@ -1331,7 +1331,7 @@ void DrawShotTypeEditor(ShotType& s) {
         "The rate health is regenerated if you switch off target before killing. 1 means regen "
         "at same rate as health is taken away for hits.");
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Health forgiveness time")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Health forgiveness time"))
                           .set_step(0.01, 0.05)
                           .set_min(0.01)
                           .set_max(5)

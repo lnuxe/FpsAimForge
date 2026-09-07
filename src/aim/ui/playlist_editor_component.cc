@@ -171,13 +171,13 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
 
     ImGui::Separator();
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Max level")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Max level"))
                           .set_step(1, 2)
                           .set_min(2)
                           .set_default(10)
                           .set_width(char_x_ * 10),
                       PROTO_FLOAT_FIELD(LevelsPlaylistDef, &levels, max_level));
-    ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Plays per level")
+    ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId(Tr("Plays per level"))
                         .set_step(1, 2)
                         .set_min(1)
                         .set_default(1)
@@ -185,7 +185,7 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
                     PROTO_INT_FIELD(LevelsPlaylistDef, &levels, num_plays_per_level));
 
     ImGui::Separator();
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Target score")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Target score"))
                           .set_is_optional()
                           .set_step(1, 2)
                           .set_default(100)
@@ -195,13 +195,13 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
     ImGui::HelpMarker(
         "Override the target score for the scenario when playing using this playlist.");
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Min level")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Min level"))
                           .set_is_optional()
                           .set_step(1, 2)
                           .set_default(1)
                           .set_width(char_x_ * 10),
                       PROTO_FLOAT_FIELD(LevelsPlaylistDef, &levels, min_level));
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Step")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Step"))
                           .set_step(0.5, 2)
                           .set_default(1)
                           .set_is_optional()

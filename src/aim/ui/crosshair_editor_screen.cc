@@ -474,19 +474,19 @@ class CrosshairEditorScreen : public UiScreen {
   void DrawCrosshairDiamondEditor(DiamondCrosshair* c) {
     ImGui::IdGuard cid("DiamondCrosshair");
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Horizontal size")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Horizontal size"))
                           .set_step(0.1, 0.5)
                           .set_width(char_x_ * 9)
                           .set_default(1)
                           .set_min(0),
                       PROTO_FLOAT_FIELD(DiamondCrosshair, c, horizontal_size));
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Vertical size")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Vertical size"))
                           .set_step(0.1, 0.5)
                           .set_width(char_x_ * 9)
                           .set_default(1)
                           .set_min(0),
                       PROTO_FLOAT_FIELD(DiamondCrosshair, c, vertical_size));
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Outline thickness")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Outline thickness"))
                           .set_step(0.1, 1)
                           .set_width(char_x_ * 9)
                           .set_is_optional()

@@ -74,7 +74,7 @@ void DrawRoomEditorInputs(Room& room, CameraUpdates* camera_updates) {
     ImGui::InputFloat("##RoomHeight", &height, 1, 25, "%.0f");
     room.mutable_simple_room()->set_height(height);
 
-    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Depth")
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Depth"))
                           .set_is_optional()
                           .set_default(400)
                           .set_step(1, 10)
@@ -138,7 +138,7 @@ void DrawRoomEditorInputs(Room& room, CameraUpdates* camera_updates) {
     room.mutable_cylinder_room()->set_radius(radius);
 
     ImGui::InputFloat(
-        ImGui::InputFloatParams::WithLabelAsId("Sides")
+        ImGui::InputFloatParams::WithLabelAsId(Tr("Sides"))
             .set_is_optional()
             .set_optional_secondary_label("angle")
             .set_default(GetDefaultSideAngleForDegrees(current_width_degrees))
@@ -157,7 +157,7 @@ void DrawRoomEditorInputs(Room& room, CameraUpdates* camera_updates) {
       room.mutable_camera_position());
   ImGui::Unindent();
 
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Horizontal FOV")
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Horizontal FOV"))
                         .set_is_optional()
                         .set_step(1, 5)
                         .set_min(1)
