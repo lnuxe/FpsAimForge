@@ -19,8 +19,15 @@ constexpr const char* kOrgName = "";
 FileSystem::FileSystem() {
   std::string explicit_user_path = absl::GetFlag(FLAGS_af_user_path);
   std::string app_name = absl::GetFlag(FLAGS_af_user_app_name);
-  pref_dir_ = !explicit_user_path.empty() ? explicit_user_path
-                                          : SDL_GetPrefPath(kOrgName, app_name.c_str());
+
+  if (!explicit_user_path.empty()) {
+    pref_dir_ = explicit_user_path;
+  } else {
+    char* sdl_pref_path = SDL_GetPrefPath(kOrgName, app_name.c_str());
+    pref_dir_ = sdl_pref_path;
+    SDL_free(sdl_pref_path);
+  }
+
   base_dir_ = SDL_GetBasePath();
   CreateDirectories(pref_dir_);
 }
