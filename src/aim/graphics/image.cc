@@ -1,30 +1,28 @@
 #include "image.h"
 
-#include "absl/cleanup/cleanup.h"
 #include "aim/common/log.h"
-#include "stripped_sdl_image.h"
+#include "wuffs_sdl_image.h"
 
 namespace aim {
 
 SDL_Surface* LoadImageSurface(const std::filesystem::path& path) {
-  SDL_IOStream* src = SDL_IOFromFile(path.string().c_str(), "rb");
-  if (!src) {
-    return nullptr;
-  }
-  auto cleanup_src = absl::MakeCleanup([=]() { SDL_CloseIO(src); });
-
-  /* See whether or not this data source can handle seeking */
-  if (SDL_SeekIO(src, 0, SDL_IO_SEEK_CUR) < 0) {
-    SDL_SetError("Can't seek in this data source");
+  size_t data_size = 0;
+  void* file_data = SDL_LoadFile(path.string().c_str(), &data_size);
+  if (!file_data) {
+    Logger::get()->warn("Failed to load image file {}", path.string());
     return nullptr;
   }
 
-  if (IMG_isJPG(src) || IMG_isPNG(src)) {
-    return IMG_LoadSTB_IO(src);
-  }
+  const auto* byte_ptr = static_cast<const uint8_t*>(file_data);
+  std::vector<uint8_t> buffer(byte_ptr, byte_ptr + data_size);
+  SDL_free(file_data);
 
-  SDL_SetError("Unsupported image format");
-  return nullptr;
+  std::pair<SDL_Surface*, std::string> result = IMG_LoadWuffs_IO(buffer);
+  SDL_Surface* surface = result.first;
+  if (surface == nullptr) {
+    Logger::get()->warn("Failed to load image {}, : {}", path.string(), result.second);
+  }
+  return surface;
 }
 
 Image::Image(const std::filesystem::path& path) {

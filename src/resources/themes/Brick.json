@@ -1,7 +1,7 @@
 {
   "backAppearance": {
     "texture": {
-      "textureName": "Brick.jpg"
+      "textureName": "Brick.png"
     }
   },
   "crosshair": {
@@ -16,14 +16,14 @@
     "mixColor": {},
     "mixPercent": 0.539999962,
     "texture": {
-      "textureName": "Brick.jpg"
+      "textureName": "Brick.png"
     }
   },
   "frontAppearance": {
     "mixColor": {},
     "mixPercent": 0.4,
     "texture": {
-      "textureName": "Brick.jpg"
+      "textureName": "Brick.png"
     }
   },
   "ghostTargetColor": {
@@ -44,19 +44,18 @@
       "r": 196
     }
   },
-  "name": "Brick",
   "roofAppearance": {
     "mixColor": {},
     "mixPercent": 0.42,
     "texture": {
-      "textureName": "Brick.jpg"
+      "textureName": "Brick.png"
     }
   },
   "sideAppearance": {
     "mixColor": {},
     "mixPercent": 0.580000043,
     "texture": {
-      "textureName": "Brick.jpg"
+      "textureName": "Brick.png"
     }
   },
   "targetColor": {

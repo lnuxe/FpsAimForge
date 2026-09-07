@@ -15,7 +15,7 @@
     "mixPercent": 0.410000056,
     "texture": {
       "scale": 1.19999981,
-      "textureName": "Stone.jpg"
+      "textureName": "Stone.png"
     }
   },
   "frontAppearance": {
@@ -27,7 +27,7 @@
     "mixPercent": 0.299999863,
     "texture": {
       "scale": 1.19999969,
-      "textureName": "Stone.jpg"
+      "textureName": "Stone.png"
     }
   },
   "ghostTargetColor": {
@@ -46,13 +46,12 @@
       "r": 255
     }
   },
-  "name": "Stone",
   "roofAppearance": {
     "mixColor": {},
     "mixPercent": 0.399999917,
     "texture": {
       "scale": 1.19999981,
-      "textureName": "Stone.jpg"
+      "textureName": "Stone.png"
     }
   },
   "sideAppearance": {
@@ -60,7 +59,7 @@
     "mixPercent": 0.339999974,
     "texture": {
       "scale": 1.19999981,
-      "textureName": "Stone.jpg"
+      "textureName": "Stone.png"
     }
   },
   "targetColor": {
