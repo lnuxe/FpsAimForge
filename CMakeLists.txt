@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.22)
 
-project("aim_forge")
+project("FpsAimForge")
+
+option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
+
+if(ENABLE_ASAN)
+  if(MSVC)
+    add_compile_options(/fsanitize=address)
+  else()
+    # GCC / Clang
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+  endif()
+endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
