@@ -125,11 +125,11 @@ class SettingsScreen : public UiScreen {
         {"Next Scenario", "", updater_.settings.mutable_keybinds()->mutable_next_scenario()},
         {"Edit Scenario", "", updater_.settings.mutable_keybinds()->mutable_edit_scenario()},
         {"Quick Settings",
-         kQuickSettingsHelpText,
+         Tr(kQuickSettingsHelpText),
          updater_.settings.mutable_keybinds()->mutable_quick_settings()},
         {"Quick Metronome", "", updater_.settings.mutable_keybinds()->mutable_quick_metronome()},
         {"Adjust Crosshair Size",
-         kAdjustCrosshairSizeHelpText,
+         Tr(kAdjustCrosshairSizeHelpText),
          updater_.settings.mutable_keybinds()->mutable_adjust_crosshair_size()},
     };
   }
@@ -187,9 +187,9 @@ class SettingsScreen : public UiScreen {
                             .set_range(30, 2000),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, max_render_fps));
       ImGui::SameLine();
-      ImGui::HelpMarker(
+      ImGui::HelpMarker(Tr(
           "State updates and event polling are not tied to fps. A good target can be 2x monitor "
-          "refresh rate to reduce tearing.");
+          "refresh rate to reduce tearing."));
 
       ImGui::AlignTextToFramePadding();
       ImGui::Text(Tr("%s"), Tr("Present mode"));
@@ -391,9 +391,9 @@ class SettingsScreen : public UiScreen {
                      InvertBoolField(PROTO_BOOL_FIELD(
                          Settings, &updater_.settings, disable_per_scenario_settings)));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "If disabled, the config below will be ignored and the same settings will always be used "
-        "for every scenario.");
+        "for every scenario."));
     ImGui::SpacedSeparator();
 
     ScenarioSettingsConfig& config = *updater_.settings.mutable_scenario_settings_config();
@@ -417,9 +417,9 @@ class SettingsScreen : public UiScreen {
 
     ImGui::Text(Tr("%s"), Tr("Choose which fields are stored uniquely for each scenario"));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "\"Scenario\" means this setting will be saved per scenario. \"Global\" means that all "
-        "scenarios share the same value.");
+        "scenarios share the same value."));
 
     ImGui::Indent();
     draw_item("cm/360",

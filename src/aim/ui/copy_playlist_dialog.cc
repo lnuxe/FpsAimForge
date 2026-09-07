@@ -39,18 +39,18 @@ bool CopyPlaylistDialog::Draw(Application& app) {
         ImGui::SameLine();
         ImGui::Checkbox("##AsReferences", &as_references_);
         ImGui::SameLine();
-        ImGui::HelpMarker(
+        ImGui::HelpMarker(Tr(
             "Versions in new playlist will have a different name (stats, settings, ..), but will "
-            "change when the underlying scenario changes.");
+            "change when the underlying scenario changes."));
 
         ImGui::AlignTextToFramePadding();
         ImGui::Text(Tr("%s"), Tr("Add name prefix*"));
         ImGui::SameLine();
         ImGui::InputText("##AddPrefix", &add_prefix_);
         ImGui::SameLine();
-        ImGui::HelpMarker(
+        ImGui::HelpMarker(Tr(
             "Adds the following prefix to all newly created scenario names after the bundle "
-            "name");
+            "name"));
 
         ImGui::AlignTextToFramePadding();
         ImGui::Text(Tr("%s"), Tr("Remove name prefix"));

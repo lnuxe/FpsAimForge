@@ -192,8 +192,8 @@ class PlaylistEditorComponentImpl : public PlaylistEditorComponent {
                           .set_width(char_x_ * 10),
                       PROTO_FLOAT_FIELD(LevelsPlaylistDef, &levels, target_score));
     ImGui::SameLine();
-    ImGui::HelpMarker(
-        "Override the target score for the scenario when playing using this playlist.");
+    ImGui::HelpMarker(Tr(
+        "Override the target score for the scenario when playing using this playlist."));
 
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Min level"))
                           .set_is_optional()

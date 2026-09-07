@@ -87,9 +87,9 @@ void DrawCircleEditor(CircleScenarioDef& d) {
                                  PROTO_PTR_FIELD(RegionLength, CircleScenarioDef, &d, final_radius),
                                  10);
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "The radius will change to this value over the duration of the scenario (or until "
-      "direction change)");
+      "direction change)"));
 
   ImGui::InputFloat(ImGui::InputFloatParams("StartDegrees")
                         .set_label(Tr("Start degrees"))
@@ -157,10 +157,10 @@ void DrawWallWanderProfile(float char_x, WallWanderProfile* p) {
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(WallWanderProfile, p, turn_rate));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "The number of degrees to turn per second. The turn rate will accelerate smoothly "
       "between "
-      "turns base on turn time.");
+      "turns base on turn time."));
 }
 
 void DrawWallWanderEditor(WallWanderScenarioDef& d) {
@@ -241,12 +241,12 @@ void DrawBarrelEditor(ScenarioDef& def) {
                         .set_width(char_x * 10),
                     PROTO_PERCENT_FIELD(BarrelScenarioDef, &d, direction_radius_percent));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "When the target collides with the wall it will be redirected in the direction of a "
       "random "
       "point within the specified portion of the center. The smaller the radius the more it "
       "will "
-      "be redirected towards the center of the circle.");
+      "be redirected towards the center of the circle."));
 
   if (!d.has_target_placement_strategy()) {
     d.mutable_target_placement_strategy()->mutable_min_distance()->set_value(15);
@@ -302,9 +302,9 @@ void DrawStrafeProfile(float char_x,
                         .set_width(char_x * 10),
                     PROTO_PERCENT_FIELD(StrafeProfile, p, start_speed_percent));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "For a new target with acceleartion. What percent of max speed to start at. The default is "
-      "to start at 0 speed.");
+      "to start at 0 speed."));
   ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Center bias"))
                         .set_is_optional()
                         .set_step(0.1, 0.5)
@@ -313,9 +313,9 @@ void DrawStrafeProfile(float char_x,
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(StrafeProfile, p, center_bias));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "If close to the edge will shorten/lengthen the next strafe to encourage moving towards the "
-      "center. 0.10 means lengthen the strafe by 10%");
+      "center. 0.10 means lengthen the strafe by 10%"));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Pause time"))
                                 .set_is_optional()
@@ -748,9 +748,9 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
                                   .set_width(char_x * 12),
                               PROTO_JITTERED_FIELD(CenteringScenarioDef, &c, angle));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "Specify just the angle of movement and how far to travel. Typically used with Barrel "
-        "rooms.");
+        "rooms."));
     DrawRegionLengthEditor("Length", RegionLength::kXPercentValue, c.mutable_angle_length(), 50);
     ImGui::Unindent();
   } else {
@@ -904,9 +904,9 @@ void DrawReferenceEditor(ScenarioDef& def,
                         .set_width(char_x * 12),
                     PROTO_FLOAT_FIELD(ReferenceScenarioDef, &r, explicit_target_radius));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Provide an explicit radius for the target. Useful for providing a stable size for a base "
-      "level.");
+      "level."));
 
   if (app != nullptr) {
     bool has_room = r.has_room();
@@ -1236,15 +1236,15 @@ void DrawShotTypeEditor(ShotType& s) {
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ShotType, &s, ghost_closest_on_miss));
     ImGui::SameLine();
-    ImGui::HelpMarker(
-        "The closest target will become a ghost on miss and be removed after the specified time");
+    ImGui::HelpMarker(Tr(
+        "The closest target will become a ghost on miss and be removed after the specified time"));
     if (s.has_ghost_closest_on_miss()) {
       ImGui::Indent();
       ImGui::InputBool(Tr("Unghost instead of remove"),
                        PROTO_BOOL_FIELD(ShotType, &s, unghost_miss_on_expiration));
       ImGui::SameLine();
-      ImGui::HelpMarker(
-          "When the time expires the target will become clickable agazin instead of being removed");
+      ImGui::HelpMarker(Tr(
+          "When the time expires the target will become clickable agazin instead of being removed"));
       ImGui::Unindent();
     } else {
       s.clear_unghost_miss_on_expiration();
@@ -1266,9 +1266,9 @@ void DrawShotTypeEditor(ShotType& s) {
     ImGui::SameLine();
     ImGui::Checkbox("##ReloadCheckbox", &has_reload);
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "There is no accuracy penalty but you will have to reload if you miss too many consecutive "
-        "shots");
+        "shots"));
     if (has_reload) {
       s.set_accuracy_penalty(AccuracyPenalty::ACCURACY_PENALTY_NONE);
       ImGui::Indent();
@@ -1327,9 +1327,9 @@ void DrawShotTypeEditor(ShotType& s) {
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ShotType, &s, health_regen_rate));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "The rate health is regenerated if you switch off target before killing. 1 means regen "
-        "at same rate as health is taken away for hits.");
+        "at same rate as health is taken away for hits."));
 
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Health forgiveness time"))
                           .set_step(0.01, 0.05)
@@ -1340,10 +1340,10 @@ void DrawShotTypeEditor(ShotType& s) {
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ShotType, &s, remove_if_below_health_seconds));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "If the target has less than the specified amount of health left (in seconds) and you move "
         "off the target, it will be removed and you will get partial points. The kill sound is "
-        "played when this threshold is passed.");
+        "played when this threshold is passed."));
 
     ImGui::InputBool(Tr("No partial kills"), PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
   }

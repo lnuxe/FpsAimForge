@@ -146,9 +146,9 @@ void DrawProfileList(const std::string& id,
   ImGui::SameLine();
   ImGui::Checkbox("##UseOrder", &use_order);
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Specify the order in which profiles should be selected. 0, 1 means alternate between "
-      "first and second profile");
+      "first and second profile"));
   if (use_order) {
     ImGui::Indent();
     DrawOrderListEditor(type_name, order_list, profile_list, char_x);
@@ -166,9 +166,9 @@ void DrawProfileList(const std::string& id,
   ImGui::SameLine();
   ImGui::Checkbox("##HasStartOrder", &has_start_order);
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Specify an explicit initial order of profiles to select. After these profiles are "
-      "selected, selection will then proceed normally.");
+      "selected, selection will then proceed normally."));
   if (has_start_order) {
     ImGui::Indent();
     ImGui::IdGuard start_order_cid("StartOrderList");
@@ -253,7 +253,7 @@ void DrawProfileList(const std::string& id,
                           .set_width(char_x * 10),
                       PROTO_INT_FIELD(ProfileInfo, p->mutable_info(), next_profile));
       ImGui::SameLine();
-      ImGui::HelpMarker("If this profile is selected, always select the specified profile next.");
+      ImGui::HelpMarker(Tr("If this profile is selected, always select the specified profile next."));
 
       ImGui::InputInt(ImGui::InputIntParams("MinSelectionGap")
                           .set_label("Selection gap")
@@ -264,9 +264,9 @@ void DrawProfileList(const std::string& id,
                           .set_width(char_x * 10),
                       PROTO_INT_FIELD(ProfileInfo, p->mutable_info(), min_selection_gap));
       ImGui::SameLine();
-      ImGui::HelpMarker(
+      ImGui::HelpMarker(Tr(
           "Limit how frequently the profile can be selected. A value of 2 means that 2 other "
-          "profiles must be selected before this one can be chosen again.");
+          "profiles must be selected before this one can be chosen again."));
 
     } else {
       p->mutable_info()->clear_weight();

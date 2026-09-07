@@ -85,10 +85,10 @@ class ThemeEditor {
     ImGui::Checkbox("##ReferenceCheck", &is_reference);
     ImGui::SameLine();
     // TODO: Improve help text to be more clear
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "Use settings from another theme. Useful when you using per scenario theme settings and "
         "you want to create a \"Default Static\" theme which you can change and have all static "
-        "scenarios use the new theme.");
+        "scenarios use the new theme."));
 
     ImGui::SpacedSeparator();
 

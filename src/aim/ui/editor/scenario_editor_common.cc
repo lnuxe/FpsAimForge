@@ -115,9 +115,9 @@ void DrawTargetRegion(float char_x, bool support_depth, TargetRegion* region) {
         PROTO_PTR_FIELD(RegionLength, TargetRegion, region, depth_jitter),
         0);
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "The distance away from the wall towards the camera. The greater the value, the "
-        "further it is from the wall.");
+        "further it is from the wall."));
   } else {
     region->clear_depth();
     region->clear_depth_jitter();
@@ -133,8 +133,8 @@ void DrawTargetRegion(float char_x, bool support_depth, TargetRegion* region) {
       PROTO_PTR_FIELD(RegionLength, TargetRegion, region, fixed_distance_from_last_target_jitter),
       10);
   ImGui::SameLine();
-  ImGui::HelpMarker(
-      "New target will be placed at a fixed distance from the last target that was added.");
+  ImGui::HelpMarker(Tr(
+      "New target will be placed at a fixed distance from the last target that was added."));
 
   if (!is_point) {
     ImGui::AlignTextToFramePadding();
@@ -509,9 +509,9 @@ void DrawScoreTargetsEditor(PtrField<ScoreTargets> score_targets) {
     score_targets.clear();
   }
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Defines a target for scores. Hitting the target gives a 5.0. 95% of target gives a 4.0. "
-      "Each 5% goes down 1 more score level.");
+      "Each 5% goes down 1 more score level."));
 }
 
 }  // namespace aim

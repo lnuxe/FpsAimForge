@@ -609,10 +609,10 @@ class StatsScreen : public UiScreen {
 
           ImGui::SameLine();
           ImGui::SetCursorPosY(ImGui::GetCursorPosY() + offset);
-          ImGui::HelpMarker(
+          ImGui::HelpMarker(Tr(
               "Displays percentage of time within the specified middle % of the target. The 3 "
               "values displayed are 100% (anywhere on target), 50%, 20%. 50% "
-              "means time in the center half of the target.");
+              "means time in the center half of the target."));
         }
       } else {
         std::string hit_percent = GetHitPercentageString(stats);

@@ -127,6 +127,7 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Explicit {} selection order", "显式 {} 选择顺序"},
     {"Initial {} selection order", "初始 {} 选择顺序"},
     {"score: {}", "得分：{}"},
+    {"For a new target with acceleartion. What percent of max speed to start at. The default is to start at 0 speed.", "对于带加速度的新目标。以最大速度的百分之多少开始。默认从 0 速度开始。"},
 
     // Settings
     {"Settings", "设置"},

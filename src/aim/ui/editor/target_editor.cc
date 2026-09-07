@@ -87,9 +87,9 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   ImGui::SameLine();
   ImGui::Checkbox("##PulseCheckbox", &has_growth);
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Target will grow to a certain size over some duration. If it is not killed by "
-      "then, it will be removed.");
+      "then, it will be removed."));
   if (has_growth) {
     ImGui::Indent();
     ImGui::InputFloat(ImGui::InputFloatParams("GrowthTime")
@@ -117,9 +117,9 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
             .set_width(char_x * 10),
         PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_growth_final_size_time_seconds));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "Time target will stay at final size before being removed. Defaults to 0. i.e. remove "
-        "immediately upon reaching final size. This time is in addition to the pulse time.");
+        "immediately upon reaching final size. This time is in addition to the pulse time."));
     ImGui::Unindent();
   } else {
     profile->clear_target_radius_growth_time_seconds();
@@ -138,9 +138,9 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_at_kill));
     ImGui::SameLine();
-    ImGui::HelpMarker(
+    ImGui::HelpMarker(Tr(
         "The radius of the target will change to the specified value incrementally based on "
-        "how much health remains");
+        "how much health remains"));
   } else {
     profile->clear_target_radius_at_kill();
   }
@@ -195,9 +195,9 @@ void DrawTargetEditor(ScenarioDef& def) {
                         .set_width(char_x * 10),
                     PROTO_PERCENT_FIELD(TargetDef, t, ghost_border_percent));
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "If the target gets within the specified percent distance from the wall, it will become a "
-      "ghost.");
+      "ghost."));
 
   ImGui::InputFloat(ImGui::InputFloatParams("NewTargetDelaySeconds")
                         .set_label(Tr("New target delay"))
@@ -229,8 +229,8 @@ void DrawTargetEditor(ScenarioDef& def) {
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(TargetDef, t, stagger_initial_targets_seconds));
   ImGui::SameLine();
-  ImGui::HelpMarker(
-      "Time in seconds between each target being added at the start of the scenario.");
+  ImGui::HelpMarker(Tr(
+      "Time in seconds between each target being added at the start of the scenario."));
 
   bool has_delayed_targets = t->delayed_target_times_size() > 0;
   ImGui::AlignTextToFramePadding();
@@ -238,10 +238,10 @@ void DrawTargetEditor(ScenarioDef& def) {
   ImGui::SameLine();
   ImGui::Checkbox("##DelayTargetsCheckbox", &has_delayed_targets);
   ImGui::SameLine();
-  ImGui::HelpMarker(
+  ImGui::HelpMarker(Tr(
       "Targets will only be added for the first time after the specified delay. If num_targets=3 "
       "and there are two delays in the list, 1 target will be added immediately, 1 target after "
-      "the first time in the list, and 1 target after the second time in the list.");
+      "the first time in the list, and 1 target after the second time in the list."));
   if (has_delayed_targets) {
     if (t->delayed_target_times_size() == 0) {
       t->add_delayed_target_times(1);

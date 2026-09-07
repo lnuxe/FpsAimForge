@@ -649,9 +649,9 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::AlignTextToFramePadding();
       ImGui::Text(Tr("%s"), Tr("Referenced scenario"));
       ImGui::SameLine();
-      ImGui::HelpMarker(
+      ImGui::HelpMarker(Tr(
           "This scenario references/extends the following scenario. Editing the referenced "
-          "scenario will alter the behavior of this scenario.");
+          "scenario will alter the behavior of this scenario."));
       ImGui::SameLine();
       if (ImGui::Button(referenced_scenario)) {
         app_.scenario_manager().SetCurrentScenario(referenced_scenario);
@@ -665,9 +665,9 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::SpacedSeparator();
       ImGui::Text(Tr("%s"), Tr("Referencing scenarios"));
       ImGui::SameLine();
-      ImGui::HelpMarker(
+      ImGui::HelpMarker(Tr(
           "Scenarios that extend this scenario. Changing this scenario would change the following "
-          "ones too.");
+          "ones too."));
       ImGui::Indent();
       ImGui::LoopId loop_id;
       for (const std::string& name : referencing_scenarios_) {
