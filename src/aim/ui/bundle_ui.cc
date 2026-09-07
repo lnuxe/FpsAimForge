@@ -9,6 +9,7 @@
 #include "aim/core/scenario_manager.h"
 #include "aim/proto/bundle.pb.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -36,7 +37,7 @@ class AddBundleDialog {
 
     std::optional<std::string> added_name;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Bundle name");
+    ImGui::Text(Tr("%s"), Tr("Bundle name"));
     ImGui::SameLine();
     ImGui::InputText("##BundleNameInput", &bundle_name_);
 
@@ -49,10 +50,10 @@ class AddBundleDialog {
 
     if (!bundle_name_.empty() && !is_valid) {
       if (name_taken) {
-        ImGui::TextFmt("Bundle name \"{}\" already exists", bundle_name_);
+        ImGui::Text("%s", TrFormat("Bundle name \"{}\" already exists", bundle_name_).c_str());
       } else {
-        ImGui::TextFmt("Bundle name \"{}\" is invalid. Can only contains letters, numbers, and _",
-                       bundle_name_);
+        ImGui::Text("%s", TrFormat("Bundle name \"{}\" is invalid. Can only contains letters, numbers, and _",
+                       bundle_name_).c_str());
       }
     }
 
@@ -72,7 +73,7 @@ class AddBundleDialog {
       ImGui::EndDisabled();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       popup_.Close();
     }
 
@@ -110,7 +111,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
       ImGui::Spacing();
 
-      if (ImGui::Button(std::format("{} Bundle", icons::kAdd))) {
+      if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("Bundle")))) {
         add_dialog_.NotifyOpen({});
       }
 
@@ -133,21 +134,21 @@ class BundleUiComponentImpl : public BundleUiComponent {
       DrawSelectedBundle();
     }
 
-    if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
+    if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("Folder")))) {
       OpenFolderInExplorer(app_.file_system()->GetUserDataPath("bundles"));
     }
-    ImGui::HelpTooltip("Open bundles folder in file explorer");
+    ImGui::HelpTooltip(Tr("Open bundles folder in file explorer"));
   }
 
   void DrawSelectedBundle() {
     auto maybe_bundle_info = app_.bundle_manager().GetBundleInfo(selected_bundle_name_);
     if (!maybe_bundle_info) {
-      ImGui::Text("Could not find bundle: %s", selected_bundle_name_.c_str());
+      ImGui::Text(Tr("Could not find bundle: %s"), selected_bundle_name_.c_str());
       return;
     }
     BundleInfo info = *maybe_bundle_info;
 
-    ImGui::Text("Bundle name: %s", selected_bundle_name_.c_str());
+    ImGui::Text(Tr("Bundle name: %s"), selected_bundle_name_.c_str());
 
     bool need_update = false;
 
@@ -160,7 +161,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     } else {
       bool readonly = info.readonly();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Readonly");
+      ImGui::Text(Tr("%s"), Tr("Readonly"));
       ImGui::SameLine();
       if (ImGui::Checkbox("##ReadonlyInput", &readonly)) {
         info.set_readonly(readonly);
@@ -173,21 +174,21 @@ class BundleUiComponentImpl : public BundleUiComponent {
     ImGui::Spacing();
 
     CachedBundleDetails details = GetBundleDetails(selected_bundle_name_);
-    ImGui::TextFmt("{} scenarios", details.num_scenarios);
+    ImGui::Text("%s", TrFormat("{} scenarios", details.num_scenarios).c_str());
     if (details.num_playlists > 0) {
-      ImGui::TextFmt("{} playlists", details.num_playlists);
+      ImGui::Text("%s", TrFormat("{} playlists", details.num_playlists).c_str());
     }
 
     ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
-    if (ImGui::Button(std::format("{} Copy", icons::kContentCopy))) {
+    if (ImGui::Button(std::format("{} {}", icons::kContentCopy, Tr("Copy")))) {
       add_dialog_.NotifyOpen(selected_bundle_name_);
     }
 
-    if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
-      delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", selected_bundle_name_),
+    if (ImGui::Button(std::format("{} {}", icons::kDelete, Tr("Delete")))) {
+      delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", selected_bundle_name_),
                                              selected_bundle_name_);
     }
 

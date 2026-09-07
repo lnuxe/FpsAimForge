@@ -11,6 +11,7 @@
 #include "glm/mat4x4.hpp"         // IWYU pragma: keep
 #include "glm/trigonometric.hpp"  // IWYU pragma: keep
 #include "glm/vec3.hpp"           // IWYU pragma: keep
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

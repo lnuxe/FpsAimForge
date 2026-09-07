@@ -14,6 +14,7 @@
 #include "glm/mat4x4.hpp"
 #include "glm/trigonometric.hpp"
 #include "glm/vec3.hpp"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

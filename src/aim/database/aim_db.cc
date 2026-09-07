@@ -10,6 +10,7 @@
 #include "aim/common/times.h"
 #include "aim/database/sqlite_util.h"
 #include "sqlite3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

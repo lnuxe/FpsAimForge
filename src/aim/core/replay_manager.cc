@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "aim/scenario/replay.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

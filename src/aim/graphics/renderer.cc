@@ -14,6 +14,7 @@
 #include "glm/gtc/matrix_transform.hpp"  // IWYU pragma: keep
 #include "glm/gtx/vector_angle.hpp"
 #include "glm/mat4x4.hpp"  // IWYU pragma: keep
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

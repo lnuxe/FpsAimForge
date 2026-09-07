@@ -23,6 +23,7 @@
 #include "aim/database/aim_db.h"
 #include "aim/graphics/image.h"
 #include "aim/graphics/renderer.h"
+#include "aim/i18n/i18n.h"
 #include "glm/common.hpp"  // IWYU pragma: keep
 #include "imgui.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
@@ -560,6 +561,7 @@ std::optional<std::string> Application::InitializeCritical(const Stopwatch& stop
     return maybe_error;
   }
   local_store_ = std::make_unique<LocalStore>(file_system_.get());
+  LoadLanguageFromStore(*local_store_);
   replay_manager_ = CreateReplayManager();
 
   play_time_manager_ = std::make_unique<PlayTimeManager>(db_.get());

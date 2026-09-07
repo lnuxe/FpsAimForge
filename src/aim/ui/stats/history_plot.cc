@@ -9,6 +9,7 @@
 #include "aim/common/util.h"
 #include "imgui.h"
 #include "implot.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -75,8 +76,10 @@ void DrawHistoryPlot(const std::string& id,
 
   // ImPlot::PlotShaded("Score History", times.data(), scores.data(), scores.size(), 0);
   ImPlot::PlotLineG("Scores", point_getter, &plot_data, stats.size());
-  ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle, 3.0f);
-  ImPlot::PlotScatterG("ScorePoint", point_getter, &plot_data, stats.size());
+  ImPlotSpec score_point_spec;
+  score_point_spec.Marker = ImPlotMarker_Circle;
+  score_point_spec.MarkerSize = 3.0f;
+  ImPlot::PlotScatterG("ScorePoint", point_getter, &plot_data, stats.size(), score_point_spec);
 
   if (ImPlot::IsPlotHovered()) {
     ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos(ImAxis_X1, ImAxis_Y1);
@@ -95,10 +98,12 @@ void DrawHistoryPlot(const std::string& id,
 
         if (score < high_score) {
           float diff_percent = (high_score - score) / high_score;
-          ImGui::TextFmt(
-              "{} (-{}%)", MaybeIntToString(score, 2), MaybeIntToString(diff_percent * 100, 1));
+          ImGui::Text("%s",
+                       TrFormat("{} (-{}%)", MaybeIntToString(score, 2),
+                                MaybeIntToString(diff_percent * 100, 1))
+                           .c_str());
         } else {
-          ImGui::TextFmt("{} (High)", MaybeIntToString(score, 2));
+          ImGui::Text("%s", TrFormat("{} (High)", MaybeIntToString(score, 2)).c_str());
         }
 
         std::string time_ago =
@@ -107,32 +112,41 @@ void DrawHistoryPlot(const std::string& id,
 
         ImGui::EndTooltip();
 
-        ImPlot::SetNextMarkerStyle(
-            ImPlotMarker_Circle, 4.0f, ImVec4(1, 0, 0, 1), IMPLOT_AUTO, ImVec4(1, 0, 0, 1));
-        ImPlot::PlotScatter("MouseDot", &x_val, &score, 1);
+        ImPlotSpec mouse_dot_spec;
+        mouse_dot_spec.Marker = ImPlotMarker_Circle;
+        mouse_dot_spec.MarkerSize = 4.0f;
+        mouse_dot_spec.MarkerFillColor = ImVec4(1, 0, 0, 1);
+        mouse_dot_spec.MarkerLineColor = ImVec4(1, 0, 0, 1);
+        ImPlot::PlotScatter("MouseDot", &x_val, &score, 1, mouse_dot_spec);
       } else {
         // See if it is near one of the drag lines and show the tooltip if so.
         ImPlotPoint threshold = ImPlot::GetPlotDistanceFromPixels(10);
         if (abs(high_score - mouse_pos.y) < threshold.y) {
           ImGui::BeginTooltip();
-          ImGui::TextFmt("High score: {}", MaybeIntToString(high_score, 2));
+          ImGui::Text("%s", TrFormat("High score: {}", MaybeIntToString(high_score, 2)).c_str());
           ImGui::EndTooltip();
 
-          ImPlot::SetNextMarkerStyle(
-              ImPlotMarker_Circle, 3.0f, kTopThresholdColor, IMPLOT_AUTO, kTopThresholdColor);
+          ImPlotSpec high_score_spec;
+          high_score_spec.Marker = ImPlotMarker_Circle;
+          high_score_spec.MarkerSize = 3.0f;
+          high_score_spec.MarkerFillColor = kTopThresholdColor;
+          high_score_spec.MarkerLineColor = kTopThresholdColor;
           float float_high_score = high_score;
           float mouse_x = mouse_pos.x;
-          ImPlot::PlotScatter("HighScoreDot", &mouse_x, &float_high_score, 1);
+          ImPlot::PlotScatter("HighScoreDot", &mouse_x, &float_high_score, 1, high_score_spec);
         } else if (score_target > 0 && abs(score_target - mouse_pos.y) < threshold.y) {
           ImGui::BeginTooltip();
-          ImGui::TextFmt("Target score: {}", MaybeIntToString(score_target, 2));
+          ImGui::Text("%s", TrFormat("Target score: {}", MaybeIntToString(score_target, 2)).c_str());
           ImGui::EndTooltip();
 
-          ImPlot::SetNextMarkerStyle(
-              ImPlotMarker_Circle, 3.0f, kMidThresholdColor, IMPLOT_AUTO, kMidThresholdColor);
+          ImPlotSpec score_target_spec;
+          score_target_spec.Marker = ImPlotMarker_Circle;
+          score_target_spec.MarkerSize = 3.0f;
+          score_target_spec.MarkerFillColor = kMidThresholdColor;
+          score_target_spec.MarkerLineColor = kMidThresholdColor;
           float mouse_x = mouse_pos.x;
           float float_score_target = score_target;
-          ImPlot::PlotScatter("ScoreTargetDot", &mouse_x, &float_score_target, 1);
+          ImPlot::PlotScatter("ScoreTargetDot", &mouse_x, &float_score_target, 1, score_target_spec);
         }
       }
     }

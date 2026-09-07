@@ -3,6 +3,7 @@
 #include "glm/vec2.hpp"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "aim/i18n/i18n.h"
 
 using namespace aim;
 

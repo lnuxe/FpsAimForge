@@ -16,6 +16,7 @@
 #include "aim/ui/select_variation_dialog.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -49,7 +50,7 @@ class AddPlaylistDialog {
         ImGui::InputText("##RelativeNameInput", name_.mutable_relative_name());
 
         ImGui::Spacing();
-        if (ImGui::Button("Add")) {
+        if (ImGui::Button(Tr("Add"))) {
           auto taken_names =
               app.playlist_manager().GetAllRelativeNamesInBundle(name_.bundle_name());
           *name_.mutable_relative_name() = MakeUniqueName(name_.relative_name(), taken_names);
@@ -61,7 +62,7 @@ class AddPlaylistDialog {
           is_open_ = false;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Cancel")) {
+        if (ImGui::Button(Tr("Cancel"))) {
           is_open_ = false;
           ImGui::CloseCurrentPopup();
         }
@@ -148,22 +149,22 @@ class PlaylistComponentImpl : public PlaylistComponent {
       bool is_readonly = has_dynamic_suffix ||
                          app_.bundle_manager().IsBundleReadonly(GetBundleName(run->playlist.name));
       if (!is_readonly) {
-        if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
+        if (ImGui::Selectable(std::format("{} {}", icons::kEdit, Tr("Edit")))) {
           showing_editor_ = true;
         }
       }
 
-      if (ImGui::Selectable(std::format("{} Copy", icons::kContentCopy))) {
+      if (ImGui::Selectable(std::format("{} {}", icons::kContentCopy, Tr("Copy")))) {
         copy_dialog_.NotifyOpen(run->playlist);
       }
-      if (ImGui::Selectable(std::format("{} Shuffle", icons::kShuffle))) {
+      if (ImGui::Selectable(std::format("{} {}", icons::kShuffle, Tr("Shuffle")))) {
         run->Shuffle(app_.rand());
       }
-      if (ImGui::Selectable(std::format("{} Reset run", icons::kRestartAlt))) {
+      if (ImGui::Selectable(std::format("{} {}", icons::kRestartAlt, Tr("Reset run")))) {
         app_.playlist_manager().ClearRun(run->playlist.name);
         run = app_.playlist_manager().GetCurrentRun();
       }
-      if (ImGui::Selectable(std::format("{} Select variation", icons::kTune))) {
+      if (ImGui::Selectable(std::format("{} {}", icons::kTune, Tr("Select variation")))) {
         select_variation_dialog_.NotifyOpen(run->playlist.name);
       }
 
@@ -171,18 +172,18 @@ class PlaylistComponentImpl : public PlaylistComponent {
       if (is_readonly) {
         ImGui::AlignTextToFramePadding();
         ImGui::BeginDisabled();
-        ImGui::Text("%s Readonly", icons::kEditOff);
+        ImGui::Text(Tr("%s Readonly"), icons::kEditOff);
         ImGui::EndDisabled();
         if (has_dynamic_suffix) {
           // TODO: Support editing and switching to edit the base version by default.
-          ImGui::HelpTooltip("Cannot edit playlist with dynamic suffix like 25cm or 5%Faster.");
+          ImGui::HelpTooltip(Tr("Cannot edit playlist with dynamic suffix like 25cm or 5%Faster."));
         } else {
           ImGui::HelpTooltip(
-              std::format("Bundle \"{}\" is readonly.", GetBundleName(run->playlist.name)));
+              TrFormat("Bundle \"{}\" is readonly.", GetBundleName(run->playlist.name)));
         }
       } else {
-        if (ImGui::Selectable(std::format("{} Delete", icons::kDelete))) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", playlist_name),
+        if (ImGui::Selectable(std::format("{} {}", icons::kDelete, Tr("Delete")))) {
+          delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", playlist_name),
                                                  run->playlist);
         }
       }
@@ -200,7 +201,7 @@ class PlaylistComponentImpl : public PlaylistComponent {
       ImGui::SameLine();
       // ImGui::SetButtonCursorAtRight(text);
       ImGui::Button(std::format("L{}", MaybeIntToString(*highest_complete_level, 2)));
-      ImGui::HelpTooltip("Highest complete level where score target was hit");
+      ImGui::HelpTooltip(Tr("Highest complete level where score target was hit"));
     }
 
     const PlaylistDef& def = run->playlist.def();
@@ -308,7 +309,7 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
     ImVec2 char_size = ImGui::CalcTextSize("A");
 
     ImGui::Spacing();
-    if (ImGui::Button(std::format("{} Playlist", icons::kAdd))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("Playlist")))) {
       add_dialog_.NotifyOpen();
     }
 
@@ -335,7 +336,7 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
     ImGui::Spacing();
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("%s", icons::kFilterList);
+    ImGui::Text(Tr("%s"), icons::kFilterList);
     ImGui::SameLine();
     if (ImGui::ChipSelector("##PlaylistViewType",
                             &view_type_,
@@ -402,21 +403,21 @@ class PlaylistListComponentImpl : public PlaylistListComponent {
     }
     const char* menu_id = "PlaylistItemMenu";
     if (ImGui::BeginPopupContextItem(menu_id)) {
-      if (ImGui::Selectable("Copy")) {
+      if (ImGui::Selectable(Tr("Copy"))) {
         auto playlist = app_.playlist_manager().GetPlaylist(playlist_name);
         if (playlist) {
           copy_dialog_.NotifyOpen(*playlist);
         }
       }
-      if (ImGui::Selectable("Remove from recents")) {
+      if (ImGui::Selectable(Tr("Remove from recents"))) {
         app_.history_manager().DeleteRecentView(ObjectType::PLAYLIST, playlist_name);
       }
 
       ImGui::SpacedSeparator();
-      if (ImGui::Selectable("Delete")) {
+      if (ImGui::Selectable(Tr("Delete"))) {
         auto playlist = app_.playlist_manager().GetPlaylist(playlist_name);
         if (playlist) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", playlist_name),
+          delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", playlist_name),
                                                  *playlist);
         }
       }
@@ -452,23 +453,23 @@ void PlaylistRunRightClickMenu(const std::string& scenario_name, PlaylistRun& ru
   const char* popup_id = "ScenarioItemMenu";
   bool is_levels_playlist = run.playlist.def().has_levels();
   if (ImGui::BeginPopupContextItem(popup_id)) {
-    if (ImGui::Selectable("Edit")) {
+    if (ImGui::Selectable(Tr("Edit"))) {
       ScenarioEditorOptions opts;
       opts.scenario_name = scenario_name;
       screen.PushNextScreen(CreateScenarioEditorScreen(opts, &screen.app()));
     }
-    if (ImGui::Selectable("Copy")) {
+    if (ImGui::Selectable(Tr("Copy"))) {
       ScenarioEditorOptions opts;
       opts.scenario_name = scenario_name;
       opts.is_new_copy = true;
       screen.PushNextScreen(CreateScenarioEditorScreen(opts, &screen.app()));
     }
-    if (ImGui::Selectable("View")) {
+    if (ImGui::Selectable(Tr("View"))) {
       screen.app().scenario_manager().SetCurrentScenario(scenario_name);
       screen.app().state().go_to_app_screen = AppScreen::SCENARIOS;
     }
     if (!is_levels_playlist) {
-      if (ImGui::Selectable("Add copy")) {
+      if (ImGui::Selectable(Tr("Add copy"))) {
         ScenarioEditorOptions opts;
         opts.scenario_name = scenario_name;
         opts.is_new_copy = true;

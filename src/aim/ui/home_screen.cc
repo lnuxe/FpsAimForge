@@ -17,6 +17,7 @@
 #include "aim/ui/top_bar.h"
 #include "aim/ui/ui_screen.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -34,9 +35,9 @@ class SetInitialDpiDialog {
     std::optional<int> set_dpi;
     if (popup_.Begin()) {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("What is your mouse DPI?");
+      ImGui::Text(Tr("%s"), Tr("What is your mouse DPI?"));
       ImGui::SameLine();
-      ImGui::HelpMarker("DPI is used to calculate sensitivity given a cm/360 value.");
+      ImGui::HelpMarker(Tr("DPI is used to calculate sensitivity given a cm/360 value."));
 
       if (ImGui::Button("400")) {
         set_dpi = 400;
@@ -65,7 +66,7 @@ class SetInitialDpiDialog {
       if (!is_valid) {
         ImGui::BeginDisabled();
       }
-      if (ImGui::Button("Set")) {
+      if (ImGui::Button(Tr("Set"))) {
         set_dpi = dpi_input_value_;
       }
       if (!is_valid) {
@@ -274,21 +275,21 @@ class HomeScreen : public UiScreen {
 
   void DrawLeftNav() {
     AppScreen original_app_screen = app_screen_;
-    if (ImGui::Selectable(std::format("{} Playlists", icons::kList).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kList, Tr("Playlists")).c_str(),
                           app_screen_ == AppScreen::PLAYLISTS)) {
       app_screen_ = AppScreen::PLAYLISTS;
     }
-    if (ImGui::Selectable(std::format("{} Scenarios", icons::kCenterFocusWeak).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kCenterFocusWeak, Tr("Scenarios")).c_str(),
                           app_screen_ == AppScreen::SCENARIOS)) {
       app_screen_ = AppScreen::SCENARIOS;
     }
-    if (ImGui::Selectable(std::format("{} Bundles", icons::kAutoAwesomeMotion).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kAutoAwesomeMotion, Tr("Bundles")).c_str(),
                           app_screen_ == AppScreen::BUNDLES)) {
       app_screen_ = AppScreen::BUNDLES;
     }
     auto latest_run = app_.stats_manager().GetLatestRun();
     if (latest_run) {
-      if (ImGui::Selectable(std::format("{} Results", icons::kAssignment).c_str(), false)) {
+      if (ImGui::Selectable(std::format("{} {}", icons::kAssignment, Tr("Results")).c_str(), false)) {
         PushNextScreen(
             CreateStatsScreen(latest_run->scenario_name, latest_run->run_id, false, &app_));
       }
@@ -304,21 +305,21 @@ class HomeScreen : public UiScreen {
     for (int i = 0; i < 30; ++i) {
       ImGui::Spacing();
     }
-    ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
-    ImGui::TextFmt("init {:.1f}s", app_.state().initialization_times.total.GetSeconds());
-    ImGui::TextFmt("load {:.1f}s", app_.state().initialization_times.load_bundles.GetSeconds());
-    ImGui::TextFmt("db {:.1f}s", app_.state().initialization_times.db.GetSeconds());
-    ImGui::TextFmt("sdl {:.1f}s", app_.state().initialization_times.sdl.GetSeconds());
-    ImGui::TextFmt("audio {:.1f}s", app_.state().initialization_times.audio.GetSeconds());
-    ImGui::TextFmt("window {:.1f}s", app_.state().initialization_times.window.GetSeconds());
-    // ImGui::TextFmt("scenario count: {}", app_.scenario_manager().scenarios().size());
+    ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
+    ImGui::Text("%s", TrFormat("init {:.1f}s", app_.state().initialization_times.total.GetSeconds()).c_str());
+    ImGui::Text("%s", TrFormat("load {:.1f}s", app_.state().initialization_times.load_bundles.GetSeconds()).c_str());
+    ImGui::Text("%s", TrFormat("db {:.1f}s", app_.state().initialization_times.db.GetSeconds()).c_str());
+    ImGui::Text("%s", TrFormat("sdl {:.1f}s", app_.state().initialization_times.sdl.GetSeconds()).c_str());
+    ImGui::Text("%s", TrFormat("audio {:.1f}s", app_.state().initialization_times.audio.GetSeconds()).c_str());
+    ImGui::Text("%s", TrFormat("window {:.1f}s", app_.state().initialization_times.window.GetSeconds()).c_str());
+    // ImGui::Text("%s", TrFormat("scenario count: {}", app_.scenario_manager().scenarios().size());
     for (const auto& item : app_.state().initialization_times.window_trace.GetTrace()) {
       ImGui::Text(item);
     }
     */
 
     // ImGui::SetCursorAtBottom();
-    // ImGui::Text("%s", kAimForgeVersion);
+    // ImGui::Text(Tr("%s"), kAimForgeVersion);
   }
 
   void DrawScenariosScreen() {

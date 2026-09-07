@@ -14,6 +14,7 @@
 #include "aim/core/settings_manager.h"
 #include "aim/graphics/crosshair.h"
 #include "aim/graphics/renderer.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -72,14 +73,14 @@ class ThemeEditor {
     float char_x = ImGui::GetDefaultCharSizeX();
     ImGui::IdGuard cid("CurrentThemeEditor");
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Theme");
+    ImGui::Text(Tr("%s"), Tr("Theme"));
     ImGui::SameLine();
     ImGui::SetNextItemWidth(char_x * 20);
     ImGui::InputText("##NameInput", &current_theme_name_);
 
     bool is_reference = current_theme_.has_reference();
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Reference");
+    ImGui::Text(Tr("%s"), Tr("Reference"));
     ImGui::SameLine();
     ImGui::Checkbox("##ReferenceCheck", &is_reference);
     ImGui::SameLine();
@@ -106,21 +107,21 @@ class ThemeEditor {
       current_theme_.clear_reference();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Targets");
+      ImGui::Text(Tr("%s"), Tr("Targets"));
       ImGui::Indent();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Color");
+      ImGui::Text(Tr("%s"), Tr("Color"));
       ImGui::SameLine();
       DrawStoredColorEditor("TargetColor", current_theme_.mutable_target_color());
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Ghost color");
+      ImGui::Text(Tr("%s"), Tr("Ghost color"));
       ImGui::SameLine();
       DrawStoredColorEditor("GhostTargetColor", current_theme_.mutable_ghost_target_color());
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Center color");
+      ImGui::Text(Tr("%s"), Tr("Center color"));
       ImGui::SameLine();
       DrawOptionalStoredColorEditor(
           "CenterTargetColor",
@@ -131,16 +132,16 @@ class ThemeEditor {
       ImGui::SpacedSeparator();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Crosshair");
+      ImGui::Text(Tr("%s"), Tr("Crosshair"));
       ImGui::Indent();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Color");
+      ImGui::Text(Tr("%s"), Tr("Color"));
       ImGui::SameLine();
       DrawStoredColorEditor("CrosshairColor", current_theme_.mutable_crosshair()->mutable_color());
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Outline color");
+      ImGui::Text(Tr("%s"), Tr("Outline color"));
       ImGui::SameLine();
       DrawStoredColorEditor("OutlineCrosshairColor",
                             current_theme_.mutable_crosshair()->mutable_outline_color());
@@ -150,12 +151,12 @@ class ThemeEditor {
       ImGui::SpacedSeparator();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Health bar");
+      ImGui::Text(Tr("%s"), Tr("Health bar"));
       HealthBarAppearance& health_bar = *current_theme_.mutable_health_bar();
       ImGui::Indent();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Health color");
+      ImGui::Text(Tr("%s"), Tr("Health color"));
       ImGui::SameLine();
       DrawStoredColorEditor("HealthColor", health_bar.mutable_health_color());
 
@@ -168,7 +169,7 @@ class ThemeEditor {
                         PROTO_FLOAT_FIELD(HealthBarAppearance, &health_bar, health_alpha));
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Background color");
+      ImGui::Text(Tr("%s"), Tr("Background color"));
       ImGui::SameLine();
       DrawStoredColorEditor("HealthBackgroundColor", health_bar.mutable_background_color());
 
@@ -184,12 +185,12 @@ class ThemeEditor {
       ImGui::SpacedSeparator();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Walls");
+      ImGui::Text(Tr("%s"), Tr("Walls"));
       ImGui::Indent();
 
       if (current_theme_.front_appearance().has_texture()) {
         ImGui::AlignTextToFramePadding();
-        ImGui::Text("Use same texture on all walls");
+        ImGui::Text(Tr("%s"), Tr("Use same texture on all walls"));
         ImGui::SameLine();
         ImGui::Checkbox("##SameTextureCheck", &share_texture_and_scale_);
       } else {
@@ -239,7 +240,7 @@ class ThemeEditor {
     bool is_rename = !is_new_theme && current_theme_name_ != original_theme_name_;
     if (is_new_theme || is_rename) {
       if (theme_exists) {
-        *error_message = std::format("Theme \"{}\" already exists", current_theme_name_);
+        *error_message = TrFormat("Theme \"{}\" already exists", current_theme_name_);
         return false;
       }
     }
@@ -249,7 +250,7 @@ class ThemeEditor {
     }
 
     if (!app_.settings_manager().SaveTheme(current_theme_name_, current_theme_)) {
-      *error_message = std::format("Unable to save theme \"{}\"", current_theme_name_);
+      *error_message = TrFormat("Unable to save theme \"{}\"", current_theme_name_);
       return false;
     }
     return true;
@@ -289,7 +290,7 @@ class ThemeEditor {
 
     if (selected_type == kSolidColorItem) {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Color");
+      ImGui::Text(Tr("%s"), Tr("Color"));
       ImGui::SameLine();
       ImGui::InputStoredColor("##Color", appearance->mutable_color(), char_x);
     }
@@ -310,7 +311,7 @@ class ThemeEditor {
     }
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Mix percent");
+    ImGui::Text(Tr("%s"), Tr("Mix percent"));
     ImGui::SameLine();
     ImGui::SetNextItemWidth(char_x * 9);
     float mix_percent = appearance->mix_percent();
@@ -318,7 +319,7 @@ class ThemeEditor {
     if (mix_percent > 0) {
       appearance->set_mix_percent(mix_percent);
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Mix color");
+      ImGui::Text(Tr("%s"), Tr("Mix color"));
       ImGui::SameLine();
       DrawStoredColorEditor("MixColor", appearance->mutable_mix_color());
     } else {
@@ -378,7 +379,7 @@ class ThemeEditorScreen : public UiScreen {
     ImGui::SetNextWindowSize(ImVec2(width, -1));
     ImGui::Begin("TopBar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
 
-    if (ImGui::Button(std::format("{} Save", icons::kSave))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSave, Tr("Save")))) {
       std::string error_message = "Could not save theme";
       if (theme_editor_->Save(&error_message)) {
         LoadThemeList();
@@ -388,7 +389,7 @@ class ThemeEditorScreen : public UiScreen {
       }
     }
     ImGui::SameLine();
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("Back")))) {
       BackToThemeList();
     }
 
@@ -466,23 +467,23 @@ class ThemeEditorScreen : public UiScreen {
   void DrawThemeListEditor() {
     ImGui::IdGuard cid("ThemeListEditor");
     ImGui::LoopId loop_id;
-    if (ImGui::Button(std::format("{} Back", icons::kArrowBack))) {
+    if (ImGui::Button(std::format("{} {}", icons::kArrowBack, Tr("Back")))) {
       PopSelf();
     }
     ImGui::SpacedSeparator();
-    if (ImGui::Button(std::format("{} Theme", icons::kAdd))) {
+    if (ImGui::Button(std::format("{} {}", icons::kAdd, Tr("Theme")))) {
       OpenNewTheme();
     }
     ImGui::SpacedSeparator();
     ImGui::BeginChild("ThemesListContent");
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Themes");
+    ImGui::Text(Tr("%s"), Tr("Themes"));
     ImGui::SameLine();
     auto folder = app_.file_system()->GetUserDataPath("resources/themes");
     if (ImGui::Button(icons::kOpenInNew)) {
       OpenFolderInExplorer(folder);
     }
-    ImGui::HelpTooltip(std::format("Open \"{}\"", folder.string()));
+    ImGui::HelpTooltip(TrFormat("Open \"{}\"", folder.string()));
     ImGui::Indent();
     ImGui::Spacing();
     for (const std::string& name : theme_names_) {
@@ -492,14 +493,14 @@ class ThemeEditorScreen : public UiScreen {
       }
       const char* popup_id = "ThemeItemMenu";
       if (ImGui::BeginPopupContextItem(popup_id)) {
-        if (ImGui::Selectable("Copy")) {
+        if (ImGui::Selectable(Tr("Copy"))) {
           OpenThemeCopy(name);
         }
-        if (ImGui::Selectable("Edit")) {
+        if (ImGui::Selectable(Tr("Edit"))) {
           OpenExistingTheme(name);
         }
-        if (ImGui::Selectable("Delete")) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", name), name);
+        if (ImGui::Selectable(Tr("Delete"))) {
+          delete_confirmation_dialog_.NotifyOpen(TrFormat("Delete \"{}\"?", name), name);
         }
         ImGui::EndPopup();
       }

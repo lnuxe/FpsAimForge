@@ -1,6 +1,7 @@
 #include "scenario_factory.h"
 
 #include "aim/scenario/scenario_overrides.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

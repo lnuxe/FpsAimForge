@@ -3,6 +3,7 @@
 #include "aim/common/field.h"
 #include "aim/common/util.h"
 #include "aim/scenario/scenario_util.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

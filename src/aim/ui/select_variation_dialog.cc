@@ -6,6 +6,7 @@
 #include "aim/common/imgui_ext.h"
 #include "aim/common/name_util.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 
@@ -65,23 +66,23 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
 
     ImGui::Spacing();
 
-    if (ImGui::Button("Select")) {
+    if (ImGui::Button(Tr("Select"))) {
       selected = true;
       popup_.Close();
     }
 
     ImGui::SameLine();
-    if (ImGui::Button("Clear")) {
+    if (ImGui::Button(Tr("Clear"))) {
       NameInfo cleared;
       cleared.base_name = name_info_.base_name;
       name_info_ = cleared;
       selected = true;
       popup_.Close();
     }
-    ImGui::HelpTooltip("Clear variation");
+    ImGui::HelpTooltip(Tr("Clear variation"));
 
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       popup_.Close();
     }
     float char_x = ImGui::GetDefaultCharSizeX();
@@ -131,7 +132,7 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
 
     ImGui::SpacedSeparator();
 
-    ImGui::InputBool("Poke", CreateBoolField(&name_info_.is_poke));
+    ImGui::InputBool(Tr("Poke"), CreateBoolField(&name_info_.is_poke));
 
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Duration")
                           .set_is_optional()
@@ -149,7 +150,7 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
     ImGui::SpacedSeparator();
 
     // Sensitivity variation selection
-    ImGui::Text("Sensitivity");
+    ImGui::Text(Tr("%s"), Tr("Sensitivity"));
     ImGui::Indent();
 
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("cm/360")

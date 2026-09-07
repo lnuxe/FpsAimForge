@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "aim/core/target.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

@@ -6,6 +6,7 @@
 
 #include "aim/common/log.h"
 #include "aim/graphics/image.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

@@ -98,7 +98,7 @@ void DrawOrderListEditor(const std::string& type_name,
       }
     }
   }
-  if (ImGui::Button("Add##Order")) {
+  if (ImGui::Button(std::string(Tr("Add")) + "##Order")) {
     order_list->Add(0);
   }
   if (remove_at_i >= 0) {
@@ -137,7 +137,7 @@ void DrawProfileList(const std::string& id,
 
   std::string lower_type_name = absl::AsciiStrToLower(type_name);
   ImGui::AlignTextToFramePadding();
-  ImGui::TextFmt("Explicit {} selection order", lower_type_name);
+  ImGui::Text("%s", TrFormat("Explicit {} selection order", lower_type_name).c_str());
 
   ProfileListInfo* profile_list_info = profile_list_info_field.get_mutable();
   google::protobuf::RepeatedField<int>* order_list = profile_list_info->mutable_explicit_order();
@@ -162,7 +162,7 @@ void DrawProfileList(const std::string& id,
   google::protobuf::RepeatedField<int>* start_order_list = profile_list_info->mutable_start_order();
   bool has_start_order = start_order_list->size() > 0;
   ImGui::AlignTextToFramePadding();
-  ImGui::TextFmt("Initial {} selection order", lower_type_name);
+  ImGui::Text("%s", TrFormat("Initial {} selection order", lower_type_name).c_str());
   ImGui::SameLine();
   ImGui::Checkbox("##HasStartOrder", &has_start_order);
   ImGui::SameLine();
@@ -225,7 +225,7 @@ void DrawProfileList(const std::string& id,
     ImGui::Indent();
     if (use_weights) {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Selection weight");
+      ImGui::Text("%s", Tr("Selection weight"));
       ImGui::SameLine();
       int weight = p->info().weight();
       if (!p->info().has_weight()) {

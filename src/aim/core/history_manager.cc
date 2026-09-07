@@ -1,6 +1,7 @@
 #include "history_manager.h"
 
 #include <memory>
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

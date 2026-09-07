@@ -15,6 +15,7 @@
 #include "aim/ui/editor/scenario_editor_screen.h"
 #include "aim/ui/search_selector.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -23,19 +24,19 @@ void DrawWallArcEditor(WallArcScenarioDef& d) {
   ImGui::IdGuard cid("WallArcEditor");
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Width");
+  ImGui::Text(Tr("%s"), Tr("Width"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Width", RegionLength::kXPercentValue, d.mutable_width(), 50);
   ImGui::SameLine();
-  ImGui::HelpMarker("The arc will be stretched over the specified width");
+  ImGui::HelpMarker(Tr("The arc will be stretched over the specified width"));
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Height");
+  ImGui::Text(Tr("%s"), Tr("Height"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Height", RegionLength::kYPercentValue, d.mutable_height(), 50);
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Height range");
+  ImGui::Text(Tr("%s"), Tr("Height range"));
   ImGui::SameLine();
   bool use_range = d.has_height_jitter();
   ImGui::Checkbox("##UseRange", &use_range);
@@ -46,27 +47,27 @@ void DrawWallArcEditor(WallArcScenarioDef& d) {
     d.clear_height_jitter();
   }
 
-  ImGui::InputBool("Reflect", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
+  ImGui::InputBool(Tr("Reflect"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, reflect));
   ImGui::SameLine();
-  ImGui::HelpMarker("Turn the arc upside down.");
+  ImGui::HelpMarker(Tr("Turn the arc upside down."));
 
-  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
+  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(WallArcScenarioDef, &d, start_on_ground));
 }
 
 void DrawSineEditor(SineScenarioDef& d) {
   ImGui::IdGuard cid("SineEditor");
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Height");
+  ImGui::Text(Tr("%s"), Tr("Height"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Height", RegionLength::kYPercentValue, d.mutable_height(), 20);
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Width");
+  ImGui::Text(Tr("%s"), Tr("Width"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Width", RegionLength::kXPercentValue, d.mutable_width(), 20);
 
-  ImGui::InputBool("Going left", PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
+  ImGui::InputBool(Tr("Going left"), PROTO_BOOL_FIELD(SineScenarioDef, &d, going_left));
 }
 
 void DrawCircleEditor(CircleScenarioDef& d) {
@@ -74,12 +75,12 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::IdGuard cid("CircleEditor");
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Radius");
+  ImGui::Text(Tr("%s"), Tr("Radius"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Radius", RegionLength::kXPercentValue, d.mutable_radius(), 30);
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Final radius");
+  ImGui::Text(Tr("%s"), Tr("Final radius"));
   ImGui::SameLine();
   DrawOptionalRegionLengthEditor("FinalRadius",
                                  RegionLength::kXPercentValue,
@@ -91,14 +92,14 @@ void DrawCircleEditor(CircleScenarioDef& d) {
       "direction change)");
 
   ImGui::InputFloat(ImGui::InputFloatParams("StartDegrees")
-                        .set_label("Start degrees")
+                        .set_label(Tr("Start degrees"))
                         .set_step(5, 30)
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(CircleScenarioDef, &d, start_degrees));
   ImGui::SameLine();
-  ImGui::HelpMarker("0 degrees starts at 3 o'clock and rotates counter clockwise.");
+  ImGui::HelpMarker(Tr("0 degrees starts at 3 o'clock and rotates counter clockwise."));
 
-  ImGui::InputBool("Start clockwise", PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
+  ImGui::InputBool(Tr("Start clockwise"), PROTO_BOOL_FIELD(CircleScenarioDef, &d, rotate_clockwise));
 
   ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Switch direction after time")
                         .set_is_optional()
@@ -111,7 +112,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::SpacedSeparator();
 
   ImGui::InputFloat(ImGui::InputFloatParams("StretchY")
-                        .set_label("Stretch Y")
+                        .set_label(Tr("Stretch Y"))
                         .set_step(0.05, 0.1)
                         .set_default(0.8)
                         .set_min(0.1)
@@ -119,7 +120,7 @@ void DrawCircleEditor(CircleScenarioDef& d) {
                         .set_width(char_x * 10),
                     PROTO_FLOAT_FIELD(CircleScenarioDef, &d, stretch_y));
   ImGui::InputFloat(ImGui::InputFloatParams("StretchX")
-                        .set_label("Stretch X")
+                        .set_label(Tr("Stretch X"))
                         .set_step(0.05, 0.1)
                         .set_default(0.8)
                         .set_min(0.1)
@@ -130,26 +131,26 @@ void DrawCircleEditor(CircleScenarioDef& d) {
   ImGui::SpacedSeparator();
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Depth");
+  ImGui::Text(Tr("%s"), Tr("Depth"));
   ImGui::SameLine();
   DrawRegionLengthEditor("Depth", RegionLength::kDepthPercentValue, d.mutable_depth(), 0);
   ImGui::SameLine();
-  ImGui::HelpMarker("Distance away from the wall");
+  ImGui::HelpMarker(Tr("Distance away from the wall"));
 }
 
 void DrawWallWanderProfile(float char_x, WallWanderProfile* p) {
   ImGui::InputJitteredFloat(ImGui::InputFloatParams("TimeBetweenTurns")
-                                .set_label("Time between turns")
+                                .set_label(Tr("Time between turns"))
                                 .set_step(0.1, 2)
                                 .set_min(0.1)
                                 .set_default(2)
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(WallWanderProfile, p, turn_time));
   ImGui::SameLine();
-  ImGui::HelpMarker("The amount of time to turn in a single direction before switching.");
+  ImGui::HelpMarker(Tr("The amount of time to turn in a single direction before switching."));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams("TurnRate")
-                                .set_label("Turn rate")
+                                .set_label(Tr("Turn rate"))
                                 .set_step(10, 30)
                                 .set_default(300)
                                 .set_min(0)
@@ -169,7 +170,7 @@ void DrawWallWanderEditor(WallWanderScenarioDef& d) {
   if (d.profiles_size() == 0) {
     d.add_profiles();
   }
-  ImGui::Text("Wander profiles");
+  ImGui::Text(Tr("%s"), Tr("Wander profiles"));
   ImGui::Indent();
   DrawProfileList("WanderProfileList",
                   "Profile",
@@ -194,7 +195,7 @@ void DrawLinearEditor(LinearScenarioDef& d) {
                             PROTO_JITTERED_FIELD(LinearScenarioDef, &d, angle));
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial left/right direction");
+  ImGui::Text(Tr("%s"), Tr("Initial left/right direction"));
   ImGui::SameLine();
   Direction left_right_direction_type = d.has_left_right_initial_direction()
                                             ? d.left_right_initial_direction()
@@ -206,7 +207,7 @@ void DrawLinearEditor(LinearScenarioDef& d) {
   d.set_left_right_initial_direction(left_right_direction_type);
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial up/down direction");
+  ImGui::Text(Tr("%s"), Tr("Initial up/down direction"));
   ImGui::SameLine();
   Direction up_down_direction_type = d.up_down_initial_direction();
   ImGui::SimpleTypeDropdown(
@@ -216,7 +217,7 @@ void DrawLinearEditor(LinearScenarioDef& d) {
   ImGui::SpacedSeparator();
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial target location");
+  ImGui::Text(Tr("%s"), Tr("Initial target location"));
   ImGui::Indent();
   DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
   ImGui::Unindent();
@@ -228,12 +229,12 @@ void DrawBarrelEditor(ScenarioDef& def) {
   BarrelScenarioDef& d = *def.mutable_barrel_def();
 
   if (!def.room().has_barrel_room()) {
-    ImGui::Text("Must use barrel room");
+    ImGui::Text(Tr("%s"), Tr("Must use barrel room"));
     return;
   }
 
   ImGui::InputFloat(ImGui::InputFloatParams("DirectionRadiusPercent")
-                        .set_label("Redirect to percent of center")
+                        .set_label(Tr("Redirect to percent of center"))
                         .set_step(1, 5)
                         .set_min(1)
                         .set_default(40)
@@ -258,7 +259,7 @@ void DrawBarrelEditor(ScenarioDef& def) {
   ImGui::SpacedSeparator();
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial target location");
+  ImGui::Text(Tr("%s"), Tr("Initial target location"));
   ImGui::Indent();
   DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
   ImGui::Unindent();
@@ -324,7 +325,7 @@ void DrawStrafeProfile(float char_x,
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(StrafeProfile, p, pause_time));
   ImGui::SameLine();
-  ImGui::HelpMarker("Amount of time to pause at the end of the strafe in seconds");
+  ImGui::HelpMarker(Tr("Amount of time to pause at the end of the strafe in seconds"));
 
   if (p->has_pause_time()) {
     ImGui::Indent();
@@ -336,7 +337,7 @@ void DrawStrafeProfile(float char_x,
                           .set_width(char_x * 10),
                       PROTO_PERCENT_FIELD(StrafeProfile, p, pause_chance_percent));
     ImGui::SameLine();
-    ImGui::HelpMarker("Percent chance that the target will pause at the end of the strafe");
+    ImGui::HelpMarker(Tr("Percent chance that the target will pause at the end of the strafe"));
     ImGui::Unindent();
   } else {
     p->clear_pause_chance_percent();
@@ -355,31 +356,31 @@ void DrawLeftRightStrafeProfiles(PtrField<ProfileListInfo> profiles_info,
                                  Field<Direction> direction_field) {
   ImGui::IdGuard cid("LeftRightProfiles");
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Bounds");
+  ImGui::Text(Tr("%s"), Tr("Bounds"));
   ImGui::SameLine();
   DrawOptionalRegionLengthEditor("Width",
                                  RegionLength::kXPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, Bounds, bounds, width),
                                  90);
   ImGui::SameLine();
-  ImGui::HelpMarker("Constrain where the target can strafe on the wall");
+  ImGui::HelpMarker(Tr("Constrain where the target can strafe on the wall"));
 
   if (relative_bounds != nullptr) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Relative bounds");
+    ImGui::Text(Tr("%s"), Tr("Relative bounds"));
     ImGui::SameLine();
     DrawOptionalRegionLengthEditor("RelativeWidth",
                                    RegionLength::kXPercentValue,
                                    PROTO_PTR_FIELD(RegionLength, Bounds, relative_bounds, width),
                                    40);
     ImGui::SameLine();
-    ImGui::HelpMarker("Constrain movement based on the initial target position");
+    ImGui::HelpMarker(Tr("Constrain movement based on the initial target position"));
   }
 
   float char_x = ImGui::GetDefaultCharSizeX();
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial left/right direction");
+  ImGui::Text(Tr("%s"), Tr("Initial left/right direction"));
   ImGui::SameLine();
   Direction direction = direction_field.get();
   ImGui::SimpleTypeDropdown(
@@ -403,29 +404,29 @@ void DrawUpDownStrafeProfiles(PtrField<ProfileListInfo> profiles_info,
   float char_x = ImGui::GetDefaultCharSizeX();
   ImGui::IdGuard cid("UpDownProfiles");
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Bounds");
+  ImGui::Text(Tr("%s"), Tr("Bounds"));
   ImGui::SameLine();
   DrawOptionalRegionLengthEditor("Height",
                                  RegionLength::kYPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, Bounds, bounds, height),
                                  90);
   ImGui::SameLine();
-  ImGui::HelpMarker("Constrain where the target can strafe on the wall");
+  ImGui::HelpMarker(Tr("Constrain where the target can strafe on the wall"));
 
   if (relative_bounds != nullptr) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Relative bounds");
+    ImGui::Text(Tr("%s"), Tr("Relative bounds"));
     ImGui::SameLine();
     DrawOptionalRegionLengthEditor("RelativeHeight",
                                    RegionLength::kYPercentValue,
                                    PROTO_PTR_FIELD(RegionLength, Bounds, relative_bounds, height),
                                    40);
     ImGui::SameLine();
-    ImGui::HelpMarker("Constrain movement based on the initial target position");
+    ImGui::HelpMarker(Tr("Constrain movement based on the initial target position"));
   }
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial up/down direction");
+  ImGui::Text(Tr("%s"), Tr("Initial up/down direction"));
   ImGui::SameLine();
   Direction direction = direction_field.get();
   ImGui::SimpleTypeDropdown(
@@ -449,29 +450,29 @@ void DrawForwardBackStrafeProfiles(PtrField<ProfileListInfo> profiles_info,
   float char_x = ImGui::GetDefaultCharSizeX();
   ImGui::IdGuard cid("ForwardBackProfiles");
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Bounds");
+  ImGui::Text(Tr("%s"), Tr("Bounds"));
   ImGui::SameLine();
   DrawOptionalRegionLengthEditor("Depth",
                                  RegionLength::kDepthPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, Bounds, bounds, depth),
                                  50);
   ImGui::SameLine();
-  ImGui::HelpMarker("Constrain where the target can move forward and back");
+  ImGui::HelpMarker(Tr("Constrain where the target can move forward and back"));
 
   if (relative_bounds != nullptr) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Relative bounds");
+    ImGui::Text(Tr("%s"), Tr("Relative bounds"));
     ImGui::SameLine();
     DrawOptionalRegionLengthEditor("RelativeDepth",
                                    RegionLength::kDepthPercentValue,
                                    PROTO_PTR_FIELD(RegionLength, Bounds, relative_bounds, depth),
                                    20);
     ImGui::SameLine();
-    ImGui::HelpMarker("Constrain movement based on the initial target position");
+    ImGui::HelpMarker(Tr("Constrain movement based on the initial target position"));
   }
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial forward/back direction");
+  ImGui::Text(Tr("%s"), Tr("Initial forward/back direction"));
   ImGui::SameLine();
   Direction direction = direction_field.get();
   ImGui::SimpleTypeDropdown(
@@ -491,7 +492,7 @@ void DrawStrafeEditor(StrafeScenarioDef& d) {
   ImGui::IdGuard cid("StrafeEditor");
   float char_x = ImGui::GetDefaultCharSizeX();
 
-  ImGui::Text("Left/right profiles");
+  ImGui::Text(Tr("%s"), Tr("Left/right profiles"));
   ImGui::Indent();
   DrawLeftRightStrafeProfiles(
       PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, left_right_profiles_info),
@@ -503,7 +504,7 @@ void DrawStrafeEditor(StrafeScenarioDef& d) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Up/down profiles");
+  ImGui::Text(Tr("%s"), Tr("Up/down profiles"));
   ImGui::Indent();
   DrawUpDownStrafeProfiles(
       PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, up_down_profiles_info),
@@ -515,7 +516,7 @@ void DrawStrafeEditor(StrafeScenarioDef& d) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Forward/back profiles");
+  ImGui::Text(Tr("%s"), Tr("Forward/back profiles"));
   ImGui::Indent();
   DrawForwardBackStrafeProfiles(
       PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, forward_back_profiles_info),
@@ -537,7 +538,7 @@ void DrawStrafeEditor(StrafeScenarioDef& d) {
 
 void DrawBounceProfile(float char_x, BounceProfile* p) {
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Bounce height");
+  ImGui::Text(Tr("%s"), Tr("Bounce height"));
   ImGui::SameLine();
   DrawJitteredRegionLengthEditor("BounceHeight",
                                  RegionLength::kYPercentValue,
@@ -552,7 +553,7 @@ void DrawBounceProfile(float char_x, BounceProfile* p) {
                                 .set_default(0)
                                 .set_width(char_x * 10),
                             PROTO_JITTERED_FIELD(BounceProfile, p, delay_seconds));
-  ImGui::InputBool("Only delay on floor", PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
+  ImGui::InputBool(Tr("Only delay on floor"), PROTO_BOOL_FIELD(BounceProfile, p, only_delay_on_floor));
 
   ImGui::InputJitteredFloat(ImGui::InputFloatParams::WithLabelAsId("Float time")
                                 .set_step(0.01, 0.05)
@@ -587,20 +588,20 @@ void DrawBounceEditor(BounceScenarioDef& d) {
   ImGui::IdGuard cid("BounceEditor");
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Floor height");
+  ImGui::Text(Tr("%s"), Tr("Floor height"));
   ImGui::SameLine();
   DrawOptionalRegionLengthEditor("FloorHeight",
                                  RegionLength::kYPercentValue,
                                  PROTO_PTR_FIELD(RegionLength, BounceScenarioDef, &d, floor_height),
                                  0);
-  ImGui::InputBool("Start on floor", PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
+  ImGui::InputBool(Tr("Start on floor"), PROTO_BOOL_FIELD(BounceScenarioDef, &d, start_on_floor));
 
   ImGui::SpacedSeparator();
 
   if (d.bounce_profiles_size() == 0) {
     d.add_bounce_profiles();
   }
-  ImGui::Text("Bounce profiles");
+  ImGui::Text(Tr("%s"), Tr("Bounce profiles"));
   ImGui::Indent();
   DrawProfileList("BounceProfileList",
                   "Profile",
@@ -611,7 +612,7 @@ void DrawBounceEditor(BounceScenarioDef& d) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Left/right profiles");
+  ImGui::Text(Tr("%s"), Tr("Left/right profiles"));
   ImGui::Indent();
   DrawLeftRightStrafeProfiles(
       PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, &d, left_right_profiles_info),
@@ -622,7 +623,7 @@ void DrawBounceEditor(BounceScenarioDef& d) {
   ImGui::Unindent();
 
   ImGui::SpacedSeparator();
-  ImGui::Text("Forward/back profiles");
+  ImGui::Text(Tr("%s"), Tr("Forward/back profiles"));
   ImGui::Indent();
   DrawForwardBackStrafeProfiles(
       PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, &d, forward_back_profiles_info),
@@ -644,7 +645,7 @@ void DrawBounceEditor(BounceScenarioDef& d) {
 
 void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Distance");
+  ImGui::Text(Tr("%s"), Tr("Distance"));
   ImGui::SameLine();
   DrawJitteredRegionLengthEditor("Distance",
                                  RegionLength::kXPercentValue,
@@ -662,7 +663,7 @@ void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
 
   if (p->angle() > 0 || p->angle_jitter() > 0) {
     ImGui::InputFloat(ImGui::InputFloatParams("DirectionChangePercent")
-                          .set_label("Direction change chance")
+                          .set_label(Tr("Direction change chance"))
                           .set_step(1, 5)
                           .set_range(0, 100)
                           .set_default(50)
@@ -699,7 +700,7 @@ void DrawAngleStrafeEditor(AngleStrafeScenarioDef& w) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Strafe profiles");
+  ImGui::Text(Tr("%s"), Tr("Strafe profiles"));
   ImGui::Indent();
   DrawProfileList("StrafeProfileList",
                   "Profile",
@@ -726,7 +727,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
   }
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Type");
+  ImGui::Text(Tr("%s"), Tr("Type"));
   ImGui::SameLine();
   ImGui::SimpleDropdown("##TypeDrop", &type, {kPoints, kAngle}, char_x * 13);
 
@@ -742,7 +743,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
   if (use_angle) {
     ImGui::Indent();
     ImGui::InputJitteredFloat(ImGui::InputFloatParams("Angle")
-                                  .set_label("Angle degrees")
+                                  .set_label(Tr("Angle degrees"))
                                   .set_step(1, 5)
                                   .set_width(char_x * 12),
                               PROTO_JITTERED_FIELD(CenteringScenarioDef, &c, angle));
@@ -759,13 +760,13 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
     }
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Point 1");
+    ImGui::Text(Tr("%s"), Tr("Point 1"));
     ImGui::Indent();
     DrawRegionVec2Editor("Point1", c.mutable_wall_points(0));
     ImGui::Unindent();
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Point 2");
+    ImGui::Text(Tr("%s"), Tr("Point 2"));
     ImGui::Indent();
     DrawRegionVec2Editor("Point2", c.mutable_wall_points(1));
     ImGui::Unindent();
@@ -774,7 +775,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
     for (int i = 2; i < c.wall_points_size(); ++i) {
       ImGui::IdGuard lid("ExtraPoint", i);
       ImGui::AlignTextToFramePadding();
-      ImGui::TextFmt("Point {}", i + 1);
+      ImGui::Text("%s", TrFormat("Point {}", i + 1).c_str());
       ImGui::SameLine();
       if (ImGui::Button(icons::kCancel)) {
         remove_at_i = i;
@@ -785,7 +786,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
     }
 
     ImGui::Spacing();
-    if (ImGui::Button("Add point")) {
+    if (ImGui::Button(Tr("Add point"))) {
       c.add_wall_points();
     }
 
@@ -827,9 +828,9 @@ void DrawReferenceEditor(ScenarioDef& def,
 
   ReferenceScenarioDef& r = *def.mutable_reference_def();
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Scenario");
+  ImGui::Text(Tr("%s"), Tr("Scenario"));
   ImGui::SameLine();
-  ImGui::HelpMarker("The name of the scenario to reference");
+  ImGui::HelpMarker(Tr("The name of the scenario to reference"));
   ImGui::SameLine();
 
   if (app != nullptr) {
@@ -846,7 +847,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         opts.scenario_name = r.scenario_name();
         app->GetCurrentScreen()->PushNextScreen(CreateScenarioEditorScreen(opts, app));
       }
-      ImGui::HelpTooltip("Go to the referenced scenario. All current edits will be lost.");
+      ImGui::HelpTooltip(Tr("Go to the referenced scenario. All current edits will be lost."));
     }
   } else {
     ImGui::InputText("##ScenarioReference", r.mutable_scenario_name());
@@ -854,7 +855,7 @@ void DrawReferenceEditor(ScenarioDef& def,
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Overrides");
+  ImGui::Text(Tr("%s"), Tr("Overrides"));
   ImGui::Indent();
   DrawOverridesEditor("ReferenceOverrides", def.mutable_overrides());
   ImGui::Unindent();
@@ -862,7 +863,7 @@ void DrawReferenceEditor(ScenarioDef& def,
   ImGui::SpacedSeparator();
 
   bool has_level_overrides = def.has_level_overrides();
-  ImGui::Text("Level overrides");
+  ImGui::Text(Tr("%s"), Tr("Level overrides"));
   ImGui::SameLine();
   ImGui::Checkbox("##LevelOverridesCheck", &has_level_overrides);
   if (has_level_overrides) {
@@ -910,7 +911,7 @@ void DrawReferenceEditor(ScenarioDef& def,
   if (app != nullptr) {
     bool has_room = r.has_room();
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Change room");
+    ImGui::Text(Tr("%s"), Tr("Change room"));
     ImGui::SameLine();
     ImGui::Checkbox("##OverrideRoomCheck", &has_room);
     if (has_room) {
@@ -924,7 +925,7 @@ void DrawReferenceEditor(ScenarioDef& def,
         }
       }
       ImGui::SameLine();
-      if (ImGui::Button(std::format("{} Room", icons::kEdit))) {
+      if (ImGui::Button(std::format("{} {}", icons::kEdit, Tr("Room")))) {
         *editing_room = true;
       }
     } else {
@@ -944,7 +945,7 @@ void DrawReferenceEditor(ScenarioDef& def,
 
   bool has_shot_type = def.reference_def().has_shot_type();
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Shot type");
+  ImGui::Text(Tr("%s"), Tr("Shot type"));
   ImGui::SameLine();
   ImGui::Checkbox("##OverrideShotType", &has_shot_type);
   if (has_shot_type) {
@@ -958,8 +959,8 @@ void DrawReferenceEditor(ScenarioDef& def,
   if (description_dialog != nullptr) {
     ImGui::SpacedSeparator();
     std::string button_text = r.description().empty()
-                                  ? std::format("{} Set description", icons::kEdit)
-                                  : std::format("{} Edit description", icons::kEdit);
+                                  ? std::format("{} {}", icons::kEdit, Tr("Set description"))
+                                  : std::format("{} {}", icons::kEdit, Tr("Edit description"));
     if (ImGui::Button(button_text)) {
       description_dialog->NotifyOpen(r.description());
     }
@@ -974,7 +975,7 @@ void DrawReferenceEditor(ScenarioDef& def,
   ImGui::SpacedSeparator();
 
   if (app != nullptr) {
-    if (ImGui::Button("Bake")) {
+    if (ImGui::Button(Tr("Bake"))) {
       auto parent = app->scenario_manager().GetEvaluatedScenarioDef(r.scenario_name());
       if (parent) {
         ScenarioDef baked_def = *parent;
@@ -982,11 +983,11 @@ void DrawReferenceEditor(ScenarioDef& def,
         def = ApplyScenarioOverrides(baked_def);
       } else {
         *error_message_out =
-            std::format("Referenced scenario \"{}\" is invalid.", r.scenario_name());
+            TrFormat("Referenced scenario \"{}\" is invalid.", r.scenario_name());
       }
     }
     ImGui::SameLine();
-    ImGui::HelpMarker("Expand and remove the reference. Will now be an equivalent normal scenario");
+    ImGui::HelpMarker(Tr("Expand and remove the reference. Will now be an equivalent normal scenario"));
   }
 }
 
@@ -1069,7 +1070,7 @@ void DrawScenarioTypeEditor(ScenarioDef& def,
   float char_x = ImGui::GetDefaultCharSizeX();
   ImGui::IdGuard cid("ScenarioTypeEditor");
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Scenario type");
+  ImGui::Text(Tr("%s"), Tr("Scenario type"));
   ImGui::SameLine();
 
   if (def.type_case() == ScenarioDef::TYPE_NOT_SET) {
@@ -1156,7 +1157,7 @@ void DrawSecondaryScenarioTypeEditor(ScenarioDef& def) {
 
   bool use_target_placement = strat->has();
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Set initial target location");
+  ImGui::Text(Tr("%s"), Tr("Set initial target location"));
   ImGui::SameLine();
   bool changed = ImGui::Checkbox("##UseTargetPlacement", &use_target_placement);
   if (use_target_placement) {
@@ -1206,7 +1207,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kPoke) {
     ImGui::InputFloat(ImGui::InputFloatParams("PokeKillTime")
-                          .set_label("Poke kill time")
+                          .set_label(Tr("Poke kill time"))
                           .set_step(0.01, 0.1)
                           .set_min(0.01)
                           .set_default(0.1)
@@ -1217,7 +1218,7 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kClickMulti) {
     ImGui::InputInt(ImGui::InputIntParams("ClickCount")
-                        .set_label("Clicks to kill")
+                        .set_label(Tr("Clicks to kill"))
                         .set_step(1, 2)
                         .set_min(2)
                         .set_default(3)
@@ -1239,7 +1240,7 @@ void DrawShotTypeEditor(ShotType& s) {
         "The closest target will become a ghost on miss and be removed after the specified time");
     if (s.has_ghost_closest_on_miss()) {
       ImGui::Indent();
-      ImGui::InputBool("Unghost instead of remove",
+      ImGui::InputBool(Tr("Unghost instead of remove"),
                        PROTO_BOOL_FIELD(ShotType, &s, unghost_miss_on_expiration));
       ImGui::SameLine();
       ImGui::HelpMarker(
@@ -1257,11 +1258,11 @@ void DrawShotTypeEditor(ShotType& s) {
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ShotType, &s, click_rate_seconds));
     ImGui::SameLine();
-    ImGui::HelpMarker("The amount of time in seconds after shooting before you can shoot again");
+    ImGui::HelpMarker(Tr("The amount of time in seconds after shooting before you can shoot again"));
 
     bool has_reload = s.has_reload();
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Reload");
+    ImGui::Text(Tr("%s"), Tr("Reload"));
     ImGui::SameLine();
     ImGui::Checkbox("##ReloadCheckbox", &has_reload);
     ImGui::SameLine();
@@ -1284,7 +1285,7 @@ void DrawShotTypeEditor(ShotType& s) {
                           .set_width(char_x * 10),
                       PROTO_INT_FIELD(ReloadInfo, s.mutable_reload(), num_to_reload_on_hit));
       ImGui::SameLine();
-      ImGui::HelpMarker("Number of shots to reload on a hit up to the \"max shots\".");
+      ImGui::HelpMarker(Tr("Number of shots to reload on a hit up to the \"max shots\"."));
 
       ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Reload time")
                             .set_step(0.05, 0.2)
@@ -1308,17 +1309,17 @@ void DrawShotTypeEditor(ShotType& s) {
 
   if (type == ShotType::kTrackingKill) {
     ImGui::InputFloat(ImGui::InputFloatParams("HealthSeconds")
-                          .set_label("Health time")
+                          .set_label(Tr("Health time"))
                           .set_step(0.01, 0.1)
                           .set_min(0.01)
                           .set_default(0.4)
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ShotType, &s, health_seconds));
     ImGui::SameLine();
-    ImGui::HelpMarker("The amount of time in seconds to kill the target.");
+    ImGui::HelpMarker(Tr("The amount of time in seconds to kill the target."));
 
     ImGui::InputFloat(ImGui::InputFloatParams("HealthRegenRate")
-                          .set_label("Health regen rate")
+                          .set_label(Tr("Health regen rate"))
                           .set_step(0.1, 0.5)
                           .set_min(0.1)
                           .set_default(1)
@@ -1344,7 +1345,7 @@ void DrawShotTypeEditor(ShotType& s) {
         "off the target, it will be removed and you will get partial points. The kill sound is "
         "played when this threshold is passed.");
 
-    ImGui::InputBool("No partial kills", PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
+    ImGui::InputBool(Tr("No partial kills"), PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
   }
 }
 

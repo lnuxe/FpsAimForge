@@ -17,6 +17,7 @@ extern char** environ;
 #include "aim/common/log.h"
 #include "google/protobuf/json/json.h"
 #include "google/protobuf/util/json_util.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

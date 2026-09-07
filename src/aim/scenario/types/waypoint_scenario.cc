@@ -9,6 +9,7 @@
 #include "aim/scenario/waypoint_movement_controller.h"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

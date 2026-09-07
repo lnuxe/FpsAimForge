@@ -26,6 +26,7 @@
 #include "aim/ui/top_bar.h"
 #include "imgui.h"
 #include "implot.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -111,13 +112,16 @@ void DrawScoresOverTimePlot(const std::string& scenario_name,
       float x_val = mouse_pos.x;
       float y_val = scores[closest_index];
       ImGui::BeginTooltip();
-      ImGui::Text("Score: %.2f", y_val);
-      ImGui::Text("Time: %.2f", x_val);
+      ImGui::Text(Tr("Score: %.2f"), y_val);
+      ImGui::Text(Tr("Time: %.2f"), x_val);
       ImGui::EndTooltip();
 
-      ImPlot::SetNextMarkerStyle(
-          ImPlotMarker_Circle, 4.0f, ImVec4(1, 0, 0, 1), IMPLOT_AUTO, ImVec4(1, 0, 0, 1));
-      ImPlot::PlotScatter("MouseDot", &x_val, &y_val, 1);
+      ImPlotSpec mouse_dot_spec;
+      mouse_dot_spec.Marker = ImPlotMarker_Circle;
+      mouse_dot_spec.MarkerSize = 4.0f;
+      mouse_dot_spec.MarkerFillColor = ImVec4(1, 0, 0, 1);
+      mouse_dot_spec.MarkerLineColor = ImVec4(1, 0, 0, 1);
+      ImPlot::PlotScatter("MouseDot", &x_val, &y_val, 1, mouse_dot_spec);
     }
   }
 
@@ -308,22 +312,22 @@ class StatsScreen : public UiScreen {
   }
 
   void DrawLeftNav() {
-    if (ImGui::Selectable(std::format("{} Home", icons::kHome).c_str(), false)) {
+    if (ImGui::Selectable(std::format("{} {}", icons::kHome, Tr("Home")).c_str(), false)) {
       ReturnHome();
     }
-    if (ImGui::Selectable(std::format("{} Stats", icons::kAssignment).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kAssignment, Tr("Stats")).c_str(),
                           selected_screen_ == SelectedScreen::STATS)) {
       selected_screen_ = SelectedScreen::STATS;
     }
-    if (ImGui::Selectable(std::format("{} History", icons::kBarChart).c_str(),
+    if (ImGui::Selectable(std::format("{} {}", icons::kBarChart, Tr("History")).c_str(),
                           selected_screen_ == SelectedScreen::HISTORY)) {
       selected_screen_ = SelectedScreen::HISTORY;
     }
-    if (replay_ && ImGui::Selectable(std::format("{} Replay", icons::kLiveTv).c_str(), false)) {
+    if (replay_ && ImGui::Selectable(std::format("{} {}", icons::kLiveTv, Tr("Replay")).c_str(), false)) {
       PushNextScreen(CreateReplayViewerScreen(replay_, &app_));
     }
     if (performance_stats_) {
-      if (ImGui::Selectable(std::format("{} Perf", icons::kSmartToy).c_str(),
+      if (ImGui::Selectable(std::format("{} {}", icons::kSmartToy, Tr("Perf")).c_str(),
                             selected_screen_ == SelectedScreen::PERF)) {
         selected_screen_ = SelectedScreen::PERF;
       }
@@ -494,12 +498,12 @@ class StatsScreen : public UiScreen {
     ImGui::Spacing();
     if (percent_diff > 0) {
       auto font = app_.font_manager().UseDefault();
-      ImGui::Button("NEW HIGH SCORE");
+      ImGui::Button(Tr("NEW HIGH SCORE"));
     }
     {
       auto font = app_.font_manager().UseLarge();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Score:");
+      ImGui::Text(Tr("%s"), Tr("Score:"));
       ImGui::SameLine();
       ImGui::Text(MaybeIntToString(stats.score, 2));
     }
@@ -513,7 +517,7 @@ class StatsScreen : public UiScreen {
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           details_.previous_high_score_stats.epoch_seconds, GetNowEpochSeconds());
       bool is_new_high = percent_diff > 0;
-      std::string prefix = is_new_high ? "Previous high score" : "Current high score";
+      std::string prefix = is_new_high ? Tr("Previous high score") : Tr("Current high score");
       ImGui::HelpTooltip(std::format(
           "{}: {} ({})", prefix, MaybeIntToString(previous_high_score, 2), high_score_time));
     }
@@ -536,7 +540,7 @@ class StatsScreen : public UiScreen {
         }
         auto font2 = app_.font_manager().UseDefault();
         ImGui::HelpTooltip(
-            std::format("Target score: {}",
+            TrFormat("Target score: {}",
                         MaybeIntToString(evaluated_scenario_def_->score_targets().end(), 1)));
       }
     }
@@ -621,14 +625,14 @@ class StatsScreen : public UiScreen {
       std::string high_score_time = GetHowLongAgoStringFromEpochSeconds(
           details_.previous_high_score_stats.epoch_seconds, GetNowEpochSeconds());
       bool is_new_high = percent_diff > 0;
-      std::string prefix = is_new_high ? "Previous high" : "Current high";
+      std::string prefix = is_new_high ? Tr("Previous high") : Tr("Current high");
       ImGui::TextFmt(
           "{}: {} ({})", prefix, MaybeIntToString(previous_high_score, 2), high_score_time);
     }
     if (all_stats.size() > 2) {
       auto avg_comparison = GetStatsComparison(details_.stats, details_.average_stats);
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Average");
+      ImGui::Text(Tr("%s"), Tr("Average"));
       ImGui::BeginDisabled();
       ImGui::SameLine();
       ImGui::Button(std::format("{}###avg_diff_button", avg_comparison.score_diff_percent_string));
@@ -636,7 +640,7 @@ class StatsScreen : public UiScreen {
     }
 
     if (all_stats.size() > 1) {
-      ImGui::TextFmt("{} total runs", all_stats.size());
+      ImGui::Text("%s", TrFormat("{} total runs", all_stats.size()).c_str());
     }
   }
 
@@ -660,7 +664,7 @@ class StatsScreen : public UiScreen {
 
       if (scores_over_time_) {
         ImGui::SpacedSeparator();
-        if (ImGui::TreeNode("Score over time")) {
+        if (ImGui::TreeNode(Tr("Score over time"))) {
           DrawScoresOverTimePlot(scenario_name_, run_id_, *scores_over_time_, score_target_);
           ImGui::TreePop();
         }
@@ -668,7 +672,7 @@ class StatsScreen : public UiScreen {
 
       if (compare_to_scenarios_.size() > 0) {
         ImGui::SpacedSeparator();
-        if (ImGui::TreeNode("More comparisons")) {
+        if (ImGui::TreeNode(Tr("More comparisons"))) {
           ImGui::IdGuard cid("MoreComparisons");
           DrawStatsTable(/*is_comparisons=*/true);
           ImGui::TreePop();
@@ -705,12 +709,12 @@ class StatsScreen : public UiScreen {
   }
 
   void DrawHistoryListTable() {
-    if (ImGui::Button("Clear history")) {
+    if (ImGui::Button(Tr("Clear history"))) {
       delete_history_confirmation_dialog_.NotifyOpen(
-          std::format("Delete history for \"{}\"?", scenario_name_), scenario_name_);
+          TrFormat("Delete history for \"{}\"?", scenario_name_), scenario_name_);
     }
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Sort by score");
+    ImGui::Text(Tr("%s"), Tr("Sort by score"));
     ImGui::SameLine();
     if (ImGui::Checkbox("##HistorySortByScore", &sort_by_score_)) {
       history_rows_ = {};

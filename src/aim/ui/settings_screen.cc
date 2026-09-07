@@ -12,6 +12,7 @@
 #include "aim/common/search.h"
 #include "aim/core/settings_manager.h"
 #include "aim/core/version.h"
+#include "aim/i18n/i18n.h"
 #include "aim/proto/common.pb.h"
 #include "aim/ui/crosshair_editor_screen.h"
 #include "aim/ui/theme_editor_screen.h"
@@ -75,7 +76,7 @@ class SoundInputDialog {
       ImGui::EndChild();
       ImGui::SpacedSeparator();
 
-      if (ImGui::Button("Cancel")) {
+      if (ImGui::Button(Tr("Cancel"))) {
         popup_.Close();
       }
 
@@ -99,9 +100,9 @@ struct KeybindItem {
 };
 
 const std::vector<std::pair<PresentMode, std::string>> kPresentModes{
-    {PresentMode::PRESENT_MODE_IMMEDIATE, "Immediate"},
-    {PresentMode::PRESENT_MODE_VSYNC, "Vsync"},
-    {PresentMode::PRESENT_MODE_MAILBOX, "Mailbox"},
+    {PresentMode::PRESENT_MODE_IMMEDIATE, Tr("Immediate")},
+    {PresentMode::PRESENT_MODE_VSYNC, Tr("Vsync")},
+    {PresentMode::PRESENT_MODE_MAILBOX, Tr("Mailbox")},
 };
 
 const char* kQuickSettingsHelpText =
@@ -138,20 +139,38 @@ class SettingsScreen : public UiScreen {
     if (!ImGui::BeginTabBar("SettingsTabBar")) {
       return;
     }
-    if (ImGui::BeginTabItem("Settings")) {
+    if (ImGui::BeginTabItem(Tr("Settings"))) {
       ImGui::Spacing();
+
+      Language language = GetLanguage();
+      ImGui::AlignTextToFramePadding();
+      ImGui::Text("%s", Tr("Language"));
+      ImGui::SameLine();
+      const char* preview = language == Language::kChinese ? Tr("Chinese") : Tr("English");
+      if (ImGui::BeginCombo("LanguageDropdown", preview, ImGuiComboFlags_WidthFitPreview)) {
+        if (ImGui::Selectable(Tr("English"), language == Language::kEnglish)) {
+          SaveLanguageToStore(app_.local_store(), Language::kEnglish);
+        }
+        if (ImGui::Selectable(Tr("Chinese"), language == Language::kChinese)) {
+          SaveLanguageToStore(app_.local_store(), Language::kChinese);
+        }
+        ImGui::EndCombo();
+      }
+
+      ImGui::SpacedSeparator();
+
       ImGui::InputFloat(ImGui::InputFloatParams("CmPer360")
-                            .set_label("cm/360")
+                            .set_label(Tr("cm/360"))
                             .set_step(1, 5)
                             .set_width(char_x_ * 9)
                             .set_min(1)
                             .set_default(35),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, cm_per_360));
       ImGui::SameLine();
-      ImGui::HelpMarker("Adjust within a run by holding \"s\" and using the scroll wheel");
+      ImGui::HelpMarker(Tr("Adjust within a run by holding \"s\" and using the scroll wheel"));
 
       ImGui::InputFloat(ImGui::InputFloatParams("Dpi")
-                            .set_label("DPI")
+                            .set_label(Tr("DPI"))
                             .set_step(100, 200)
                             .set_width(char_x_ * 10)
                             .set_min(100)
@@ -161,7 +180,7 @@ class SettingsScreen : public UiScreen {
       ImGui::SpacedSeparator();
 
       ImGui::InputFloat(ImGui::InputFloatParams("Fps")
-                            .set_label("Max render fps")
+                            .set_label(Tr("Max render fps"))
                             .set_is_optional()
                             .set_step(10, 100)
                             .set_width(char_x_ * 10)
@@ -173,7 +192,7 @@ class SettingsScreen : public UiScreen {
           "refresh rate to reduce tearing.");
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Present mode");
+      ImGui::Text(Tr("%s"), Tr("Present mode"));
       ImGui::SameLine();
       PresentMode present_mode = updater_.settings.present_mode();
       ImGui::SimpleTypeDropdown("GpuPresentModes", &present_mode, kPresentModes, char_x_ * 10);
@@ -182,13 +201,13 @@ class SettingsScreen : public UiScreen {
       const char* driver_name = SDL_GetGPUDeviceDriver(app_.gpu_device());
       if (driver_name != nullptr) {
         ImGui::AlignTextToFramePadding();
-        ImGui::TextFmt("GPU device driver: {}", driver_name);
+        ImGui::Text("%s", TrFormat("GPU device driver: {}", driver_name).c_str());
       }
 
       ImGui::SpacedSeparator();
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Theme");
+      ImGui::Text(Tr("%s"), Tr("Theme"));
       ImGui::SameLine();
       ImGui::SimpleDropdown(
           "ThemeDropdown", updater_.settings.mutable_theme_name(), theme_names_, char_x_ * 20);
@@ -196,10 +215,10 @@ class SettingsScreen : public UiScreen {
       if (ImGui::Button(std::format("{}##EditThemes", icons::kEdit))) {
         PushNextScreen(CreateThemeEditorScreen(&app_));
       }
-      ImGui::HelpTooltip("Open theme editor");
+      ImGui::HelpTooltip(Tr("Open theme editor"));
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Crosshair");
+      ImGui::Text(Tr("%s"), Tr("Crosshair"));
       ImGui::SameLine();
       bool crosshair_opened = false;
       ImGui::SimpleDropdown("CrosshairDropdown",
@@ -215,7 +234,7 @@ class SettingsScreen : public UiScreen {
       if (ImGui::Button(std::format("{}##EditCrosshairs", icons::kEdit))) {
         PushNextScreen(CreateCrosshairEditorScreen(&app_));
       }
-      ImGui::HelpTooltip("Open crosshair editor");
+      ImGui::HelpTooltip(Tr("Open crosshair editor"));
       ImGui::SameLine();
       if (ImGui::Button(std::format("{}##EditCrosshairColor", icons::kPalette))) {
         ThemeEditorOptions opts;
@@ -227,22 +246,22 @@ class SettingsScreen : public UiScreen {
           "the theme.");
 
       ImGui::InputFloat(ImGui::InputFloatParams("CrosshairSize")
-                            .set_label("Crosshair size")
+                            .set_label(Tr("Crosshair size"))
                             .set_min(0.1)
                             .set_step(0.1, 1)
                             .set_default(15)
                             .set_width(char_x_ * 9),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, crosshair_size));
       ImGui::SameLine();
-      ImGui::HelpMarker("Adjust within a run by holding \"c\" and using the scroll wheel");
+      ImGui::HelpMarker(Tr("Adjust within a run by holding \"c\" and using the scroll wheel"));
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool("Save settings per scenario",
+      ImGui::InputBool(Tr("Save settings per scenario"),
                        InvertBoolField(PROTO_BOOL_FIELD(
                            Settings, &updater_.settings, disable_per_scenario_settings)));
 
-      ImGui::InputBool("Auto hold tracking",
+      ImGui::InputBool(Tr("Auto hold tracking"),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, auto_hold_tracking));
 
       ImGui::SpacedSeparator();
@@ -259,31 +278,31 @@ class SettingsScreen : public UiScreen {
                             .set_width(char_x_ * 10),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, start_countdown_time));
       ImGui::SameLine();
-      ImGui::HelpMarker("A countdown will be shown whenever a scenario is about to start");
+      ImGui::HelpMarker(Tr("A countdown will be shown whenever a scenario is about to start"));
 
       ImGui::SpacedSeparator();
-      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label("Enable metronome"),
+      ImGui::InputBool(ImGui::InputBoolParams("EnableMetronome").set_label(Tr("Enable metronome")),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, enable_metronome));
       ImGui::InputFloat(ImGui::InputFloatParams("MetronomeBpm")
-                            .set_label("Metronome BPM")
+                            .set_label(Tr("Metronome BPM"))
                             .set_min(0)
                             .set_zero_is_unset()
                             .set_step(1, 5)
                             .set_width(char_x_ * 10),
                         PROTO_FLOAT_FIELD(Settings, &updater_.settings, metronome_bpm));
       ImGui::SameLine();
-      ImGui::HelpMarker("Adjust within a run by holding \"b\" and using the scroll wheel");
+      ImGui::HelpMarker(Tr("Adjust within a run by holding \"b\" and using the scroll wheel"));
 
       ImGui::SpacedSeparator();
 
       ImGui::InputBool(
-          ImGui::InputBoolParams("ShowHealthBars").set_label("Show health bars"),
+          ImGui::InputBoolParams("ShowHealthBars").set_label(Tr("Show health bars")),
           PROTO_BOOL_FIELD(HealthBarSettings, updater_.settings.mutable_health_bar(), show));
       if (updater_.settings.health_bar().show()) {
         ImGui::Indent();
 
         ImGui::InputBool(
-            ImGui::InputBoolParams("OnlyDamaged").set_label("Only damaged"),
+            ImGui::InputBoolParams("OnlyDamaged").set_label(Tr("Only damaged")),
             PROTO_BOOL_FIELD(
                 HealthBarSettings, updater_.settings.mutable_health_bar(), only_damaged));
 
@@ -301,33 +320,33 @@ class SettingsScreen : public UiScreen {
 
       ImGui::SpacedSeparator();
 
-      ImGui::InputBool(ImGui::InputBoolParams("DisableReplays").set_label("Disable replays"),
+      ImGui::InputBool(ImGui::InputBoolParams("DisableReplays").set_label(Tr("Disable replays")),
                        PROTO_BOOL_FIELD(Settings, &updater_.settings, disable_replays));
 
       ImGui::SpacedSeparator();
 
-      if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
+      if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("Folder")))) {
         OpenFolderInExplorer(app_.file_system()->GetUserDataPath());
       }
       ImGui::HelpTooltip(
-          std::format("Open \"{}\"", app_.file_system()->GetUserDataPath().string()));
+          TrFormat("Open \"{}\"", app_.file_system()->GetUserDataPath().string()));
       ImGui::Text(kAimForgeVersion);
 
       ImGui::EndTabItem();
     }
-    if (ImGui::BeginTabItem("Keybinds")) {
+    if (ImGui::BeginTabItem(Tr("Keybinds"))) {
       ImGui::Spacing();
       DrawKeybinds();
       ImGui::EndTabItem();
     }
 
-    if (ImGui::BeginTabItem("Sounds")) {
+    if (ImGui::BeginTabItem(Tr("Sounds"))) {
       ImGui::Spacing();
       DrawSounds();
       ImGui::EndTabItem();
     }
 
-    if (ImGui::BeginTabItem("Scenario Settings")) {
+    if (ImGui::BeginTabItem(Tr("Scenario Settings"))) {
       ImGui::Spacing();
       DrawScenarioSettingsConfig();
       ImGui::EndTabItem();
@@ -368,7 +387,7 @@ class SettingsScreen : public UiScreen {
   }
 
   void DrawScenarioSettingsConfig() {
-    ImGui::InputBool("Save settings per scenario",
+    ImGui::InputBool(Tr("Save settings per scenario"),
                      InvertBoolField(PROTO_BOOL_FIELD(
                          Settings, &updater_.settings, disable_per_scenario_settings)));
     ImGui::SameLine();
@@ -396,7 +415,7 @@ class SettingsScreen : public UiScreen {
       type_field.set(type);
     };
 
-    ImGui::Text("Choose which fields are stored uniquely for each scenario");
+    ImGui::Text(Tr("%s"), Tr("Choose which fields are stored uniquely for each scenario"));
     ImGui::SameLine();
     ImGui::HelpMarker(
         "\"Scenario\" means this setting will be saved per scenario. \"Global\" means that all "
@@ -447,7 +466,7 @@ class SettingsScreen : public UiScreen {
                       PROTO_FLOAT_FIELD(Settings, &updater_.settings, tracking_shots_per_second));
 
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Proximity tracking shots per second");
+    ImGui::Text(Tr("%s"), Tr("Proximity tracking shots per second"));
     bool has_proximity_sounds = updater_.settings.has_proximity_max_shots_per_second() ||
                                 updater_.settings.has_proximity_min_shots_per_second();
     ImGui::SameLine();
@@ -480,7 +499,7 @@ class SettingsScreen : public UiScreen {
     float char_x = ImGui::GetDefaultCharSizeX();
     {
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("Volume level");
+      ImGui::Text(Tr("%s"), Tr("Volume level"));
       ImGui::SameLine();
       float volume_level = 1;
       if (s.has_master_volume_level()) {
@@ -522,7 +541,7 @@ class SettingsScreen : public UiScreen {
 
         ImGui::SameLine();
         ImGui::AlignTextToFramePadding();
-        ImGui::Text("Volume level");
+        ImGui::Text(Tr("%s"), Tr("Volume level"));
         ImGui::SameLine();
 
         bool has_volume_level = item->has_volume_level();
@@ -559,10 +578,10 @@ class SettingsScreen : public UiScreen {
     ImGui::SpacedSeparator();
 
     auto sounds_folder = app_.file_system()->GetUserDataPath("resources/sounds");
-    if (ImGui::Button(std::format("{} Sounds folder", icons::kOpenInNew))) {
+    if (ImGui::Button(std::format("{} {}", icons::kOpenInNew, Tr("Sounds folder")))) {
       OpenFolderInExplorer(sounds_folder);
     }
-    ImGui::HelpTooltip(std::format("Open \"{}\"", sounds_folder.string()));
+    ImGui::HelpTooltip(TrFormat("Open \"{}\"", sounds_folder.string()));
   }
 
   void DrawScreen() override {
@@ -581,7 +600,7 @@ class SettingsScreen : public UiScreen {
   void DrawControls() {
     {
       ImVec2 sz = ImVec2(char_x_ * 14, 0.0f);
-      if (ImGui::Button("Save", sz)) {
+      if (ImGui::Button(Tr("Save"), sz)) {
         app_.settings_manager().MarkDirty();
         updater_.SaveIfChangesMade(scenario_id_);
         PopSelf();
@@ -590,7 +609,7 @@ class SettingsScreen : public UiScreen {
     {
       ImGui::SameLine();
       ImVec2 sz = ImVec2(0, 0.0f);
-      if (ImGui::Button("Cancel", sz)) {
+      if (ImGui::Button(Tr("Cancel"), sz)) {
         PopSelf();
       }
     }
@@ -669,13 +688,13 @@ class SettingsScreen : public UiScreen {
 
     float start_x = ImGui::GetCursorPosX();
 
-    if (ImGui::Button(std::format("{} Save", icons::kSave))) {
+    if (ImGui::Button(std::format("{} {}", icons::kSave, Tr("Save")))) {
       app_.settings_manager().MarkDirty();
       updater_.SaveIfChangesMade(scenario_id_);
       PopSelf();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       PopSelf();
     }
 

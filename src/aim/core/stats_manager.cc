@@ -4,6 +4,7 @@
 
 #include "aim/common/times.h"
 #include "aim/core/playlist_manager.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

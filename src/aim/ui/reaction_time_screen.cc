@@ -9,6 +9,7 @@
 #include "aim/core/application.h"
 #include "aim/core/settings_manager.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -87,7 +88,7 @@ class SingleReactionTimeScreen : public Screen {
       if (options_.is_audio) {
         ScreenInfo screen = app_.screen_info();
         auto bold = app_.font_manager().UseLargeBold();
-        std::string message = "Click after sound";
+        std::string message = Tr("Click after sound");
         ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
         ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
         ImGui::SetCursorPosY(app_.screen_info().center.y - text_size.y * 0.5);
@@ -155,24 +156,24 @@ class ReactionTimeScreen : public UiScreen {
   }
 
   void DrawScreenInternal() {
-    ImGui::Text("Reaction times");
-    if (ImGui::Button("Cancel")) {
+    ImGui::Text(Tr("%s"), Tr("Reaction times"));
+    if (ImGui::Button(Tr("Cancel"))) {
       PopSelf();
     }
 
-    const char* audio_label = "Audio";
-    const char* visual_label = "Visual";
+    const char* audio_label = Tr("Audio");
+    const char* visual_label = Tr("Visual");
     float char_x = ImGui::GetDefaultCharSizeX();
 
     std::string selected_type = options_.is_audio ? audio_label : visual_label;
     ImGui::AlignTextToFramePadding();
-    ImGui::Text("Type");
+    ImGui::Text(Tr("%s"), Tr("Type"));
     ImGui::SameLine();
     if (ImGui::SimpleDropdown(
             "TypeSelector", &selected_type, {visual_label, audio_label}, char_x * 10)) {
       options_.is_audio = selected_type == audio_label;
     }
-    ImGui::Text("Use \"restart scenario\" keybind to start");
+    ImGui::Text("%s", Tr("Use \"restart scenario\" keybind to start"));
 
     {
       auto font = app_.font_manager().UseLarge();
@@ -189,7 +190,7 @@ class ReactionTimeScreen : public UiScreen {
     ImGui::Spacing();
     if (too_early_) {
       auto font = app_.font_manager().UseLarge();
-      std::string message = "Too soon";
+      std::string message = Tr("Too soon");
       ImVec2 text_size = ImGui::CalcTextSize(message.c_str());
       ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
       ImGui::Text(message);

@@ -8,6 +8,7 @@
 #include "aim/proto/scenario.pb.h"
 #include "aim/ui/editor/profile_list_editor.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -61,12 +62,12 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   }
 
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Use pill shape");
+  ImGui::Text(Tr("%s"), Tr("Use pill shape"));
   ImGui::SameLine();
   bool use_pill = profile->has_pill();
   ImGui::Checkbox("##UsePill", &use_pill);
   ImGui::SameLine();
-  ImGui::HelpMarker("Switch from sphere target to a pill (capsule) shaped target.");
+  ImGui::HelpMarker(Tr("Switch from sphere target to a pill (capsule) shaped target."));
   if (use_pill) {
     ImGui::Indent();
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Height")
@@ -82,7 +83,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
 
   bool has_growth = profile->target_radius_growth_time_seconds() > 0;
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Pulse");
+  ImGui::Text(Tr("%s"), Tr("Pulse"));
   ImGui::SameLine();
   ImGui::Checkbox("##PulseCheckbox", &has_growth);
   ImGui::SameLine();
@@ -92,7 +93,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   if (has_growth) {
     ImGui::Indent();
     ImGui::InputFloat(ImGui::InputFloatParams("GrowthTime")
-                          .set_label("Time seconds")
+                          .set_label(Tr("Time seconds"))
                           .set_default(2)
                           .set_width(char_x * 10)
                           .set_step(0.1, 0.5)
@@ -100,7 +101,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
                       PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_growth_time_seconds));
 
     ImGui::InputFloat(ImGui::InputFloatParams("GrowthRadius")
-                          .set_label("Final radius")
+                          .set_label(Tr("Final radius"))
                           .set_default(3)
                           .set_width(char_x * 10)
                           .set_step(0.1, 0.5)
@@ -129,7 +130,7 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
   if (def.shot_type().type_case() == ShotType::kClickMulti ||
       def.shot_type().type_case() == ShotType::kTrackingKill) {
     ImGui::InputFloat(ImGui::InputFloatParams("TargetRadiusAtill")
-                          .set_label("Target radius at kill")
+                          .set_label(Tr("Target radius at kill"))
                           .set_step(0.1, 0.5)
                           .set_min(0.1)
                           .set_default(profile->target_radius())
@@ -158,7 +159,7 @@ void DrawTargetEditor(ScenarioDef& def) {
     num_targets = 1;
   }
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Number of targets");
+  ImGui::Text(Tr("%s"), Tr("Number of targets"));
   ImGui::SameLine();
   ImGui::SetNextItemWidth(char_x * 8);
   ImGui::InputInt("##NumberEntry", &num_targets, 1, 1);
@@ -170,7 +171,7 @@ void DrawTargetEditor(ScenarioDef& def) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::Text("Target profiles");
+  ImGui::Text(Tr("%s"), Tr("Target profiles"));
   ImGui::Indent();
   DrawProfileList("ProfileList",
                   "Profile",
@@ -181,10 +182,10 @@ void DrawTargetEditor(ScenarioDef& def) {
 
   ImGui::SpacedSeparator();
 
-  ImGui::InputBool("Newest target is ghost",
+  ImGui::InputBool(Tr("Newest target is ghost"),
                    PROTO_BOOL_FIELD(TargetDef, t, newest_target_is_ghost));
   ImGui::SameLine();
-  ImGui::HelpMarker("Ghost targets are unkillable and drawn in a different color.");
+  ImGui::HelpMarker(Tr("Ghost targets are unkillable and drawn in a different color."));
 
   ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Ghost wall border")
                         .set_is_optional()
@@ -199,7 +200,7 @@ void DrawTargetEditor(ScenarioDef& def) {
       "ghost.");
 
   ImGui::InputFloat(ImGui::InputFloatParams("NewTargetDelaySeconds")
-                        .set_label("New target delay")
+                        .set_label(Tr("New target delay"))
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)
@@ -209,7 +210,7 @@ void DrawTargetEditor(ScenarioDef& def) {
                     PROTO_FLOAT_FIELD(TargetDef, t, new_target_delay_seconds));
 
   ImGui::InputFloat(ImGui::InputFloatParams("RemoveTargetAfterSeconds")
-                        .set_label("Remove after time")
+                        .set_label(Tr("Remove after time"))
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)
@@ -219,7 +220,7 @@ void DrawTargetEditor(ScenarioDef& def) {
                     PROTO_FLOAT_FIELD(TargetDef, t, remove_target_after_seconds));
 
   ImGui::InputFloat(ImGui::InputFloatParams("StaggerInitialTargetsSeconds")
-                        .set_label("Initial stagger time")
+                        .set_label(Tr("Initial stagger time"))
                         .set_is_optional()
                         .set_zero_is_unset()
                         .set_step(0.05, 0.25)
@@ -233,7 +234,7 @@ void DrawTargetEditor(ScenarioDef& def) {
 
   bool has_delayed_targets = t->delayed_target_times_size() > 0;
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Delayed targets");
+  ImGui::Text(Tr("%s"), Tr("Delayed targets"));
   ImGui::SameLine();
   ImGui::Checkbox("##DelayTargetsCheckbox", &has_delayed_targets);
   ImGui::SameLine();
@@ -261,7 +262,7 @@ void DrawTargetEditor(ScenarioDef& def) {
         delete_i = i;
       }
     }
-    if (ImGui::Button("Add")) {
+    if (ImGui::Button(Tr("Add"))) {
       add_item = true;
     }
     ImGui::Unindent();

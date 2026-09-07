@@ -37,6 +37,7 @@
 #include "glm/vec3.hpp"    // IWYU pragma: keep
 #include "imgui.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -391,13 +392,13 @@ void Scenario::OnWaitingForClickTick() {
 
   ImGui::PushStyleColor(ImGuiCol_Text, ToImCol32(theme_.target_color()));
 
-  ImGui::Text("%s", scenario_name_.c_str());
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("%s"), scenario_name_.c_str());
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
   if (settings_.enable_metronome() && settings_.metronome_bpm() > 0) {
-    ImGui::Text("bpm: %.0f", settings_.metronome_bpm());
+    ImGui::Text(Tr("bpm: %.0f"), settings_.metronome_bpm());
   }
-  ImGui::Text("theme: %s", settings_.theme_name().c_str());
-  ImGui::Text("cm/360: %.0f", effective_cm_per_360_);
+  ImGui::Text(Tr("theme: %s"), settings_.theme_name().c_str());
+  ImGui::Text(Tr("cm/360: %.0f"), effective_cm_per_360_);
 
   {
     auto bold = app_.font_manager().UseLargeBold();
@@ -411,20 +412,20 @@ void Scenario::OnWaitingForClickTick() {
   ImVec2 text_size = ImGui::CalcTextSize(scenario_name_.c_str());
   ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
   ImGui::SetCursorPosY(app_.screen_info().center.y + text_size.y * 1);
-  ImGui::Text("%s", scenario_name_.c_str());
+  ImGui::Text(Tr("%s"), scenario_name_.c_str());
 
   float score_target = def_.score_targets().end();
   if (score_target > 0) {
-    std::string message = std::format("Target score: {}", MaybeIntToString(score_target, 2));
+    std::string message = TrFormat("Target score: {}", MaybeIntToString(score_target, 2));
     text_size = ImGui::CalcTextSize(message.c_str());
     ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
-    ImGui::Text("%s", message.c_str());
+    ImGui::Text(Tr("%s"), message.c_str());
   }
 
-  std::string message = std::format("cm/360: {}", MaybeIntToString(effective_cm_per_360_, 1));
+  std::string message = TrFormat("cm/360: {}", MaybeIntToString(effective_cm_per_360_, 1));
   text_size = ImGui::CalcTextSize(message.c_str());
   ImGui::SetCursorPosX(app_.screen_info().center.x - text_size.x * 0.5);
-  ImGui::Text("%s", message.c_str());
+  ImGui::Text(Tr("%s"), message.c_str());
 
   ImGui::PopStyleColor();
   ImGui::End();
@@ -467,8 +468,8 @@ void Scenario::OnStartCountdownClickTick() {
   app_.crosshair_manager().Draw(crosshair_, crosshair_size_, theme_, app_.screen_info().center);
 
   ImGui::PushStyleColor(ImGuiCol_Text, ToImCol32(theme_.target_color()));
-  ImGui::Text("%s", scenario_name_.c_str());
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("%s"), scenario_name_.c_str());
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
   ImGui::PopStyleColor();
 
   {
@@ -587,12 +588,12 @@ void Scenario::OnRunningTick() {
 
   ImGui::PushStyleColor(ImGuiCol_Text, ToImCol32(theme_.target_color()));
   float elapsed_seconds = timer_.GetElapsedSeconds();
-  ImGui::Text("time: %.1f", elapsed_seconds);
-  ImGui::Text("fps: %d", (int)ImGui::GetIO().Framerate);
-  ImGui::Text("ups: %.1fk", state_updates_per_second_);
-  ImGui::Text("cm/360: %.0f", effective_cm_per_360_);
+  ImGui::Text(Tr("time: %.1f"), elapsed_seconds);
+  ImGui::Text(Tr("fps: %d"), (int)ImGui::GetIO().Framerate);
+  ImGui::Text(Tr("ups: %.1fk"), state_updates_per_second_);
+  ImGui::Text(Tr("cm/360: %.0f"), effective_cm_per_360_);
   if (settings_.enable_metronome() && settings_.metronome_bpm() > 0) {
-    ImGui::Text("bpm: %.0f", settings_.metronome_bpm());
+    ImGui::Text(Tr("bpm: %.0f"), settings_.metronome_bpm());
   }
   ImGui::PopStyleColor();
 

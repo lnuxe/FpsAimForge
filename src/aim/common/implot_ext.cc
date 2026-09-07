@@ -1,6 +1,7 @@
 #include "implot_ext.h"
 
 #include <cmath>
+#include "aim/i18n/i18n.h"
 
 namespace ImPlot {
 

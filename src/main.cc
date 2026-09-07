@@ -1,8 +1,12 @@
 #include "SDL3/SDL.h"
 #include "absl/cleanup/cleanup.h"
 #include "absl/flags/parse.h"
+#include "absl/strings/str_cat.h"
 #include "aim/core/application.h"
+#include "aim/core/file_system.h"
+#include "aim/core/local_store.h"
 #include "aim/core/process_lock.h"
+#include "aim/i18n/i18n.h"
 #include "aim/ui/home_screen.h"
 
 #ifdef _WIN32
@@ -28,11 +32,14 @@ int main(int argc, char* argv[]) {
   auto process_lock = CreateProcessLock();
   auto existing_pid_with_lock = process_lock->CreateLockFile();
   if (existing_pid_with_lock) {
-    std::string error_msg =
-        std::format("An existing instance of FpsAimForge is already running with process id: {}",
-                    *existing_pid_with_lock);
-    SDL_ShowSimpleMessageBox(
-        SDL_MESSAGEBOX_ERROR, "FpsAimForge already open", error_msg.c_str(), nullptr);
+    FileSystem file_system;
+    LocalStore local_store(&file_system);
+    LoadLanguageFromStore(local_store);
+    std::string error_msg = absl::StrCat(
+        Tr("An existing instance of FpsAimForge is already running with process id: "),
+        *existing_pid_with_lock);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, Tr("FpsAimForge already open"),
+                             error_msg.c_str(), nullptr);
     return 0;
   }
   auto pid_cleanup = absl::MakeCleanup([&]() { process_lock->ReleaseLockFile(); });

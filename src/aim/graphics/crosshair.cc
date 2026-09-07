@@ -2,6 +2,7 @@
 
 #include "aim/common/util.h"
 #include "aim/proto/settings.pb.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

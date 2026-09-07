@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "aim/common/field.h"
+#include "aim/i18n/i18n.h"
 #include "aim/proto/common.pb.h"
 #include "imgui.h"
 #include "misc/cpp/imgui_stdlib.h"  // IWYU pragma: keep
@@ -353,7 +354,7 @@ bool ChipSelector(const std::string& id,
     } else {
       ImGui::SameLine();
     }
-    if (Chip(label.c_str(), *current_value == value_type)) {
+    if (Chip(aim::Tr(label.c_str()), *current_value == value_type)) {
       selected_value = value_type;
     }
   }
@@ -437,7 +438,7 @@ class ConfirmationDialog {
       popup_.Close();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(aim::Tr("Cancel"))) {
       popup_.Close();
     }
     popup_.End();

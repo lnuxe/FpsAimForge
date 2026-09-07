@@ -17,6 +17,7 @@
 #include "google/protobuf/message.h"
 #include "gtest/gtest.h"
 #include "protobuf-matchers/protocol-buffer-matchers.h"
+#include "aim/i18n/i18n.h"
 
 using namespace aim;
 using ::google::protobuf::Message;

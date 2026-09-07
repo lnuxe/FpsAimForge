@@ -3,6 +3,7 @@
 #include "absl/cleanup/cleanup.h"
 #include "aim/common/log.h"
 #include "stripped_sdl_image.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

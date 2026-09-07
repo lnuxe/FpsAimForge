@@ -5,6 +5,7 @@
 #include "absl/strings/ascii.h"
 #include "absl/strings/str_split.h"
 #include "aim/common/name_util.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

@@ -8,6 +8,7 @@
 #include "aim/common/util.h"
 #include "aim/core/perf.h"
 #include "imgui.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {
@@ -74,49 +75,44 @@ void DumpFrameTimeline(const FrameTimes& t) {
 void DrawPerformanceStats(const RunPerformanceStats& stats) {
   auto& worst_times = stats.worst_times;
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Worst frame");
+  ImGui::Text(Tr("%s"), Tr("Worst frame"));
   ImGui::SameLine();
-  ImGui::InfoMarker(std::format("At time {:.1f}s. Frame {:L}",
+  ImGui::InfoMarker(TrFormat("At time {:.1f}s. Frame {:L}",
                                 stats.worst_times_micros / 1000000.0f,
                                 worst_times.frame_number));
 
   float total_ms = (worst_times.end - worst_times.start) / 1000.0;
   ImGui::Indent();
   ImGui::AlignTextToFramePadding();
-  ImGui::Text("Projected fps");
+  ImGui::Text(Tr("%s"), Tr("Projected fps"));
   ImGui::SameLine();
   ImGui::Button(MaybeIntToString(1000 / total_ms));
-  ImGui::HelpTooltip("Projected fps if all frames were this bad.");
-  ImGui::TextFmt("Total time: {:.2f}ms", total_ms);
-  ImGui::TextFmt("Process events: {:.2f}ms",
-                 (worst_times.events_end - worst_times.events_start) / 1000.0);
-  ImGui::TextFmt("Event count: {} (mouse={}, max_seen={})",
+  ImGui::HelpTooltip(Tr("Projected fps if all frames were this bad."));
+  ImGui::Text("%s", TrFormat("Total time: {:.2f}ms", total_ms).c_str());
+  ImGui::Text("%s", TrFormat("Process events: {:.2f}ms",
+                             (worst_times.events_end - worst_times.events_start) / 1000.0).c_str());
+  ImGui::Text("%s", TrFormat("Event count: {} (mouse={}, max_seen={})",
                  worst_times.events_count,
                  worst_times.mouse_events_count,
-                 stats.top_events_count);
-  ImGui::TextFmt("Update time: {:.2f}ms",
-                 (worst_times.update_end - worst_times.update_start) / 1000.0);
+                 stats.top_events_count).c_str());
+  ImGui::Text("%s", TrFormat("Update time: {:.2f}ms",
+                             (worst_times.update_end - worst_times.update_start) / 1000.0).c_str());
   if (worst_times.render.start > 0) {
-    ImGui::TextFmt("Render time: {:.2f}ms", worst_times.render.GetSeconds() * 1000.0);
+    ImGui::Text("%s", TrFormat("Render time: {:.2f}ms", worst_times.render.GetSeconds() * 1000.0).c_str());
     ImGui::Indent();
-    ImGui::TextFmt("Build draw data: {:.2f}ms", worst_times.build_draw_data.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Pack instance data: {:.2f}ms",
-                   worst_times.pack_instance_data.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Upload instance data: {:.2f}ms",
-                   worst_times.upload_instance_data.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Upload instance data (copy pass): {:.2f}ms",
-                   worst_times.upload_instance_data_copy_pass.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Upload instance data (memcpy): {:.2f}ms",
-                   worst_times.upload_instance_data_memcpy.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Render draw data: {:.2f}ms",
-                   worst_times.render_draw_data.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Start render: {:.2f}ms", worst_times.start_render.GetSeconds() * 1000.0);
-    ImGui::TextFmt("Finish render: {:.2f}ms", worst_times.finish_render.GetSeconds() * 1000.0);
+    ImGui::Text("%s", TrFormat("Build draw data: {:.2f}ms", worst_times.build_draw_data.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Pack instance data: {:.2f}ms", worst_times.pack_instance_data.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Upload instance data: {:.2f}ms", worst_times.upload_instance_data.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Upload instance data (copy pass): {:.2f}ms", worst_times.upload_instance_data_copy_pass.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Upload instance data (memcpy): {:.2f}ms", worst_times.upload_instance_data_memcpy.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Render draw data: {:.2f}ms", worst_times.render_draw_data.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Start render: {:.2f}ms", worst_times.start_render.GetSeconds() * 1000.0).c_str());
+    ImGui::Text("%s", TrFormat("Finish render: {:.2f}ms", worst_times.finish_render.GetSeconds() * 1000.0).c_str());
     ImGui::Unindent();
   }
   ImGui::Unindent();
 
-  if (ImGui::TreeNode("Frame timeline")) {
+  if (ImGui::TreeNode(Tr("Frame timeline"))) {
     DumpFrameTimeline(worst_times);
     ImGui::TreePop();
   }
@@ -125,7 +121,7 @@ void DrawPerformanceStats(const RunPerformanceStats& stats) {
   ImGui::Separator();
   ImGui::Spacing();
 
-  ImGui::Text("Total Times (ms)");
+  ImGui::Text(Tr("%s"), Tr("Total Times (ms)"));
   ImGui::Indent();
   DumpHistogram(stats.total_time_histogram);
   ImGui::Unindent();
@@ -133,20 +129,20 @@ void DrawPerformanceStats(const RunPerformanceStats& stats) {
   if (worst_times.render.start > 0) {
     ImGui::SpacedSeparator();
 
-    ImGui::Text("Render Times (ms)");
+    ImGui::Text(Tr("%s"), Tr("Render Times (ms)"));
     ImGui::Indent();
     DumpHistogram(stats.render_time_histogram);
     ImGui::Unindent();
   }
 
   ImGui::SpacedSeparator();
-  ImGui::Text("Update Times (ms)");
+  ImGui::Text(Tr("%s"), Tr("Update Times (ms)"));
   ImGui::Indent();
   DumpHistogram(stats.update_time_histogram);
   ImGui::Unindent();
 
   ImGui::SpacedSeparator();
-  ImGui::Text("Event Times (ms)");
+  ImGui::Text(Tr("%s"), Tr("Event Times (ms)"));
   ImGui::Indent();
   DumpHistogram(stats.events_time_histogram);
   ImGui::Unindent();

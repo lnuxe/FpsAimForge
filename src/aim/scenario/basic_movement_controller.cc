@@ -5,6 +5,7 @@
 #include "aim/core/target.h"
 #include "glm/vec2.hpp"  // IWYU pragma: keep
 #include "google/protobuf/message_lite.h"
+#include "aim/i18n/i18n.h"
 
 using google::protobuf::RepeatedPtrField;
 

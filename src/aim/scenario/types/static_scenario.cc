@@ -16,6 +16,7 @@
 #include "glm/trigonometric.hpp"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 namespace {

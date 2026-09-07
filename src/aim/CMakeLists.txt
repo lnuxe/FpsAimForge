@@ -104,6 +104,8 @@ set(SRCS
     "graphics/shapes.h"
     "graphics/textures.cc"
     "graphics/textures.h"
+    "i18n/i18n.cc"
+    "i18n/i18n.h"
     "proto/bundle.pb.cc"
     "proto/bundle.pb.h"
     "proto/common.pb.cc"

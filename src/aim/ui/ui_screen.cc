@@ -6,6 +6,7 @@
 #include "aim/ui/editor/scenario_editor_screen.h"
 #include "aim/ui/quick_settings_screen.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

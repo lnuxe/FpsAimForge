@@ -6,8 +6,12 @@
 #include "aim/proto/common.pb.h"
 #include "imgui.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
+#include "aim/i18n/i18n.h"
 
 namespace ImGui {
+
+using aim::Tr;
+
 namespace {
 
 static double RoundDouble5(double value) {
@@ -92,7 +96,7 @@ bool NotificationPopup::Draw() {
     float button_width = ImGui::CalcTextSize("OK").x + ImGui::GetStyle().FramePadding.x * 2.0f;
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x - button_width) * 0.5f);
 
-    if (ImGui::Button("Ok")) {
+    if (ImGui::Button(Tr("Ok"))) {
       confirmed = true;
       text_ = "";
       popup_.Close();
@@ -113,7 +117,7 @@ void HelpMarker(const std::string& text) {
 }
 
 void InfoMarker(const std::string& text) {
-  ImGui::Text("%s", aim::icons::kInfo);
+  ImGui::Text(Tr("%s"), aim::icons::kInfo);
   if (ImGui::BeginItemTooltip()) {
     ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
     ImGui::Text(text);
@@ -243,7 +247,7 @@ void InputJitteredFloat(const InputFloatParams& params, aim::JitteredField<float
 
   if (!params.is_optional || field.value.has()) {
     ImGui::SameLine();
-    ImGui::Text("+/-");
+    ImGui::Text(Tr("%s"), Tr("+/-"));
     ImGui::SameLine();
     InputFloat(jitter_params, field.jitter);
   } else {
@@ -342,8 +346,8 @@ void InputStoredColor(const std::string& id, aim::StoredColor* stored_color, flo
   }
 
   ImGui::SameLine();
-  ImGui::Text("%s", aim::icons::kClose);
-  ImGui::HelpTooltip("Multiply color by value");
+  ImGui::Text(Tr("%s"), aim::icons::kClose);
+  ImGui::HelpTooltip(Tr("Multiply color by value"));
 
   ImGui::SameLine();
   ImGui::InputFloat(ImGui::InputFloatParams("ColorMultiplier")
@@ -424,12 +428,12 @@ std::optional<std::string> MultilineTextEntryDialog::Draw() {
                               ImVec2(work_size.x * 0.4, work_size.y * 0.5),
                               ImGuiInputTextFlags_AllowTabInput);
     ImGui::Spacing();
-    if (ImGui::Button("Set")) {
+    if (ImGui::Button(Tr("Set"))) {
       result = text_;
       popup_.Close();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel")) {
+    if (ImGui::Button(Tr("Cancel"))) {
       popup_.Close();
     }
     popup_.End();

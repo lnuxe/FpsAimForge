@@ -8,6 +8,7 @@
 #include "glm/gtc/matrix_transform.hpp"  // IWYU pragma: keep
 #include "glm/gtx/intersect.hpp"
 #include "glm/trigonometric.hpp"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 

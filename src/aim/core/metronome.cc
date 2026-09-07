@@ -1,6 +1,7 @@
 #include "metronome.h"
 
 #include "aim/core/application.h"
+#include "aim/i18n/i18n.h"
 
 namespace aim {
 
