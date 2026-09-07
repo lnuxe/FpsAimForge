@@ -1,8 +1,6 @@
 #include "textures.h"
 
 #include <bit>
-#include <iostream>
-#include <optional>
 
 #include "aim/common/log.h"
 #include "aim/graphics/image.h"

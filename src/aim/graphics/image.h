@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-#include "SDL3/SDL.h"
+#include "SDL3/SDL.h"  // IWYU pragma: keep
 
 namespace aim {
 
