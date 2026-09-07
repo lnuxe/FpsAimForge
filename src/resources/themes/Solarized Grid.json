@@ -1,7 +1,7 @@
 {
  "roofAppearance": {
   "texture": {
-   "textureName": "Solarized Grid.jpg",
+   "textureName": "Solarized Grid.png",
    "scale": 5.15
   },
   "mixColor": {},
@@ -9,7 +9,7 @@
  },
  "sideAppearance": {
   "texture": {
-   "textureName": "Solarized Grid.jpg",
+   "textureName": "Solarized Grid.png",
    "scale": 5.15
   },
   "mixColor": {},
@@ -17,14 +17,14 @@
  },
  "frontAppearance": {
   "texture": {
-   "textureName": "Solarized Grid.jpg",
+   "textureName": "Solarized Grid.png",
    "scale": 5.15
   },
   "mixColor": {}
  },
  "floorAppearance": {
   "texture": {
-   "textureName": "Solarized Grid.jpg",
+   "textureName": "Solarized Grid.png",
    "scale": 5.15
   },
   "mixColor": {},
