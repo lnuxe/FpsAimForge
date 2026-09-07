@@ -560,11 +560,20 @@ class ApplicationImpl : public Application {
 
     trace.Add("SDL_GetWindowSize");
 
-    // SDL_GetWindowSize(sdl_window_, &window_width_, &window_height_);
-    SDL_Rect safe_area;
-    SDL_GetDisplayUsableBounds(display_.display_id, &safe_area);
-    window_width_ = safe_area.w;
-    window_height_ = safe_area.h;
+    bool use_usable_bounds = false;
+#if __APPLE__
+    // The laptop notch messes things up. Need a more reliable way to get this screen size.
+    use_usable_bounds = true;
+#endif
+
+    if (use_usable_bounds) {
+      SDL_Rect safe_area;
+      SDL_GetDisplayUsableBounds(display_.display_id, &safe_area);
+      window_width_ = safe_area.w;
+      window_height_ = safe_area.h;
+    } else {
+      SDL_GetWindowSize(sdl_window_, &window_width_, &window_height_);
+    }
 
     state_->initialization_times.sdl.end = stopwatch.GetElapsedMicros();
 
