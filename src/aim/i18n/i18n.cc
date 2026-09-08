@@ -56,9 +56,7 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Edit", "编辑"},
     {"Edit description", "编辑描述"},
     {"Edit name", "编辑名称"},
-    {"Edit playlist", "编辑播放列表"},
     {"Edit variation", "编辑变体"},
-    {"Enable metronome", "启用节拍器"},
     {"Folder", "文件夹"},
     {"FpsAimForge", "FpsAimForge"},
     {"Frame timeline", "帧时间线"},
@@ -71,7 +69,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Just now", "刚刚"},
     {"Last run", "上次训练"},
     {"Make new copy", "创建新副本"},
-    {"Make new copies of all scenarios", "为所有场景创建新副本"},
     {"Move down", "下移"},
     {"Move up", "上移"},
     {"NEW HIGH SCORE", "新高分"},
@@ -92,7 +89,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Remove from recents", "从最近中移除"},
     {"Remove name prefix", "移除名称前缀"},
     {"Replay", "回放"},
-    {"Reset run", "重置训练"},
     {"Restart Scenario", "重启场景"},
     {"Save", "保存"},
     {"Save settings per scenario", "按场景保存设置"},
@@ -105,9 +101,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Select", "选择"},
     {"Select variation", "选择变体"},
     {"Set", "确定"},
-    {"Shuffle", "随机"},
-    {"Show health bars", "显示血条"},
-    {"Sort by score", "按分数排序"},
     {"Sounds", "音效"},
     {"Starred", "收藏"},
     {"Stats", "统计"},
@@ -121,12 +114,7 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"None", "无"},
 
     // Common format strings
-    {"High score: {}", "最高分：{}"},
-    {"Copy \"{}\" to", "将 \"{}\" 复制到"},
     {"GPU device driver: {}", "GPU 设备驱动：{}"},
-    {"Explicit {} selection order", "显式 {} 选择顺序"},
-    {"Initial {} selection order", "初始 {} 选择顺序"},
-    {"score: {}", "得分：{}"},
     {"For a new target with acceleartion. What percent of max speed to start at. The default is to start at 0 speed.", "对于带加速度的新目标。以最大速度的百分之多少开始。默认从 0 速度开始。"},
 
     // Settings
@@ -203,7 +191,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     // Home / nav
     {"Start new run", "开始新训练"},
     {"Click to Start", "点击开始"},
-    {"Target score", "目标分数"},
     {"Play time", "练习时长"},
     {"Reaction", "反应时间"},
     {"Restart", "重启"},
@@ -271,7 +258,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Total time spent on runs that are restarted before completion",
      "未完成即重启的训练所花费的总时间"},
     {"Reaction times", "反应时间"},
-    {"Type", "类型"},
 
     // Theme / crosshair editor
     {"Reference", "引用"},
@@ -297,7 +283,6 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Layer", "图层"},
     {"Dot", "点"},
     {"Plus", "十字"},
-    {"Circle", "圆"},
     {"Diamond", "菱形"},
     {"Image", "图片"},
     {"Name", "名称"},
