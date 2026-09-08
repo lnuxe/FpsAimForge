@@ -789,6 +789,32 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {" {}%LargerWall", " {}%墙更大"},
     {" {}s", " {}秒"},
     {" {}cm", " {}cm"},
+
+    // Long help tooltip strings (concatenated across lines in source)
+    {"If disabled, the config below will be ignored and the same settings will always be used for every scenario.",
+     "如果禁用，下面的配置将被忽略，所有场景都会使用相同的设置。"},
+    {"\"Scenario\" means this setting will be saved per scenario. \"Global\" means that all scenarios share the same value.",
+     "\"场景\" 表示此设置按场景单独保存。\"全局\" 表示所有场景共享同一个值。"},
+    {"Versions in new playlist will have a different name (stats, settings, ..), but will change when the underlying scenario changes.",
+     "新播放列表中的版本会有不同的名称（统计、设置等），但当底层场景改变时它们也会随之改变。"},
+    {"Use settings from another theme. Useful when you using per scenario theme settings and you want to create a \"Default Static\" theme which you can change and have all static scenarios use the new theme.",
+     "使用另一个主题的设置。当你使用按场景的主题设置，并想创建一个可修改的 \"默认静态\" 主题，让所有静态场景都使用新主题时很有用。"},
+    {"Displays percentage of time within the specified middle % of the target. The 3 values displayed are 100% (anywhere on target), 50%, 20%. 50% means time in the center half of the target.",
+     "显示在目标指定中间百分比内的时间占比。显示的 3 个值分别是 100%（目标任意位置）、50%、20%。50% 表示在目标中心一半区域的时间。"},
+    {"The distance away from the wall towards the camera. The greater the value, the further it is from the wall.",
+     "目标距离墙壁向相机方向的偏移距离。数值越大，离墙越远。"},
+    {"Target will grow to a certain size over some duration. If it is not killed by then, it will be removed.",
+     "目标会在一定时间内增长到某个尺寸。如果到时未被击杀，它将被移除。"},
+    {"If the target gets within the specified percent distance from the wall, it will become a ghost.",
+     "如果目标进入距离墙壁指定百分比范围内，它将变成幽灵目标。"},
+    {"Targets will only be added for the first time after the specified delay. If num_targets=3 and there are two delays in the list, 1 target will be added immediately, 1 target after the first time in the list, and 1 target after the second time in the list.",
+     "目标只会在指定延迟后首次添加。如果 num_targets=3 且列表中有两个延迟，则立即添加 1 个目标，在第一个时间点后添加 1 个，在第二个时间点后添加 1 个。"},
+    {"Define up for the camera (usually the z axis). This allows you to rotate the entire scenario. (1, 0, 1) would be a 45 degree rotation.",
+     "定义相机的向上方向（通常是 z 轴）。这允许你旋转整个场景。(1, 0, 1) 表示 45 度旋转。"},
+    {"The radius will change to this value over the duration of the scenario (or until direction change)",
+     "半径会在场景持续时间内（或直到方向改变）变化到该值"},
+    {"If the target has less than the specified amount of health left (in seconds) and you move off the target, it will be removed and you will get partial points. The kill sound is played when this threshold is passed.",
+     "如果目标剩余生命值（以秒计）低于指定值，且你移开了准星，目标将被移除，你将获得部分分数。超过该阈值时会播放击杀音效。"},
 };
 
 const char* Lookup(const char* english) {
