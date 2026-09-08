@@ -114,32 +114,33 @@ std::string GetHowLongAgoStringFromEpochMicros(i64 start, i64 end) {
     int months = std::chrono::duration_cast<std::chrono::months>(duration).count();
     if (months >= 12) {
       std::string year_str = MaybeIntToString(months / 12.0f, 1);
-      return year_str == "1" ? "1 year ago" : std::format("{} years ago", year_str);
+      return year_str == "1" ? Tr("1 year ago") : TrFormat("{} years ago", year_str);
     }
-    return months == 1 ? std::format("{} month ago", months) : std::format("{} months ago", months);
+    return months == 1 ? TrFormat("{} month ago", months)
+                       : TrFormat("{} months ago", months);
   }
 
   if (weeks > 0) {
-    return weeks == 1 ? std::format("{} week ago", weeks) : std::format("{} weeks ago", weeks);
+    return weeks == 1 ? TrFormat("{} week ago", weeks) : TrFormat("{} weeks ago", weeks);
   }
 
   int days = std::chrono::duration_cast<std::chrono::days>(duration).count();
   if (days > 0) {
-    return days == 1 ? std::format("{} day ago", days) : std::format("{} days ago", days);
+    return days == 1 ? TrFormat("{} day ago", days) : TrFormat("{} days ago", days);
   }
 
   int hours = std::chrono::duration_cast<std::chrono::hours>(duration).count();
   if (hours > 0) {
-    return hours == 1 ? std::format("{} hour ago", hours) : std::format("{} hours ago", hours);
+    return hours == 1 ? TrFormat("{} hour ago", hours) : TrFormat("{} hours ago", hours);
   }
 
   int minutes = std::chrono::duration_cast<std::chrono::minutes>(duration).count();
   if (minutes > 0) {
-    return minutes == 1 ? std::format("{} minute ago", minutes)
-                        : std::format("{} minutes ago", minutes);
+    return minutes == 1 ? TrFormat("{} minute ago", minutes)
+                        : TrFormat("{} minutes ago", minutes);
   }
 
-  return "Just now";
+  return Tr("Just now");
 }
 
 std::optional<i64> ParseTimestampStringAsMicros(const std::string& timestamp) {

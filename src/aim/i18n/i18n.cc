@@ -96,6 +96,8 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Score over time", "分数随时间"},
     {"Score History", "分数历史"},
     {"Scores", "分数"},
+    {"Scroll to adjust cm/360", "滚动调整 cm/360"},
+    {"Scroll to adjust BPM", "滚动调整 BPM"},
     {"Speeds", "速度曲线"},
     {"{} - {} ({} - {} fps)", "{} - {}（{} - {} 帧率）"},
     {"Select", "选择"},

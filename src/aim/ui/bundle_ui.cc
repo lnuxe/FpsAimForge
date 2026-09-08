@@ -57,7 +57,7 @@ class AddBundleDialog {
       }
     }
 
-    if (ImGui::Button(bundle_to_copy_ ? "Copy" : "Add")) {
+    if (ImGui::Button(bundle_to_copy_ ? Tr("Copy") : Tr("Add"))) {
       BundleInfo info;
       info.set_bundle_name(bundle_name_);
       app.bundle_manager().UpdateBundleInfo(info);

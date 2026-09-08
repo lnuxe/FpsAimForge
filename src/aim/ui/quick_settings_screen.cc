@@ -171,7 +171,7 @@ class QuickSettingsScreen : public UiScreen {
                                  ? MaybeIntToString(updater_.settings.cm_per_360())
                                  : MaybeIntToString(updater_.settings.metronome_bpm());
       std::string top_help =
-          type_ == QuickSettingsType::DEFAULT ? "Scroll to adjust cm/360" : "Scroll to adjust BPM";
+          type_ == QuickSettingsType::DEFAULT ? Tr("Scroll to adjust cm/360") : Tr("Scroll to adjust BPM");
       float text_size = ImGui::CalcTextSize(top_text.c_str()).x;
       ImGui::SetCursorPosX((screen.width - text_size) / 2.0);
       ImGui::TextFmt("{}{}", top_text, icons::kHeight);
