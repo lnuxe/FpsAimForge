@@ -405,7 +405,7 @@ class ScenarioEditorScreen : public UiScreen {
     ImGui::SpacedSeparator();
 
     bool overrides_default_open = !IsDefaultInstance(def_.overrides());
-    if (ImGui::TreeNodeEx("Overrides",
+    if (ImGui::TreeNodeEx(Tr("Overrides"),
                           overrides_default_open ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
       DrawOverridesEditor("Overrides", def_.mutable_overrides());
       if (ImGui::Button(Tr("Bake"))) {
