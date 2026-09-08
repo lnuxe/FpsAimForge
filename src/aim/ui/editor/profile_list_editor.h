@@ -245,7 +245,7 @@ void DrawProfileList(const std::string& id,
       }
 
       ImGui::InputInt(ImGui::InputIntParams("NextProfile")
-                          .set_label("Next profile")
+                          .set_label(Tr("Next profile"))
                           .set_step(1, 2)
                           .set_min(1)
                           .set_default(1)
@@ -256,7 +256,7 @@ void DrawProfileList(const std::string& id,
       ImGui::HelpMarker(Tr("If this profile is selected, always select the specified profile next."));
 
       ImGui::InputInt(ImGui::InputIntParams("MinSelectionGap")
-                          .set_label("Selection gap")
+                          .set_label(Tr("Selection gap"))
                           .set_step(1, 2)
                           .set_min(1)
                           .set_default(2)

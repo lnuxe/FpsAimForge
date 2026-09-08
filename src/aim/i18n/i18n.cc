@@ -418,6 +418,7 @@ const std::unordered_map<std::string_view, const char*> kChineseStrings{
     {"Redirect to percent of center", "重定向到中心百分比"},
     {"Angle degrees", "角度（度）"},
     {"Angle", "角度"},
+    {"angle", "角度"},
     {"Direction change chance", "变向概率"},
     {"The name of the scenario to reference", "要引用的场景名称"},
     {"Go to the referenced scenario. All current edits will be lost.",

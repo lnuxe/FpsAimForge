@@ -1227,7 +1227,8 @@ void DrawShotTypeEditor(ShotType& s) {
   }
 
   if (type == ShotType::kClickMulti || type == ShotType::kClickSingle) {
-    ImGui::InputBool("Remove on miss", PROTO_BOOL_FIELD(ShotType, &s, remove_closest_on_miss));
+    ImGui::InputBool(ImGui::InputBoolParams("Remove on miss").set_label(Tr("Remove on miss")),
+                    PROTO_BOOL_FIELD(ShotType, &s, remove_closest_on_miss));
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId(Tr("Ghost on miss"))
                           .set_is_optional()
                           .set_step(0.05, 0.2)

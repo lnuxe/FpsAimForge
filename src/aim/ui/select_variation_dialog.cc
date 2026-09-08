@@ -103,31 +103,31 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
                                            .set_default(10)
                                            .set_width(char_x * 10);
 
-    ImGui::InputFloat(default_percent_param.clone().set_id_and_label("Larger"),
+    ImGui::InputFloat(default_percent_param.clone().set_id("Larger").set_label(Tr("Larger")),
                       CreateOptionalFloatField(&name_info_.radius_larger));
 
-    ImGui::InputFloat(default_percent_param.clone().set_max(99).set_id_and_label("Smaller"),
+    ImGui::InputFloat(default_percent_param.clone().set_max(99).set_id("Smaller").set_label(Tr("Smaller")),
                       CreateOptionalFloatField(&name_info_.radius_smaller));
 
     ImGui::SpacedSeparator();
 
-    ImGui::InputFloat(default_percent_param.clone().set_id_and_label("Faster"),
+    ImGui::InputFloat(default_percent_param.clone().set_id("Faster").set_label(Tr("Faster")),
                       CreateOptionalFloatField(&name_info_.faster));
 
-    ImGui::InputFloat(default_percent_param.clone().set_max(99).set_id_and_label("Slower"),
+    ImGui::InputFloat(default_percent_param.clone().set_max(99).set_id("Slower").set_label(Tr("Slower")),
                       CreateOptionalFloatField(&name_info_.slower));
 
     ImGui::SpacedSeparator();
 
-    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id_and_label("Wider"),
+    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id("Wider").set_label(Tr("Wider")),
                       CreateOptionalFloatField(&name_info_.wider));
 
-    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id_and_label("Taller"),
+    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id("Taller").set_label(Tr("Taller")),
                       CreateOptionalFloatField(&name_info_.taller));
 
-    ImGui::InputFloat(default_percent_param.clone().set_id_and_label("Wall larger"),
+    ImGui::InputFloat(default_percent_param.clone().set_id("Wall larger").set_label(Tr("Wall larger")),
                       CreateOptionalFloatField(&name_info_.wall_larger));
-    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id_and_label("Wall smaller"),
+    ImGui::InputFloat(default_percent_param.clone().set_min(-99).set_id("Wall smaller").set_label(Tr("Wall smaller")),
                       CreateOptionalFloatField(&name_info_.wall_smaller));
 
     ImGui::SpacedSeparator();

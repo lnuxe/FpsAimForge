@@ -439,35 +439,41 @@ void DrawOverridesEditor(const char* id, ScenarioOverrides* overrides, bool is_l
   ImGui::IdGuard cid(id);
   const ImGui::InputFloatParams default_params =
       GetDefaultMultiplierInputParams("Default").set_is_optional().set_width(char_x * 10);
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Target radius multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, target_radius_multiplier));
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Speed multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, speed_multiplier));
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Acceleration multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, acceleration_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Target radius multiplier").set_label(Tr("Target radius multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, target_radius_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Speed multiplier").set_label(Tr("Speed multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, speed_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Acceleration multiplier").set_label(Tr("Acceleration multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, acceleration_multiplier));
   /*
   // TODO: Not sure if these are implemented correctly or make sense. Maybe should have more
   // specific names.
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Time scale multiplier"),
+  ImGui::InputFloat(default_params.clone().set_id_and_label(Tr("Time scale multiplier")),
                     PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, time_scale_multiplier));
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Distance multiplier"),
+  ImGui::InputFloat(default_params.clone().set_id_and_label(Tr("Distance multiplier")),
                     PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, distance_multiplier));
   */
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Pulse time multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, growth_time_multiplier));
   ImGui::InputFloat(
-      default_params.clone().set_id_and_label("Remove after time multiplier"),
+      default_params.clone().set_id("Pulse time multiplier").set_label(Tr("Pulse time multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, growth_time_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Remove after time multiplier").set_label(Tr("Remove after time multiplier")),
       PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, remove_target_after_seconds_multiplier));
   ImGui::InputFloat(
-      default_params.clone().set_id_and_label("Min distance between targets multiplier"),
+      default_params.clone().set_id("Min distance between targets multiplier").set_label(Tr("Min distance between targets multiplier")),
       PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, min_distance_multiplier));
   ImGui::InputFloat(
-      default_params.clone().set_id_and_label("Fixed distance from last target multiplier"),
+      default_params.clone().set_id("Fixed distance from last target multiplier").set_label(Tr("Fixed distance from last target multiplier")),
       PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, fixed_distance_from_last_target_multiplier));
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Wall width multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, wall_width_multiplier));
-  ImGui::InputFloat(default_params.clone().set_id_and_label("Wall height multiplier"),
-                    PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, wall_height_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Wall width multiplier").set_label(Tr("Wall width multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, wall_width_multiplier));
+  ImGui::InputFloat(
+      default_params.clone().set_id("Wall height multiplier").set_label(Tr("Wall height multiplier")),
+      PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, wall_height_multiplier));
 }
 
 ImGui::InputFloatParams GetDefaultMultiplierInputParams(const std::string& label) {

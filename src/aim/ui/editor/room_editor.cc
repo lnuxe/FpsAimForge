@@ -140,7 +140,7 @@ void DrawRoomEditorInputs(Room& room, CameraUpdates* camera_updates) {
     ImGui::InputFloat(
         ImGui::InputFloatParams::WithLabelAsId(Tr("Sides"))
             .set_is_optional()
-            .set_optional_secondary_label("angle")
+            .set_optional_secondary_label(Tr("angle"))
             .set_default(GetDefaultSideAngleForDegrees(current_width_degrees))
             .set_step(0.5, 3)
             .set_width(char_x * 10),

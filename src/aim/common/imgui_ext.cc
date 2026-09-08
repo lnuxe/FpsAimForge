@@ -184,7 +184,7 @@ void InputFloat(const InputFloatParams& params, aim::Field<float> field) {
   IdGuard cid(params.id);
   if (params.label.size() > 0) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text(params.label);
+    ImGui::Text("%s", Tr(params.label.c_str()));
     ImGui::SameLine();
   }
   if (params.is_optional) {
@@ -197,7 +197,7 @@ void InputFloat(const InputFloatParams& params, aim::Field<float> field) {
     if (params.optional_secondary_label.size() > 0) {
       ImGui::SameLine();
       ImGui::AlignTextToFramePadding();
-      ImGui::Text(params.optional_secondary_label);
+      ImGui::Text("%s", Tr(params.optional_secondary_label.c_str()));
     }
     ImGui::SameLine();
   }
@@ -259,7 +259,7 @@ void InputBool(const InputBoolParams& params, aim::Field<bool> field) {
   IdGuard cid(params.id);
   if (params.label.size() > 0) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text(params.label);
+    ImGui::Text("%s", Tr(params.label.c_str()));
     ImGui::SameLine();
   }
 
@@ -276,7 +276,7 @@ void InputInt(const InputIntParams& params, aim::Field<int> field) {
   IdGuard cid(params.id);
   if (params.label.size() > 0) {
     ImGui::AlignTextToFramePadding();
-    ImGui::Text(params.label);
+    ImGui::Text("%s", Tr(params.label.c_str()));
     ImGui::SameLine();
   }
   if (params.is_optional) {
@@ -385,7 +385,7 @@ float GetDefaultCharSizeX() {
 void ReadonlyLabeledFloat(const std::string& label, float value, int width_multiple) {
   IdGuard cid("RoFloat_" + label);
   ImGui::AlignTextToFramePadding();
-  ImGui::Text(label);
+  ImGui::Text("%s", Tr(label.c_str()));
   ImGui::SameLine();
   float char_x = GetDefaultCharSizeX();
   ImGui::SetNextItemWidth(char_x * width_multiple);
