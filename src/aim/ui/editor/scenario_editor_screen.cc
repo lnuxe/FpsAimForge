@@ -452,11 +452,7 @@ class ScenarioEditorScreen : public UiScreen {
 
   void DrawLeftTabItems() {
     DrawLevelsTab();
-
-    if (!def_.has_reference_def()) {
-      DrawOverridesTab();
-    }
-
+    DrawOverridesTab();
     DrawDescriptionTab();
 
     if (!def_.has_reference_def()) {
