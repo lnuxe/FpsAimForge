@@ -181,6 +181,8 @@ set(SRCS
     "ui/editor/scenario_type_editor.h"
     "ui/editor/target_editor.cc"
     "ui/editor/target_editor.h"
+    "ui/editor/strafe_editor.cc"
+    "ui/editor/strafe_editor.h"
     "ui/guide_editor_screen.cc"
     "ui/guide_editor_screen.h"
     "ui/playlist_editor_screen.cc"

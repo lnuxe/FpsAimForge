@@ -395,7 +395,7 @@ message Bounds {
   RegionLength depth = 3;
 }
 
-// Strafe sceanrio where it strafes back and forth at angles on the wall. When it changes left/right
+// Strafe scenario where it strafes back and forth at angles on the wall. When it changes left/right
 // direction it can optionally also change up/down direction.
 message AngleStrafeScenarioDef {
   Bounds bounds = 1;
