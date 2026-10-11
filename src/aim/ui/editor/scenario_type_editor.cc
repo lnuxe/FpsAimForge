@@ -178,8 +178,6 @@ void DrawWallWanderEditor(WallWanderScenarioDef& d) {
                   d.mutable_profiles(),
                   std::bind_front(&DrawWallWanderProfile, char_x));
   ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
 }
 
 void DrawLinearEditor(LinearScenarioDef& d) {
@@ -213,14 +211,6 @@ void DrawLinearEditor(LinearScenarioDef& d) {
   ImGui::SimpleTypeDropdown(
       "UpDownDirectionTypeDropdown", &up_down_direction_type, kUpDownDirections, char_x * 20);
   d.set_up_down_initial_direction(up_down_direction_type);
-
-  ImGui::SpacedSeparator();
-
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial target location");
-  ImGui::Indent();
-  DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
-  ImGui::Unindent();
 }
 
 void DrawBarrelEditor(ScenarioDef& def) {
@@ -255,14 +245,6 @@ void DrawBarrelEditor(ScenarioDef& def) {
     region->mutable_diameter()->set_x_percent_value(0.92);
     region->mutable_inner_diameter()->set_x_percent_value(0.6);
   }
-
-  ImGui::SpacedSeparator();
-
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Initial target location");
-  ImGui::Indent();
-  DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
-  ImGui::Unindent();
 }
 
 void DrawStrafeProfile(float char_x,
@@ -609,38 +591,6 @@ void DrawBounceEditor(BounceScenarioDef& d) {
                   d.mutable_bounce_profiles(),
                   std::bind_front(&DrawBounceProfile, char_x));
   ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  ImGui::Text("Left/right profiles");
-  ImGui::Indent();
-  DrawLeftRightStrafeProfiles(
-      PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, &d, left_right_profiles_info),
-      d.mutable_left_right_profiles(),
-      d.mutable_bounds(),
-      d.mutable_relative_bounds(),
-      PROTO_FIELD(Direction, BounceScenarioDef, &d, left_right_initial_direction));
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-  ImGui::Text("Forward/back profiles");
-  ImGui::Indent();
-  DrawForwardBackStrafeProfiles(
-      PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, &d, forward_back_profiles_info),
-      d.mutable_forward_back_profiles(),
-      d.mutable_bounds(),
-      d.mutable_relative_bounds(),
-      PROTO_FIELD(Direction, BounceScenarioDef, &d, forward_back_initial_direction));
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  if (IsDefaultInstance(d.bounds())) {
-    d.clear_bounds();
-  }
-  if (IsDefaultInstance(d.relative_bounds())) {
-    d.clear_relative_bounds();
-  }
 }
 
 void DrawAngleStrafeProfile(float char_x, AngleStrafeProfile* p) {
@@ -808,379 +758,7 @@ void DrawCenteringEditor(CenteringScenarioDef& c) {
   }
 }
 
-void DrawStaticEditor(StaticScenarioDef& d) {
-  ImGui::IdGuard cid("StaticEditor");
-  DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
-}
-
-void DrawWaypointEditor(WaypointScenarioDef& d) {
-  ImGui::IdGuard cid("WaypointEditor");
-  DrawTargetPlacementStrategyEditor("Placement", d.mutable_target_placement_strategy());
-}
-
-void DrawReferenceEditor(ScenarioDef& def,
-                         Application* app,
-                         std::string* error_message_out,
-                         bool* editing_room,
-                         ImGui::MultilineTextEntryDialog* description_dialog) {
-  // Make sure only the appropriate fields are set on the def.
-  ScenarioDef old_def = def;
-
-  float char_x = ImGui::GetDefaultCharSizeX();
-
-  def = {};
-  if (old_def.has_level_overrides()) {
-    *def.mutable_level_overrides() = old_def.level_overrides();
-  }
-  if (old_def.has_score_targets()) {
-    *def.mutable_score_targets() = old_def.score_targets();
-  }
-  *def.mutable_overrides() = old_def.overrides();
-  *def.mutable_reference_def() = old_def.reference_def();
-
-  ReferenceScenarioDef& r = *def.mutable_reference_def();
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Scenario");
-  ImGui::SameLine();
-  ImGui::HelpMarker("The name of the scenario to reference");
-  ImGui::SameLine();
-
-  if (app != nullptr) {
-    ScenarioSearchInput(*app, r.mutable_scenario_name());
-    bool has_referenced_scenario =
-        app->scenario_manager().GetScenario(r.scenario_name()).has_value();
-    if (has_referenced_scenario) {
-      ImGui::SameLine();
-      if (ImGui::Button(icons::kOpenInNew)) {
-        // TODO: confirmation dialog and check if there are actual edits.
-        app->scenario_manager().SetCurrentScenario(r.scenario_name());
-        app->PopCurrentScreen();
-        ScenarioEditorOptions opts;
-        opts.scenario_name = r.scenario_name();
-        app->PushNextScreen(CreateScenarioEditorScreen(opts));
-      }
-      ImGui::HelpTooltip("Go to the referenced scenario. All current edits will be lost.");
-    }
-  } else {
-    ImGui::InputText("##ScenarioReference", r.mutable_scenario_name());
-  }
-
-  ImGui::SpacedSeparator();
-
-  ImGui::Text("Overrides");
-  ImGui::Indent();
-  DrawOverridesEditor("ReferenceOverrides", def.mutable_overrides());
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  bool has_level_overrides = def.has_level_overrides();
-  ImGui::Text("Level overrides");
-  ImGui::SameLine();
-  ImGui::Checkbox("##LevelOverridesCheck", &has_level_overrides);
-  if (has_level_overrides) {
-    ImGui::Indent();
-    DrawOverridesEditor("LevelOverrides", def.mutable_level_overrides(), /*is_levels=*/true);
-    ImGui::Unindent();
-  } else {
-    def.clear_level_overrides();
-  }
-
-  ImGui::SpacedSeparator();
-
-  DrawScoreTargetsEditor(PROTO_PTR_FIELD(ScoreTargets, ScenarioDef, &def, score_targets));
-
-  ImGui::SpacedSeparator();
-
-  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Duration")
-                      .set_is_optional()
-                      .set_default(60)
-                      .set_min(5)
-                      .set_step(5, 5)
-                      .set_width(char_x * 12),
-                  PROTO_INT_FIELD(ReferenceScenarioDef, &r, duration_seconds));
-
-  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Number of targets")
-                      .set_is_optional()
-                      .set_default(3)
-                      .set_min(1)
-                      .set_step(1, 5)
-                      .set_width(char_x * 12),
-                  PROTO_INT_FIELD(ReferenceScenarioDef, &r, num_targets));
-
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Target radius")
-                        .set_is_optional()
-                        .set_default(2)
-                        .set_min(0.01)
-                        .set_step(0.05, 0.5)
-                        .set_width(char_x * 12),
-                    PROTO_FLOAT_FIELD(ReferenceScenarioDef, &r, explicit_target_radius));
-  ImGui::SameLine();
-  ImGui::HelpMarker(
-      "Provide an explicit radius for the target. Useful for providing a stable size for a base "
-      "level.");
-
-  if (app != nullptr) {
-    bool has_room = r.has_room();
-    ImGui::AlignTextToFramePadding();
-    ImGui::Text("Change room");
-    ImGui::SameLine();
-    ImGui::Checkbox("##OverrideRoomCheck", &has_room);
-    if (has_room) {
-      if (!r.has_room()) {
-        // Initialize room
-        auto parent = app->scenario_manager().GetEvaluatedScenarioDef(r.scenario_name());
-        if (parent) {
-          *r.mutable_room() = parent->room();
-        } else {
-          *r.mutable_room() = GetDefaultSimpleRoom();
-        }
-      }
-      ImGui::SameLine();
-      if (ImGui::Button(std::format("{} Room", icons::kEdit))) {
-        *editing_room = true;
-      }
-    } else {
-      r.clear_room();
-    }
-  }
-
-  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Horizontal FOV")
-                        .set_is_optional()
-                        .set_step(1, 5)
-                        .set_min(1)
-                        .set_default(103)
-                        .set_width(char_x * 10),
-                    PROTO_FLOAT_FIELD(ReferenceScenarioDef, &r, horizontal_fov));
-
-  ImGui::SpacedSeparator();
-
-  bool has_shot_type = def.reference_def().has_shot_type();
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Shot type");
-  ImGui::SameLine();
-  ImGui::Checkbox("##OverrideShotType", &has_shot_type);
-  if (has_shot_type) {
-    ImGui::Indent();
-    DrawShotTypeEditor(*def.mutable_reference_def()->mutable_shot_type());
-    ImGui::Unindent();
-  } else {
-    def.mutable_reference_def()->clear_shot_type();
-  }
-
-  if (description_dialog != nullptr) {
-    ImGui::SpacedSeparator();
-    std::string button_text = r.description().empty()
-                                  ? std::format("{} Set description", icons::kEdit)
-                                  : std::format("{} Edit description", icons::kEdit);
-    if (ImGui::Button(button_text)) {
-      description_dialog->NotifyOpen(r.description());
-    }
-    if (!r.description().empty()) {
-      ImGui::SameLine();
-      if (ImGui::SelectableButton(icons::kClear)) {
-        r.clear_description();
-      }
-    }
-  }
-
-  ImGui::SpacedSeparator();
-
-  if (app != nullptr) {
-    if (ImGui::Button("Bake")) {
-      auto parent = app->scenario_manager().GetEvaluatedScenarioDef(r.scenario_name());
-      if (parent) {
-        ScenarioDef baked_def = *parent;
-        ApplyReferenceFieldOverrides(def, &baked_def);
-        def = ApplyScenarioOverrides(baked_def);
-      } else {
-        *error_message_out =
-            std::format("Referenced scenario \"{}\" is invalid.", r.scenario_name());
-      }
-    }
-    ImGui::SameLine();
-    ImGui::HelpMarker("Expand and remove the reference. Will now be an equivalent normal scenario");
-  }
-}
-
-void InitializeScenarioType(ScenarioDef& def, ScenarioDef::TypeCase scenario_type) {
-  auto target_placement = GetTargetPlacementStrategy(def);
-  switch (scenario_type) {
-    case ScenarioDef::kStaticDef:
-      def.mutable_static_def();
-      break;
-    case ScenarioDef::kWaypointDef:
-      def.mutable_waypoint_def();
-      break;
-    case ScenarioDef::kWallWanderDef:
-      def.mutable_wall_wander_def();
-      break;
-    case ScenarioDef::kCenteringDef:
-      def.mutable_centering_def();
-      break;
-    case ScenarioDef::kAngleStrafeDef:
-      def.mutable_angle_strafe_def();
-      break;
-    case ScenarioDef::kStrafeDef:
-      def.mutable_strafe_def();
-      break;
-    case ScenarioDef::kBounceDef:
-      def.mutable_bounce_def();
-      break;
-    case ScenarioDef::kLinearDef:
-      def.mutable_linear_def();
-      break;
-    case ScenarioDef::kBarrelDef: {
-      def.mutable_barrel_def();
-      if (!def.room().has_barrel_room()) {
-        *def.mutable_room() = GetDefaultBarrelRoom();
-      }
-      break;
-    }
-    case ScenarioDef::kWallArcDef: {
-      def.mutable_wall_arc_def();
-      def.clear_target_def();
-      def.mutable_target_def()->set_num_targets(1);
-      auto* p = def.mutable_target_def()->add_profiles();
-      p->set_speed(100);
-      p->set_acceleration(160);
-
-      def.clear_shot_type();
-      def.mutable_shot_type()->set_tracking_invincible(true);
-      break;
-    }
-    case ScenarioDef::kCircleDef:
-      def.mutable_circle_def();
-      break;
-    case ScenarioDef::kSineDef:
-      def.mutable_sine_def();
-      break;
-    case ScenarioDef::kReferenceDef:
-      def.clear_level_overrides();
-      def.clear_score_targets();
-      def.clear_overrides();
-      def.mutable_reference_def();
-      break;
-    case ScenarioDef::TYPE_NOT_SET:
-      break;
-  }
-
-  if (target_placement.regions_size() > 0) {
-    auto maybe_strat = GetTargetPlacementStrategyField(&def);
-    if (maybe_strat) {
-      *maybe_strat->get_mutable() = target_placement;
-    }
-  }
-}
-
 }  // namespace
-
-void DrawScenarioTypeEditor(ScenarioDef& def,
-                            Application* app,
-                            std::string* error_message_out,
-                            bool* editing_room,
-                            ImGui::MultilineTextEntryDialog* description_dialog) {
-  float char_x = ImGui::GetDefaultCharSizeX();
-  ImGui::IdGuard cid("ScenarioTypeEditor");
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Scenario type");
-  ImGui::SameLine();
-
-  if (def.type_case() == ScenarioDef::TYPE_NOT_SET) {
-    InitializeScenarioType(def, ScenarioDef::kStaticDef);
-  }
-
-  auto scenario_type = def.type_case();
-  bool is_new_type = ImGui::SimpleTypeDropdown(
-      "ScenarioTypeDropdown", &scenario_type, kScenarioTypes, char_x * 15);
-  if (is_new_type) {
-    InitializeScenarioType(def, scenario_type);
-  }
-
-  ImGui::SpacedSeparator();
-
-  if (scenario_type == ScenarioDef::kReferenceDef) {
-    DrawReferenceEditor(def, app, error_message_out, editing_room, description_dialog);
-  }
-  if (scenario_type == ScenarioDef::kStaticDef) {
-    DrawStaticEditor(*def.mutable_static_def());
-  }
-  if (scenario_type == ScenarioDef::kWaypointDef) {
-    DrawWaypointEditor(*def.mutable_waypoint_def());
-  }
-  if (scenario_type == ScenarioDef::kCenteringDef) {
-    DrawCenteringEditor(*def.mutable_centering_def());
-  }
-  if (scenario_type == ScenarioDef::kAngleStrafeDef) {
-    DrawAngleStrafeEditor(*def.mutable_angle_strafe_def());
-  }
-  if (scenario_type == ScenarioDef::kStrafeDef) {
-    DrawStrafeEditor(*def.mutable_strafe_def());
-  }
-  if (scenario_type == ScenarioDef::kBounceDef) {
-    DrawBounceEditor(*def.mutable_bounce_def());
-  }
-  if (scenario_type == ScenarioDef::kLinearDef) {
-    DrawLinearEditor(*def.mutable_linear_def());
-  }
-  if (scenario_type == ScenarioDef::kBarrelDef) {
-    DrawBarrelEditor(def);
-  }
-  if (scenario_type == ScenarioDef::kWallArcDef) {
-    DrawWallArcEditor(*def.mutable_wall_arc_def());
-  }
-  if (scenario_type == ScenarioDef::kWallWanderDef) {
-    DrawWallWanderEditor(*def.mutable_wall_wander_def());
-  }
-  if (scenario_type == ScenarioDef::kCircleDef) {
-    DrawCircleEditor(*def.mutable_circle_def());
-  }
-  if (scenario_type == ScenarioDef::kSineDef) {
-    DrawSineEditor(*def.mutable_sine_def());
-  }
-}
-
-void DrawSecondaryScenarioTypeEditor(ScenarioDef& def) {
-  std::optional<PtrField<TargetPlacementStrategy>> strat;
-  if (def.has_strafe_def()) {
-    strat = PROTO_PTR_FIELD(TargetPlacementStrategy,
-                            StrafeScenarioDef,
-                            def.mutable_strafe_def(),
-                            target_placement_strategy);
-  } else if (def.has_bounce_def()) {
-    strat = PROTO_PTR_FIELD(TargetPlacementStrategy,
-                            BounceScenarioDef,
-                            def.mutable_bounce_def(),
-                            target_placement_strategy);
-  } else if (def.has_wall_wander_def()) {
-    strat = PROTO_PTR_FIELD(TargetPlacementStrategy,
-                            WallWanderScenarioDef,
-                            def.mutable_wall_wander_def(),
-                            target_placement_strategy);
-  } else if (def.has_angle_strafe_def()) {
-    strat = PROTO_PTR_FIELD(TargetPlacementStrategy,
-                            AngleStrafeScenarioDef,
-                            def.mutable_angle_strafe_def(),
-                            target_placement_strategy);
-  }
-
-  if (!strat.has_value()) {
-    return;
-  }
-
-  bool use_target_placement = strat->has();
-  ImGui::AlignTextToFramePadding();
-  ImGui::Text("Set initial target location");
-  ImGui::SameLine();
-  bool changed = ImGui::Checkbox("##UseTargetPlacement", &use_target_placement);
-  if (use_target_placement) {
-    ImGui::Indent();
-    DrawTargetPlacementStrategyEditor("Placement", strat->get_mutable());
-    ImGui::Unindent();
-  } else if (changed) {
-    strat->clear();
-  }
-}
 
 void DrawShotTypeEditor(ShotType& s) {
   float char_x = ImGui::GetDefaultCharSizeX();
@@ -1359,6 +937,362 @@ void DrawShotTypeEditor(ShotType& s) {
         "played when this threshold is passed.");
 
     ImGui::InputBool("No partial kills", PROTO_BOOL_FIELD(ShotType, &s, no_partial_kills));
+  }
+}
+
+void InitializeScenarioType(ScenarioDef& def, ScenarioDef::TypeCase scenario_type) {
+  auto target_placement = GetTargetPlacementStrategy(def);
+  switch (scenario_type) {
+    case ScenarioDef::kStaticDef:
+      def.mutable_static_def();
+      break;
+    case ScenarioDef::kWaypointDef:
+      def.mutable_waypoint_def();
+      break;
+    case ScenarioDef::kWallWanderDef:
+      def.mutable_wall_wander_def();
+      break;
+    case ScenarioDef::kCenteringDef:
+      def.mutable_centering_def();
+      break;
+    case ScenarioDef::kAngleStrafeDef:
+      def.mutable_angle_strafe_def();
+      break;
+    case ScenarioDef::kStrafeDef:
+      def.mutable_strafe_def();
+      break;
+    case ScenarioDef::kBounceDef:
+      def.mutable_bounce_def();
+      break;
+    case ScenarioDef::kLinearDef:
+      def.mutable_linear_def();
+      break;
+    case ScenarioDef::kBarrelDef: {
+      def.mutable_barrel_def();
+      if (!def.room().has_barrel_room()) {
+        *def.mutable_room() = GetDefaultBarrelRoom();
+      }
+      break;
+    }
+    case ScenarioDef::kWallArcDef: {
+      def.mutable_wall_arc_def();
+      def.clear_target_def();
+      def.mutable_target_def()->set_num_targets(1);
+      auto* p = def.mutable_target_def()->add_profiles();
+      p->set_speed(100);
+      p->set_acceleration(160);
+
+      def.clear_shot_type();
+      def.mutable_shot_type()->set_tracking_invincible(true);
+      break;
+    }
+    case ScenarioDef::kCircleDef:
+      def.mutable_circle_def();
+      break;
+    case ScenarioDef::kSineDef:
+      def.mutable_sine_def();
+      break;
+    case ScenarioDef::kReferenceDef:
+      def.clear_level_overrides();
+      def.clear_score_targets();
+      def.clear_overrides();
+      def.mutable_reference_def();
+      break;
+    case ScenarioDef::TYPE_NOT_SET:
+      break;
+  }
+
+  if (target_placement.regions_size() > 0) {
+    auto maybe_strat = GetTargetPlacementStrategyField(&def);
+    if (maybe_strat) {
+      *maybe_strat->get_mutable() = target_placement;
+    }
+  }
+}
+
+void DrawLeftRightStrafeTab(PtrField<ProfileListInfo> profiles_info,
+                            google::protobuf::RepeatedPtrField<StrafeProfile>* profile_list,
+                            Bounds* bounds,
+                            Bounds* relative_bounds,
+                            Field<Direction> direction_field) {
+  if (BeginMaybeEditedTabItem("Left/Right", profile_list->size() > 0)) {
+    ImGui::BeginChild("LeftRightContent");
+    DrawLeftRightStrafeProfiles(
+        profiles_info, profile_list, bounds, relative_bounds, direction_field);
+
+    ImGui::EndChild();
+    ImGui::EndTabItem();
+  }
+}
+
+void DrawUpDownStrafeTab(PtrField<ProfileListInfo> profiles_info,
+                         google::protobuf::RepeatedPtrField<StrafeProfile>* profile_list,
+                         Bounds* bounds,
+                         Bounds* relative_bounds,
+                         Field<Direction> direction_field) {
+  if (BeginMaybeEditedTabItem("Up/Down", profile_list->size() > 0)) {
+    ImGui::BeginChild("UpDownContent");
+    DrawUpDownStrafeProfiles(profiles_info, profile_list, bounds, relative_bounds, direction_field);
+
+    ImGui::EndChild();
+    ImGui::EndTabItem();
+  }
+}
+
+void DrawForwardBackStrafeTab(PtrField<ProfileListInfo> profiles_info,
+                              google::protobuf::RepeatedPtrField<StrafeProfile>* profile_list,
+                              Bounds* bounds,
+                              Bounds* relative_bounds,
+                              Field<Direction> direction_field) {
+  if (BeginMaybeEditedTabItem("Forward/Back", profile_list->size() > 0)) {
+    ImGui::BeginChild("ForwardBackContent");
+    DrawForwardBackStrafeProfiles(
+        profiles_info, profile_list, bounds, relative_bounds, direction_field);
+
+    ImGui::EndChild();
+    ImGui::EndTabItem();
+  }
+}
+
+void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
+  auto scenario_type = def.type_case();
+  if (scenario_type == ScenarioDef::kStrafeDef) {
+    auto* d = def.mutable_strafe_def();
+    DrawLeftRightStrafeTab(
+        PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, d, left_right_profiles_info),
+        d->mutable_left_right_profiles(),
+        d->mutable_bounds(),
+        d->mutable_relative_bounds(),
+        PROTO_FIELD(Direction, StrafeScenarioDef, d, left_right_initial_direction));
+    DrawUpDownStrafeTab(
+        PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, d, up_down_profiles_info),
+        d->mutable_up_down_profiles(),
+        d->mutable_bounds(),
+        d->mutable_relative_bounds(),
+        PROTO_FIELD(Direction, StrafeScenarioDef, d, up_down_initial_direction));
+    DrawForwardBackStrafeTab(
+        PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, d, forward_back_profiles_info),
+        d->mutable_forward_back_profiles(),
+        d->mutable_bounds(),
+        d->mutable_relative_bounds(),
+        PROTO_FIELD(Direction, StrafeScenarioDef, d, forward_back_initial_direction));
+    if (IsDefaultInstance(d->relative_bounds())) {
+      d->clear_relative_bounds();
+    }
+    if (IsDefaultInstance(d->bounds())) {
+      d->clear_bounds();
+    }
+  }
+  if (scenario_type == ScenarioDef::kCenteringDef) {
+    if (ImGui::BeginTabItem("Centering")) {
+      ImGui::BeginChild("CenteringContent");
+      DrawCenteringEditor(*def.mutable_centering_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kAngleStrafeDef) {
+    if (ImGui::BeginTabItem("Strafe")) {
+      ImGui::BeginChild("StrafeContent");
+      DrawAngleStrafeEditor(*def.mutable_angle_strafe_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kBounceDef) {
+    auto* d = def.mutable_bounce_def();
+    if (ImGui::BeginTabItem("Bounce")) {
+      ImGui::BeginChild("BounceContent");
+      DrawBounceEditor(*d);
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+    DrawLeftRightStrafeTab(
+        PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, d, left_right_profiles_info),
+        d->mutable_left_right_profiles(),
+        d->mutable_bounds(),
+        d->mutable_relative_bounds(),
+        PROTO_FIELD(Direction, BounceScenarioDef, d, left_right_initial_direction));
+    DrawForwardBackStrafeTab(
+        PROTO_PTR_FIELD(ProfileListInfo, BounceScenarioDef, d, forward_back_profiles_info),
+        d->mutable_forward_back_profiles(),
+        d->mutable_bounds(),
+        d->mutable_relative_bounds(),
+        PROTO_FIELD(Direction, BounceScenarioDef, d, forward_back_initial_direction));
+    if (IsDefaultInstance(d->relative_bounds())) {
+      d->clear_relative_bounds();
+    }
+    if (IsDefaultInstance(d->bounds())) {
+      d->clear_bounds();
+    }
+  }
+  if (scenario_type == ScenarioDef::kLinearDef) {
+    if (ImGui::BeginTabItem("Linear")) {
+      ImGui::BeginChild("LinearContent");
+      DrawLinearEditor(*def.mutable_linear_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kBarrelDef) {
+    if (ImGui::BeginTabItem("Barrel")) {
+      ImGui::BeginChild("BarrelContent");
+      DrawBarrelEditor(def);
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kWallArcDef) {
+    if (ImGui::BeginTabItem("Arc")) {
+      ImGui::BeginChild("WallArcContent");
+      DrawWallArcEditor(*def.mutable_wall_arc_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kWallWanderDef) {
+    if (ImGui::BeginTabItem("Wander")) {
+      ImGui::BeginChild("WallWanderContent");
+      DrawWallWanderEditor(*def.mutable_wall_wander_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kCircleDef) {
+    if (ImGui::BeginTabItem("Circle")) {
+      ImGui::BeginChild("CircleContent");
+      DrawCircleEditor(*def.mutable_circle_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+  if (scenario_type == ScenarioDef::kSineDef) {
+    if (ImGui::BeginTabItem("Sine")) {
+      ImGui::BeginChild("SineContent");
+      DrawSineEditor(*def.mutable_sine_def());
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    }
+  }
+}
+
+void DrawReferenceEditor(ScenarioDef& def,
+                         Application* app,
+                         std::string* error_message_out,
+                         bool* editing_room) {
+  // Make sure only the appropriate fields are set on the def.
+  ScenarioDef old_def = def;
+
+  float char_x = ImGui::GetDefaultCharSizeX();
+
+  def = {};
+  if (old_def.has_level_overrides()) {
+    *def.mutable_level_overrides() = old_def.level_overrides();
+  }
+  if (old_def.has_score_targets()) {
+    *def.mutable_score_targets() = old_def.score_targets();
+  }
+  *def.mutable_overrides() = old_def.overrides();
+  *def.mutable_reference_def() = old_def.reference_def();
+
+  ReferenceScenarioDef& r = *def.mutable_reference_def();
+  ImGui::AlignTextToFramePadding();
+  ImGui::Text("Scenario");
+  ImGui::SameLine();
+  ImGui::HelpMarker("The name of the scenario to reference");
+  ImGui::SameLine();
+
+  if (app != nullptr) {
+    ScenarioSearchInput(*app, r.mutable_scenario_name());
+    bool has_referenced_scenario =
+        app->scenario_manager().GetScenario(r.scenario_name()).has_value();
+    if (has_referenced_scenario) {
+      ImGui::SameLine();
+      if (ImGui::Button(icons::kOpenInNew)) {
+        // TODO: confirmation dialog and check if there are actual edits.
+        app->scenario_manager().SetCurrentScenario(r.scenario_name());
+        app->PopCurrentScreen();
+        ScenarioEditorOptions opts;
+        opts.scenario_name = r.scenario_name();
+        app->PushNextScreen(CreateScenarioEditorScreen(opts));
+      }
+      ImGui::HelpTooltip("Go to the referenced scenario. All current edits will be lost.");
+    }
+  } else {
+    ImGui::InputText("##ScenarioReference", r.mutable_scenario_name());
+  }
+
+  ImGui::SpacedSeparator();
+
+  ImGui::InputInt(ImGui::InputIntParams::WithLabelAsId("Number of targets")
+                      .set_is_optional()
+                      .set_default(3)
+                      .set_min(1)
+                      .set_step(1, 5)
+                      .set_width(char_x * 12),
+                  PROTO_INT_FIELD(ReferenceScenarioDef, &r, num_targets));
+
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Target radius")
+                        .set_is_optional()
+                        .set_default(2)
+                        .set_min(0.01)
+                        .set_step(0.05, 0.5)
+                        .set_width(char_x * 12),
+                    PROTO_FLOAT_FIELD(ReferenceScenarioDef, &r, explicit_target_radius));
+  ImGui::SameLine();
+  ImGui::HelpMarker(
+      "Provide an explicit radius for the target. Useful for providing a stable size for a base "
+      "level.");
+
+  if (app != nullptr) {
+    bool has_room = r.has_room();
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Change room");
+    ImGui::SameLine();
+    ImGui::Checkbox("##OverrideRoomCheck", &has_room);
+    if (has_room) {
+      if (!r.has_room()) {
+        // Initialize room
+        auto parent = app->scenario_manager().GetEvaluatedScenarioDef(r.scenario_name());
+        if (parent) {
+          *r.mutable_room() = parent->room();
+        } else {
+          *r.mutable_room() = GetDefaultSimpleRoom();
+        }
+      }
+      ImGui::SameLine();
+      if (ImGui::Button(std::format("{} Room", icons::kEdit))) {
+        *editing_room = true;
+      }
+    } else {
+      r.clear_room();
+    }
+  }
+
+  ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Horizontal FOV")
+                        .set_is_optional()
+                        .set_step(1, 5)
+                        .set_min(1)
+                        .set_default(103)
+                        .set_width(char_x * 10),
+                    PROTO_FLOAT_FIELD(ReferenceScenarioDef, &r, horizontal_fov));
+
+  ImGui::SpacedSeparator();
+
+  if (app != nullptr) {
+    if (ImGui::Button("Bake")) {
+      auto parent = app->scenario_manager().GetEvaluatedScenarioDef(r.scenario_name());
+      if (parent) {
+        ScenarioDef baked_def = *parent;
+        ApplyReferenceFieldOverrides(def, &baked_def);
+        def = ApplyScenarioOverrides(baked_def);
+      } else {
+        *error_message_out =
+            std::format("Referenced scenario \"{}\" is invalid.", r.scenario_name());
+      }
+    }
+    ImGui::SameLine();
+    ImGui::HelpMarker("Expand and remove the reference. Will now be an equivalent normal scenario");
   }
 }
 

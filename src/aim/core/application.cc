@@ -98,6 +98,7 @@ void InitializeImGui(const std::string& imgui_ini_filename,
   // SetupColorScheme();
   ImGui::StyleColorsClassic();
   style.Colors[ImGuiCol_WindowBg] = ImVec4(0.07f, 0.07f, 0.1f, 1.00f);
+  style.Colors[ImGuiCol_Tab] = ImVec4(0.2f, 0.2f, 0.3f, 1.00f);  // Dim inactive
   style.AntiAliasedLines = true;
   style.AntiAliasedFill = true;
 

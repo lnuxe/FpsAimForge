@@ -19,6 +19,8 @@ struct BoundsDimensions {
   bool draw_depth = true;
 };
 
+bool BeginMaybeEditedTabItem(std::string name, bool edited = false);
+
 ImGui::InputFloatParams GetDefaultMultiplierInputParams(const std::string& label);
 
 void DrawRegionLengthEditor(const std::string& id,

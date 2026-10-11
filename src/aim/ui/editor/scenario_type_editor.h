@@ -12,16 +12,15 @@ namespace aim {
 
 class Application;
 
-void DrawScenarioTypeEditor(ScenarioDef& def,
-                            Application* app,
-                            std::string* error_message,
-                            bool* editing_room,
-                            ImGui::MultilineTextEntryDialog* description_dialog);
+void InitializeScenarioType(ScenarioDef& def, ScenarioDef::TypeCase scenario_type);
 
-// Overflow information for the scenario type shown in the left panel. Should not
-// be the primary details for the scenario type.
-void DrawSecondaryScenarioTypeEditor(ScenarioDef& def);
+void DrawScenarioTypeTabs(ScenarioDef& def, Application* app);
 
 void DrawShotTypeEditor(ShotType& s);
+
+void DrawReferenceEditor(ScenarioDef& def,
+                         Application* app,
+                         std::string* error_message_out,
+                         bool* editing_room);
 
 }  // namespace aim

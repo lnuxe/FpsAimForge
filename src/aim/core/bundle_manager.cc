@@ -225,7 +225,8 @@ class BundleManagerImpl : public BundleManager {
       }
     }
 
-    // std::cout << std::format("Loading bundles from disk took {}ms", s.GetElapsedMicros() / 1000) << std::endl;
+    // std::cout << std::format("Loading bundles from disk took {}ms", s.GetElapsedMicros() / 1000)
+    // << std::endl;
 
     scenario_manager_->StartReload();
     playlist_manager_->StartReload();
@@ -253,7 +254,8 @@ class BundleManagerImpl : public BundleManager {
     playlist_manager_->FinishReload();
     guide_manager_->FinishReload();
 
-    // std::cout << std::format("Loading bundles took {}ms", s.GetElapsedMicros() / 1000) << std::endl;
+    // std::cout << std::format("Loading bundles took {}ms", s.GetElapsedMicros() / 1000) <<
+    // std::endl;
     return error_messages;
   }
 
@@ -500,7 +502,6 @@ std::shared_ptr<BundlePack> ConvertZipToBundlePack(const std::string& zip_conten
   mz_uint num_files = mz_zip_reader_get_num_files(&zip_archive);
 
   std::unordered_set<std::string> added_bundles;
-
 
   std::shared_ptr<BundlePack> pack = std::make_shared<BundlePack>();
   for (mz_uint i = 0; i < num_files; ++i) {

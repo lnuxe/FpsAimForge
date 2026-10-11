@@ -498,6 +498,14 @@ const std::unordered_map<ScenarioDef::TypeCase, std::string> kScenarioTypeDispla
 const std::unordered_map<ShotType::TypeCase, std::string> kShotTypeDisplayNameMap =
     BuildDisplayNameMap(kShotTypes);
 
+bool BeginMaybeEditedTabItem(std::string name, bool edited) {
+  bool show = ImGui::BeginTabItem(std::format("{}{}###{}", name, edited ? "*" : "", name).c_str());
+  if (show) {
+    ImGui::Spacing();
+  }
+  return show;
+}
+
 void DrawScoreTargetsEditor(PtrField<ScoreTargets> score_targets) {
   float char_x = ImGui::GetDefaultCharSizeX();
   ImGui::AlignTextToFramePadding();
