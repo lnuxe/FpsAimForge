@@ -8,7 +8,6 @@
 #include "aim/common/files.h"
 #include "aim/common/http.h"
 #include "aim/common/imgui_ext.h"
-#include "aim/common/json.h"
 #include "aim/common/log.h"
 #include "aim/common/mat_icons.h"
 #include "aim/common/simple_types.h"
@@ -35,6 +34,7 @@
 #include "aim/ui/ui_screen.h"
 #include "imgui.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
+#include "nlohmann/json.h"
 
 namespace aim {
 namespace {
