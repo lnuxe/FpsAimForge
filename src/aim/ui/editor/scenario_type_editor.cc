@@ -1038,6 +1038,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kCenteringDef) {
     if (ImGui::BeginTabItem("Centering")) {
       ImGui::BeginChild("CenteringContent");
+      ImGui::Spacing();
       DrawCenteringEditor(*def.mutable_centering_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1046,6 +1047,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kAngleStrafeDef) {
     if (ImGui::BeginTabItem("Strafe")) {
       ImGui::BeginChild("StrafeContent");
+      ImGui::Spacing();
       DrawAngleStrafeEditor(*def.mutable_angle_strafe_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1055,6 +1057,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
     auto* d = def.mutable_bounce_def();
     if (ImGui::BeginTabItem("Bounce")) {
       ImGui::BeginChild("BounceContent");
+      ImGui::Spacing();
       DrawBounceEditor(*d);
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1081,6 +1084,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kLinearDef) {
     if (ImGui::BeginTabItem("Linear")) {
       ImGui::BeginChild("LinearContent");
+      ImGui::Spacing();
       DrawLinearEditor(*def.mutable_linear_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1089,6 +1093,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kBarrelDef) {
     if (ImGui::BeginTabItem("Barrel")) {
       ImGui::BeginChild("BarrelContent");
+      ImGui::Spacing();
       DrawBarrelEditor(def);
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1097,6 +1102,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kWallArcDef) {
     if (ImGui::BeginTabItem("Arc")) {
       ImGui::BeginChild("WallArcContent");
+      ImGui::Spacing();
       DrawWallArcEditor(*def.mutable_wall_arc_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1105,6 +1111,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kWallWanderDef) {
     if (ImGui::BeginTabItem("Wander")) {
       ImGui::BeginChild("WallWanderContent");
+      ImGui::Spacing();
       DrawWallWanderEditor(*def.mutable_wall_wander_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1113,6 +1120,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kCircleDef) {
     if (ImGui::BeginTabItem("Circle")) {
       ImGui::BeginChild("CircleContent");
+      ImGui::Spacing();
       DrawCircleEditor(*def.mutable_circle_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -1121,6 +1129,7 @@ void DrawScenarioTypeTabs(ScenarioDef& def, Application* app) {
   if (scenario_type == ScenarioDef::kSineDef) {
     if (ImGui::BeginTabItem("Sine")) {
       ImGui::BeginChild("SineContent");
+      ImGui::Spacing();
       DrawSineEditor(*def.mutable_sine_def());
       ImGui::EndChild();
       ImGui::EndTabItem();
