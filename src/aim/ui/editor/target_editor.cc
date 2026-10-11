@@ -120,11 +120,27 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
     ImGui::HelpMarker(
         "Time target will stay at final size before being removed. Defaults to 0. i.e. remove "
         "immediately upon reaching final size. This time is in addition to the pulse time.");
+
+    ImGui::InputFloat(
+        ImGui::InputFloatParams::WithLabelAsId("Acceleration factor")
+            .set_step(0.05, 0.1)
+            .set_min(0)
+            .set_max(1)
+            .set_default(0.5)
+            .set_is_optional()
+            .set_width(char_x * 10),
+        PROTO_FLOAT_FIELD(TargetProfile, profile, target_radius_growth_acceleration_factor));
+    ImGui::SameLine();
+    ImGui::HelpMarker(
+        "The rate of radius size change will increase over time (acceleration). 0 is default "
+        "constant growth rate - same as unset. 1 is max acceleration meaning the growth rate will "
+        "be highest possible right at end and 0 at start.");
     ImGui::Unindent();
   } else {
     profile->clear_target_radius_growth_time_seconds();
     profile->clear_target_radius_growth_final_size_time_seconds();
     profile->clear_target_radius_growth_size();
+    profile->clear_target_radius_growth_acceleration_factor();
   }
 
   if (def.shot_type().type_case() == ShotType::kClickMulti ||

@@ -377,6 +377,7 @@ inline constexpr TargetProfile::Impl_::Impl_(
         target_radius_growth_time_seconds_{0},
         target_radius_growth_size_{0},
         target_radius_growth_final_size_time_seconds_{0},
+        target_radius_growth_acceleration_factor_{0},
         type_{},
         _oneof_case_{} {}
 
@@ -1830,7 +1831,7 @@ const ::uint32_t
         0x085, // bitmap
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_._oneof_case_[0]),
-        17, // hasbit index offset
+        18, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.info_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_jitter_),
@@ -1842,6 +1843,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_growth_time_seconds_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_growth_size_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_growth_final_size_time_seconds_),
+        PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.target_radius_growth_acceleration_factor_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::aim::TargetProfile, _impl_.type_),
         0,
@@ -1855,6 +1857,7 @@ const ::uint32_t
         8,
         9,
         10,
+        11,
         ~0u,
 };
 
@@ -2181,7 +2184,7 @@ const char descriptor_table_protodef_scenario_2eproto[] ABSL_ATTRIBUTE_SECTION_V
     "rget_after_seconds\030\007 \001(\002\022\'\n\037stagger_init"
     "ial_targets_seconds\030\010 \001(\002\022\034\n\024delayed_tar"
     "get_times\030\t \003(\002\022\034\n\024ghost_border_percent\030"
-    "\n \001(\002\"\037\n\rPillTargetDef\022\016\n\006height\030\001 \001(\002\"\213"
+    "\n \001(\002\"\037\n\rPillTargetDef\022\016\n\006height\030\001 \001(\002\"\275"
     "\003\n\rTargetProfile\022\036\n\004info\030\001 \001(\0132\020.aim.Pro"
     "fileInfo\022\025\n\rtarget_radius\030\002 \001(\002\022\034\n\024targe"
     "t_radius_jitter\030\003 \001(\002\022\r\n\005speed\030\004 \001(\002\022\024\n\014"
@@ -2190,14 +2193,16 @@ const char descriptor_table_protodef_scenario_2eproto[] ABSL_ATTRIBUTE_SECTION_V
     "radius_at_kill\030\010 \001(\002\022)\n!target_radius_gr"
     "owth_time_seconds\030\014 \001(\002\022!\n\031target_radius"
     "_growth_size\030\r \001(\002\0224\n,target_radius_grow"
-    "th_final_size_time_seconds\030\016 \001(\002\022\"\n\004pill"
-    "\030\n \001(\0132\022.aim.PillTargetDefH\000B\006\n\004type*e\n\017"
-    "AccuracyPenalty\022\034\n\030ACCURACY_PENALTY_UNKN"
-    "OWN\020\000\022\031\n\025ACCURACY_PENALTY_SQRT\020\001\022\031\n\025ACCU"
-    "RACY_PENALTY_NONE\020\002*v\n\tDirection\022\024\n\020DIRE"
-    "CTION_RANDOM\020\000\022\026\n\022DIRECTION_POSITIVE\020\001\022\026"
-    "\n\022DIRECTION_NEGATIVE\020\002\022\020\n\014DIRECTION_IN\020\003"
-    "\022\021\n\rDIRECTION_OUT\020\004b\010editionsp\350\007"
+    "th_final_size_time_seconds\030\016 \001(\002\0220\n(targ"
+    "et_radius_growth_acceleration_factor\030\017 \001"
+    "(\002\022\"\n\004pill\030\n \001(\0132\022.aim.PillTargetDefH\000B\006"
+    "\n\004type*e\n\017AccuracyPenalty\022\034\n\030ACCURACY_PE"
+    "NALTY_UNKNOWN\020\000\022\031\n\025ACCURACY_PENALTY_SQRT"
+    "\020\001\022\031\n\025ACCURACY_PENALTY_NONE\020\002*v\n\tDirecti"
+    "on\022\024\n\020DIRECTION_RANDOM\020\000\022\026\n\022DIRECTION_PO"
+    "SITIVE\020\001\022\026\n\022DIRECTION_NEGATIVE\020\002\022\020\n\014DIRE"
+    "CTION_IN\020\003\022\021\n\rDIRECTION_OUT\020\004b\010editionsp"
+    "\350\007"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_scenario_2eproto_deps[1] = {
@@ -2207,7 +2212,7 @@ static ::absl::once_flag descriptor_table_scenario_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_scenario_2eproto = {
     false,
     false,
-    10192,
+    10242,
     descriptor_table_protodef_scenario_2eproto,
     "scenario.proto",
     &descriptor_table_scenario_2eproto_once,
@@ -19075,9 +19080,9 @@ TargetProfile::TargetProfile(
                offsetof(Impl_, target_radius_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, target_radius_),
-           offsetof(Impl_, target_radius_growth_final_size_time_seconds_) -
+           offsetof(Impl_, target_radius_growth_acceleration_factor_) -
                offsetof(Impl_, target_radius_) +
-               sizeof(Impl_::target_radius_growth_final_size_time_seconds_));
+               sizeof(Impl_::target_radius_growth_acceleration_factor_));
   switch (type_case()) {
     case TYPE_NOT_SET:
       break;
@@ -19100,9 +19105,9 @@ inline void TargetProfile::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, info_),
            0,
-           offsetof(Impl_, target_radius_growth_final_size_time_seconds_) -
+           offsetof(Impl_, target_radius_growth_acceleration_factor_) -
                offsetof(Impl_, info_) +
-               sizeof(Impl_::target_radius_growth_final_size_time_seconds_));
+               sizeof(Impl_::target_radius_growth_acceleration_factor_));
 }
 TargetProfile::~TargetProfile() {
   // @@protoc_insertion_point(destructor:aim.TargetProfile)
@@ -19185,16 +19190,16 @@ TargetProfile::GetClassData() const {
   return TargetProfile_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<4, 12, 2, 0, 2>
+const ::_pbi::TcParseTable<4, 13, 2, 0, 2>
 TargetProfile::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_._has_bits_),
     0, // no _extensions_
-    14, 120,  // max_field_number, fast_idx_mask
+    15, 120,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294952192,  // skipmap
+    4294935808,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    12,  // num_field_entries
+    13,  // num_field_entries
     2,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     TargetProfile_class_data_.base(),
@@ -19252,7 +19257,10 @@ TargetProfile::_table_ = {
     {::_pbi::TcParser::FastF32S1,
      {117, 10, 0,
       PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_final_size_time_seconds_)}},
-    {::_pbi::TcParser::MiniParse, {}},
+    // float target_radius_growth_acceleration_factor = 15;
+    {::_pbi::TcParser::FastF32S1,
+     {125, 11, 0,
+      PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_acceleration_factor_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -19280,6 +19288,8 @@ TargetProfile::_table_ = {
     {PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_size_), _Internal::kHasBitsOffset + 9, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
     // float target_radius_growth_final_size_time_seconds = 14;
     {PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_final_size_time_seconds_), _Internal::kHasBitsOffset + 10, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    // float target_radius_growth_acceleration_factor = 15;
+    {PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_acceleration_factor_), _Internal::kHasBitsOffset + 11, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
   }},
   {{
       {::_pbi::TcParser::GetTable<::aim::ProfileInfo>()},
@@ -19305,10 +19315,10 @@ PROTOBUF_NOINLINE void TargetProfile::Clear() {
         reinterpret_cast<char*>(&_impl_.target_radius_at_kill_) -
         reinterpret_cast<char*>(&_impl_.target_radius_)) + sizeof(_impl_.target_radius_at_kill_));
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000700U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
     ::memset(&_impl_.target_radius_growth_time_seconds_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.target_radius_growth_final_size_time_seconds_) -
-        reinterpret_cast<char*>(&_impl_.target_radius_growth_time_seconds_)) + sizeof(_impl_.target_radius_growth_final_size_time_seconds_));
+        reinterpret_cast<char*>(&_impl_.target_radius_growth_acceleration_factor_) -
+        reinterpret_cast<char*>(&_impl_.target_radius_growth_time_seconds_)) + sizeof(_impl_.target_radius_growth_acceleration_factor_));
   }
   clear_type();
   _impl_._has_bits_.Clear();
@@ -19418,6 +19428,13 @@ PROTOBUF_NOINLINE void TargetProfile::Clear() {
         14, this_._internal_target_radius_growth_final_size_time_seconds(), target);
   }
 
+  // float target_radius_growth_acceleration_factor = 15;
+  if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(
+        15, this_._internal_target_radius_growth_acceleration_factor(), target);
+  }
+
   if (ABSL_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
     target =
         ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -19443,7 +19460,7 @@ PROTOBUF_NOINLINE void TargetProfile::Clear() {
 
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
-  total_size += ::absl::popcount(0x000007feU & cached_has_bits) * 5;
+  total_size += ::absl::popcount(0x00000ffeU & cached_has_bits) * 5;
    {
     // .aim.ProfileInfo info = 1;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
@@ -19512,7 +19529,7 @@ void TargetProfile::MergeImpl(::google::protobuf::MessageLite& to_msg,
       _this->_impl_.target_radius_at_kill_ = from._impl_.target_radius_at_kill_;
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x00000700U)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x00000f00U)) {
     if (CheckHasBit(cached_has_bits, 0x00000100U)) {
       _this->_impl_.target_radius_growth_time_seconds_ = from._impl_.target_radius_growth_time_seconds_;
     }
@@ -19521,6 +19538,9 @@ void TargetProfile::MergeImpl(::google::protobuf::MessageLite& to_msg,
     }
     if (CheckHasBit(cached_has_bits, 0x00000400U)) {
       _this->_impl_.target_radius_growth_final_size_time_seconds_ = from._impl_.target_radius_growth_final_size_time_seconds_;
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000800U)) {
+      _this->_impl_.target_radius_growth_acceleration_factor_ = from._impl_.target_radius_growth_acceleration_factor_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -19565,8 +19585,8 @@ void TargetProfile::InternalSwap(TargetProfile* PROTOBUF_RESTRICT PROTOBUF_NONNU
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_final_size_time_seconds_)
-      + sizeof(TargetProfile::_impl_.target_radius_growth_final_size_time_seconds_)
+      PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.target_radius_growth_acceleration_factor_)
+      + sizeof(TargetProfile::_impl_.target_radius_growth_acceleration_factor_)
       - PROTOBUF_FIELD_OFFSET(TargetProfile, _impl_.info_)>(
           reinterpret_cast<char*>(&_impl_.info_),
           reinterpret_cast<char*>(&other->_impl_.info_));

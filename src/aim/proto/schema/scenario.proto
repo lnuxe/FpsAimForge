@@ -600,6 +600,10 @@ message TargetProfile {
   // The amount of time it will stay at final size before being removed. This time is in addition to
   // the growth size.
   float target_radius_growth_final_size_time_seconds = 14;
+  // 0 means no acceleration - constant growth rate. 1.0 means it starts at 0 growth rate and
+  // accelerates until final size. 0.5 means start at half of the constant growth rate and
+  // accelerate to final size. The higher the value the faster the rate of growth will accelerate.
+  float target_radius_growth_acceleration_factor = 15;
 
   // Defaults to spehere if no more specific type is specified.
   oneof type {
