@@ -28,8 +28,6 @@
 #include "aim/ui/editor/scenario_editor_common.h"
 #include "aim/ui/editor/scenario_type_editor.h"
 #include "aim/ui/editor/target_editor.h"
-#include "aim/ui/search_selector.h"
-#include "google/protobuf/descriptor.pb.h"
 #include "imgui.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
 
@@ -266,16 +264,6 @@ class ScenarioEditorScreen : public UiScreen {
 
   void DrawScreenInternal() {
     DrawImportJson();
-
-    auto maybe_description = description_dialog_.Draw();
-    if (maybe_description) {
-      def_.set_description(*maybe_description);
-    }
-
-    auto maybe_ref_description = reference_description_dialog_.Draw();
-    if (maybe_ref_description) {
-      def_.mutable_reference_def()->set_description(*maybe_ref_description);
-    }
 
     if (!def_.has_reference_def() && def_.room().type_case() == Room::TYPE_NOT_SET) {
       *def_.mutable_room() = GetDefaultSimpleRoom();
@@ -750,12 +738,9 @@ class ScenarioEditorScreen : public UiScreen {
 
   bool editing_room_ = false;
 
-  std::string comparison_scenario_;
   float bake_level_ = 1;
   bool exit_after_notification_ = false;
   bool is_new_scenario_ = false;
-  ImGui::MultilineTextEntryDialog description_dialog_{"DescriptionDialog"};
-  ImGui::MultilineTextEntryDialog reference_description_dialog_{"ReferenceDescriptionDialog"};
   ImGui::MultilineTextEntryDialog import_from_json_dialog_{"ImportFromJsonDialog"};
   ImGui::MultilineTextEntryDialog view_json_dialog_{"ViewJsonDialog"};
   CameraUpdates camera_updates_;
