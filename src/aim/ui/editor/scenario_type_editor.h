@@ -4,10 +4,6 @@
 
 #include "aim/proto/scenario.pb.h"
 
-namespace ImGui {
-class MultilineTextEntryDialog;
-}  // namespace ImGui
-
 namespace aim {
 
 class Application;

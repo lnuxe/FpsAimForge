@@ -470,54 +470,6 @@ void DrawForwardBackStrafeProfiles(PtrField<ProfileListInfo> profiles_info,
                   std::bind_front(&DrawStrafeProfile, char_x, RegionLength::kDepthPercentValue));
 }
 
-void DrawStrafeEditor(StrafeScenarioDef& d) {
-  ImGui::IdGuard cid("StrafeEditor");
-  float char_x = ImGui::GetDefaultCharSizeX();
-
-  ImGui::Text("Left/right profiles");
-  ImGui::Indent();
-  DrawLeftRightStrafeProfiles(
-      PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, left_right_profiles_info),
-      d.mutable_left_right_profiles(),
-      d.mutable_bounds(),
-      d.mutable_relative_bounds(),
-      PROTO_FIELD(Direction, StrafeScenarioDef, &d, left_right_initial_direction));
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  ImGui::Text("Up/down profiles");
-  ImGui::Indent();
-  DrawUpDownStrafeProfiles(
-      PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, up_down_profiles_info),
-      d.mutable_up_down_profiles(),
-      d.mutable_bounds(),
-      d.mutable_relative_bounds(),
-      PROTO_FIELD(Direction, StrafeScenarioDef, &d, up_down_initial_direction));
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  ImGui::Text("Forward/back profiles");
-  ImGui::Indent();
-  DrawForwardBackStrafeProfiles(
-      PROTO_PTR_FIELD(ProfileListInfo, StrafeScenarioDef, &d, forward_back_profiles_info),
-      d.mutable_forward_back_profiles(),
-      d.mutable_bounds(),
-      d.mutable_relative_bounds(),
-      PROTO_FIELD(Direction, StrafeScenarioDef, &d, forward_back_initial_direction));
-  ImGui::Unindent();
-
-  ImGui::SpacedSeparator();
-
-  if (IsDefaultInstance(d.relative_bounds())) {
-    d.clear_relative_bounds();
-  }
-  if (IsDefaultInstance(d.bounds())) {
-    d.clear_bounds();
-  }
-}
-
 void DrawBounceProfile(float char_x, BounceProfile* p) {
   ImGui::AlignTextToFramePadding();
   ImGui::Text("Bounce height");
