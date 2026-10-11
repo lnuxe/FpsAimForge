@@ -156,7 +156,7 @@ class ScenarioEditorScreen : public UiScreen {
       }
     }
     ImGui::SameLine();
-    if (ImGui::Button("Cancel", button_size)) {
+    if (ImGui::Button(std::format("{} Cancel", icons::kClear), button_size)) {
       PopSelf();
     }
   }
