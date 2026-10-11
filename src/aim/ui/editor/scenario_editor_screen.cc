@@ -274,8 +274,8 @@ class ScenarioEditorScreen : public UiScreen {
     float editor_end_y = app_.screen_info().height - padding;
 
     auto available_size = ImGui::GetContentRegionAvail();
-    ImGuiTableFlags flags =
-        ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersV | ImGuiTableFlags_Borders;
+    ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersV |
+                            ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable;
     if (ImGui::BeginTable("MainEditorColumns", 3, flags, ImVec2(0, available_size.y))) {
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, available_size.x * 0.3f);
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, available_size.x * 0.35f);
