@@ -198,7 +198,7 @@ class ReactionTimeScreen : public UiScreen {
     int count = 0;
     for (int i = reaction_times_.size() - 1; i >= 0; --i) {
       count++;
-      if (count > 5) {
+      if (count > 10) {
         break;
       }
       auto font = count == 1 ? app_.font_manager().UseLargeBold() : app_.font_manager().UseMedium();
