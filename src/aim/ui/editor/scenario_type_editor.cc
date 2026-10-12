@@ -160,8 +160,7 @@ void DrawWallWanderProfile(float char_x, WallWanderProfile* p) {
   ImGui::SameLine();
   ImGui::HelpMarker(
       "The number of degrees to turn per second. The turn rate will accelerate smoothly "
-      "between "
-      "turns base on turn time.");
+      "between turns base on turn time.");
 }
 
 void DrawWallWanderEditor(WallWanderScenarioDef& d) {

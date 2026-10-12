@@ -46,10 +46,14 @@ message BundleInfo {
 
 message BundlePackInfo {
   string bundle_pack_name = 1;
-  string source_url = 2;
-  string etag = 3;
-  bool archived = 4;
-  repeated string exclude_bundles = 5;
+  bool archived = 2;
+  // Supports a URL to a zip archive containing the individual bundle files or
+  // a github URL like https://github.com/mjohns/FpsAimForgeBundles.
+  string source_url = 3;
+  // For URLs that support checking the current version (github), automatically check
+  // if there is a new version and show download option in top right if there is a new
+  // version.
+  bool automatically_check_for_updates  = 4;
 }
 
 // Structure for bundles.json file.

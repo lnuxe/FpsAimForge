@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project("FpsAimForge")
 
 option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
@@ -23,12 +27,6 @@ set(BUILD_SHARED_LIBS OFF)
 if (NOT BUILD_SHARED_LIBS)
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
-
-
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 enable_testing()
 

@@ -12,6 +12,8 @@ class GuideManager;
 class FileSystem;
 
 inline const char* kUserBundleName = "USER";
+inline const char* kDefaultBundlePackName = "Default";
+inline const char* kDefaultBundlePackFilename = "Default.pack.bin";
 
 class BundleManager {
  public:
@@ -36,6 +38,12 @@ class BundleManager {
 
   virtual bool CopyBundle(const std::string& source_bundle_name,
                           const std::string& target_bundle_name) = 0;
+
+  virtual std::optional<BundlePackInfo> GetBundlePackInfo(const std::string& pack_name) = 0;
+  // Returns optional empty if the commit sha is still loading.
+  virtual std::optional<std::string> GetGitCommitShaForBundlePack(const std::string& pack_name) = 0;
+  virtual std::vector<std::string> GetBundlePackNames() = 0;
+  virtual void UpdateBundlePackInfo(const BundlePackInfo& info) = 0;
 };
 
 std::unique_ptr<BundleManager> CreateBundleManager(FileSystem* fs,
@@ -46,5 +54,7 @@ std::unique_ptr<BundleManager> CreateBundleManager(FileSystem* fs,
 bool IsValidBundleName(const std::string& bundle_name);
 
 std::shared_ptr<BundlePack> ConvertZipToBundlePack(const std::string& zip_content);
+
+std::string GetGithubRepoNameFromUrl(const std::string& url);
 
 }  // namespace aim

@@ -34,7 +34,6 @@
 #include "aim/ui/ui_screen.h"
 #include "imgui.h"
 #include "imgui/backends/imgui_impl_sdl3.h"
-#include "nlohmann/json.h"
 
 namespace aim {
 namespace {
@@ -60,35 +59,6 @@ std::shared_ptr<BundlePack> DownloadBundlePackOnBackgroundThread(const std::stri
     return {};
   }
   return pack;
-}
-
-std::string GetCommitShaFromResponse(const std::string& response) {
-  nlohmann::json json = nlohmann::json::parse(response);
-  if (json.is_discarded()) {
-    Logger::get()->warn("Unable to parse github api response: {}", response);
-    return "";
-  }
-
-  if (!json.is_object()) {
-    return "";
-  }
-  if (json.contains("commit") && json["commit"].is_object()) {
-    const auto& commit = json["commit"];
-    if (commit.contains("sha") && commit["sha"].is_string()) {
-      return commit["sha"].get<std::string>();
-    }
-  }
-
-  return "";
-}
-
-std::string GetCurrentDefaultPackCommitShaOnBackgroundThread() {
-  FileDownload download;
-  if (!DownloadFile(kDefaultBundlePackApiUrl, "", &download)) {
-    return "";
-  }
-  std::string commit_sha = GetCommitShaFromResponse(download.content);
-  return commit_sha;
 }
 
 class SetInitialDpiDialog {
@@ -290,9 +260,6 @@ class HomeScreen : public UiScreen {
     if (last_guide.size() > 0) {
       app_.guide_manager().SetCurrentGuide(last_guide[0].name);
     }
-
-    pending_default_pack_version_future_ =
-        std::async(std::launch::async, GetCurrentDefaultPackCommitShaOnBackgroundThread);
   }
 
   void OnTickStart() override {
@@ -319,28 +286,31 @@ class HomeScreen : public UiScreen {
   }
 
   void HandleCheckDefaultPackVersion() {
-    if (!pending_default_pack_version_future_) {
+    auto pack_info = app_.bundle_manager().GetBundlePackInfo(kDefaultBundlePackName);
+    bool check_for_updates = pack_info && pack_info->automatically_check_for_updates();
+    if (!check_for_updates) {
       return;
     }
-    std::future_status status =
-        pending_default_pack_version_future_->wait_for(std::chrono::seconds(0));
-    if (status != std::future_status::ready) {
+
+    if (bundle_pack_updated_ || !default_bundle_pack_update_available_.empty()) {
       return;
     }
-    std::string commit_sha = pending_default_pack_version_future_->get();
-    pending_default_pack_version_future_ = {};
-
-    // std::cout << std::format("Got commit sha {}", commit_sha) << std::endl;
-
+    std::optional<std::string> commit_sha =
+        app_.bundle_manager().GetGitCommitShaForBundlePack(kDefaultBundlePackName);
+    if (!commit_sha) {
+      return;
+    }
     std::string current_commit_sha = app_.local_store().Get(kDefaultBundlePackCurrentCommitSha);
     if (current_commit_sha.empty()) {
       current_commit_sha = kAimForgeDefaultBundlePackCommitSha;
     }
-    if (current_commit_sha == commit_sha) {
+    if (current_commit_sha == *commit_sha) {
+      // No updated needed. Mark it as update complete.
+      bundle_pack_updated_ = true;
       return;
     }
 
-    default_bundle_pack_update_available_ = commit_sha;
+    default_bundle_pack_update_available_ = *commit_sha;
   }
 
   void RunCurrentScenario() {
@@ -422,6 +392,7 @@ class HomeScreen : public UiScreen {
       app_.local_store().Put(kDefaultBundlePackCurrentCommitSha,
                              default_bundle_pack_update_available_);
       default_bundle_pack_update_available_ = "";
+      bundle_pack_updated_ = true;
     }
 
     ImGui::Spacing();
@@ -558,11 +529,18 @@ class HomeScreen : public UiScreen {
     }
 
     if (kIsDebugBuild) {
-      ImGui::SetCursorAtBottom(ImGui::GetFrameHeight() * 2);
+      ImGui::SetCursorAtBottom(ImGui::GetFrameHeight() * 3);
+
       std::string init_txt =
           std::format("{:.2f}s init", app_.state().initialization_times.total.GetSeconds());
       ImGui::Text(init_txt);
       ImGui::HelpTooltip(init_txt);
+
+      std::string bundle_txt = std::format(
+          "{:.2f}s bundle", app_.state().initialization_times.load_bundles.GetSeconds());
+      ImGui::Text(bundle_txt);
+      ImGui::HelpTooltip(bundle_txt);
+
       ImGui::Text("%d", (int)ImGui::GetIO().Framerate);
     }
   }
@@ -610,10 +588,9 @@ class HomeScreen : public UiScreen {
   std::unique_ptr<TopBar> top_bar_ = CreateTopBar();
   ImGui::NotificationPopup notification_popup_{"Notification"};
 
-  std::optional<std::future<std::string>> pending_default_pack_version_future_;
-
   // The commit sha of available default bundle pack update.
   std::string default_bundle_pack_update_available_;
+  bool bundle_pack_updated_ = false;
 };
 
 }  // namespace

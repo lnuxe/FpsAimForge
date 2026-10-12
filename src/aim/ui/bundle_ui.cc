@@ -1,8 +1,10 @@
 #include "bundle_ui.h"
 
+#include "absl/strings/ascii.h"
 #include "aim/common/files.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
+#include "aim/common/proto_util.h"
 #include "aim/core/application.h"
 #include "aim/core/bundle_manager.h"
 #include "aim/core/playlist_manager.h"
@@ -105,9 +107,15 @@ class BundleUiComponentImpl : public BundleUiComponent {
       selected_bundle_name_ = *added_name;
     }
 
-    ImGuiTableFlags flags = ImGuiTableFlags_BordersInnerV;
-    if (ImGui::BeginTable("BundleColumns", 2, flags)) {
-      ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, GetDefaultObjectBrowserWidth());
+    float char_x = ImGui::GetDefaultCharSizeX();
+    float default_list_width = char_x * 20;
+    float default_content_width = char_x * 40;
+    ImGuiTableFlags flags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_Resizable |
+                            ImGuiTableFlags_BordersInnerV;
+    if (ImGui::BeginTable("BundleColumns", 4, flags)) {
+      ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, char_x * 20);
+      ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, default_content_width);
+      ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, char_x * 20);
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);
 
       ImGui::TableNextColumn();
@@ -119,22 +127,81 @@ class BundleUiComponentImpl : public BundleUiComponent {
         add_dialog_.NotifyOpen({});
       }
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
+      ImGui::SpacedSeparator();
 
       DrawBundlesList();
       ImGui::EndChild();
 
       ImGui::TableNextColumn();
-      DrawRightPanel();
+      DrawBundleRightPanel();
+
+      ImGui::TableNextColumn();
+      DrawBundlePackList();
+
+      ImGui::TableNextColumn();
+      DrawBundlePackRightPanel();
 
       ImGui::EndTable();
     }
   }
 
  private:
-  void DrawRightPanel() {
+  void DrawBundlePackList() {
+    ImGui::Spacing();
+    if (ImGui::Button(std::format("{} Import bundle pack", icons::kAdd))) {
+    }
+    ImGui::SpacedSeparator();
+
+    ImGui::LoopId loop_id;
+    for (const std::string& bundle_pack : app_.bundle_manager().GetBundlePackNames()) {
+      auto id_guard = loop_id.Get();
+      if (ImGui::Selectable(bundle_pack, bundle_pack == selected_bundle_pack_name_)) {
+        selected_bundle_pack_name_ = bundle_pack;
+      }
+    }
+  }
+
+  void DrawBundlePackRightPanel() {
+    auto pack = app_.bundle_manager().GetBundlePackInfo(selected_bundle_pack_name_);
+    if (!pack) {
+      return;
+    }
+    BundlePackInfo info = *pack;
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextFmt("Bundle pack name: {}", info.bundle_pack_name());
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("URL");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    ImGui::InputText("##UrlInput", info.mutable_source_url());
+    absl::StripAsciiWhitespace(info.mutable_source_url());
+
+    std::string repo_name = GetGithubRepoNameFromUrl(info.source_url());
+    if (!repo_name.empty()) {
+      ImGui::InputBool("Automatically check for updates",
+                       PROTO_BOOL_FIELD(BundlePackInfo, &info, automatically_check_for_updates));
+    } else {
+      info.clear_automatically_check_for_updates();
+    }
+
+    ImGui::InputBool("Archived", PROTO_BOOL_FIELD(BundlePackInfo, &info, archived));
+    ImGui::SameLine();
+    ImGui::HelpMarker("Bundle pack will not be loaded");
+
+    if (info.archived()) {
+      info.clear_automatically_check_for_updates();
+    }
+
+    if (!IsEquivalentProto(info, *pack)) {
+      app_.bundle_manager().UpdateBundlePackInfo(info);
+      if (info.archived() != pack->archived()) {
+        app_.bundle_manager().LoadBundlesFromDisk();
+      }
+    }
+  }
+
+  void DrawBundleRightPanel() {
     if (!selected_bundle_name_.empty()) {
       DrawSelectedBundle();
     }
@@ -267,6 +334,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
   ImGui::ConfirmationDialog<std::string> delete_confirmation_dialog_{"DeleteConfirmationDialog"};
   std::string selected_bundle_name_ = "AF";
+  std::string selected_bundle_pack_name_ = kDefaultBundlePackName;
   AddBundleDialog add_dialog_{"AddBundleDialog"};
   std::unordered_map<std::string, CachedBundleDetails> bundle_details_map_;
 };

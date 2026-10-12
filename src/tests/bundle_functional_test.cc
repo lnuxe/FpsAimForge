@@ -624,3 +624,11 @@ TEST_F(BundleFunctionalTest, TestZipToBundlePack) {
 
   EXPECT_THAT(pack.items_size(), Eq(5));
 }
+
+TEST_F(BundleFunctionalTest, GetGithubRepoNameFromUrl) {
+  EXPECT_THAT(GetGithubRepoNameFromUrl("https://github.com/mjohns/FpsAimForgeBundles"),
+              StrEq("mjohns/FpsAimForgeBundles"));
+  EXPECT_THAT(GetGithubRepoNameFromUrl("https://github.com/mjohns/FpsAimForgeBundles.git"),
+              StrEq("mjohns/FpsAimForgeBundles"));
+  EXPECT_THAT(GetGithubRepoNameFromUrl("https://foo.com/mjohns/FpsAimForgeBundles"), StrEq(""));
+}

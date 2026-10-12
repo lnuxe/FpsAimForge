@@ -161,12 +161,12 @@ std::optional<std::string> InitializeAimForgeFolder(FileSystem* fs) {
     return std::format("Unable to create folder \"{}\"", bundles_path.string());
   }
 
-  auto ini_path = fs->GetUserDataPath(kImguiIniFile);
-  if (!std::filesystem::exists(ini_path)) {
-    auto initial_ini_path = fs->GetBasePath("resources/imgui.ini");
-    if (std::filesystem::exists(initial_ini_path)) {
-      std::filesystem::copy(initial_ini_path, ini_path);
-    }
+  // Copy Default.pack.bin to bundles folder if it does not exist.
+  auto default_pack_path = bundles_path / kDefaultBundlePackFilename;
+  auto bin_default_pack_path = fs->GetBasePath("bundles") / kDefaultBundlePackFilename;
+  if (!std::filesystem::exists(default_pack_path) &&
+      std::filesystem::exists(bin_default_pack_path)) {
+    std::filesystem::copy(bin_default_pack_path, default_pack_path);
   }
 
   CopyInitialDirIfNotExists("themes", "resources/themes", fs);
@@ -511,11 +511,6 @@ class ApplicationImpl : public Application {
     // ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings);
   }
 
-  void StartHttpDownloads() {
-    GlobalInitializeHttp();
-    http_initialized_ = true;
-  }
-
   std::optional<std::string> InitializeWindow(const Stopwatch& stopwatch) {
     auto& trace = state_->initialization_times.window_trace;
 
@@ -653,6 +648,9 @@ class ApplicationImpl : public Application {
   // Initialization that should not fail unless the application can not realistically function.
   // Should be fast and able to use UiScreen after this is called.
   std::optional<std::string> InitializeCritical(const Stopwatch& stopwatch) {
+    GlobalInitializeHttp();
+    http_initialized_ = true;
+
     auto maybe_error = InitializeAimForgeFolder(file_system_.get());
     if (maybe_error) {
       logger_->warn("Failed to initialize aim forge folder. {}", *maybe_error);
@@ -930,8 +928,6 @@ std::unique_ptr<Application> CreateNewApplication() {
   stopwatch.Start();
   auto application = std::unique_ptr<ApplicationImpl>(new ApplicationImpl());
   application->state().initialization_times.total.start = stopwatch.GetElapsedMicros();
-
-  application->StartHttpDownloads();
 
   auto maybe_error = application->InitializeWindow(stopwatch);
   if (maybe_error) {
