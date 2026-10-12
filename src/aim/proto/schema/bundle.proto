@@ -53,7 +53,7 @@ message BundlePackInfo {
   // For URLs that support checking the current version (github), automatically check
   // if there is a new version and show download option in top right if there is a new
   // version.
-  bool automatically_check_for_updates  = 4;
+  bool automatically_check_for_updates = 4;
 }
 
 // Structure for bundles.json file.
