@@ -408,13 +408,21 @@ class DrawDataBuilder {
         c.height = target.height - target.radius;
         c.position = target.position;
 
-        AddDrawCylinderQuad(view_projection, c, color, look_at, draw_data);
+        if (should_draw_center) {
+          AddDrawCylinder(view_projection, c, color, draw_data);
+        } else {
+          AddDrawCylinderQuad(view_projection, c, color, look_at, draw_data);
+        }
 
         glm::vec3 top = c.position + c.up * (c.height * 0.5f);
         AddDrawSphereCircle(view_projection, top, target.radius, color, look_at, draw_data);
 
         glm::vec3 bottom = c.position + c.up * (c.height * -0.5f);
         AddDrawSphereCircle(view_projection, bottom, target.radius, color, look_at, draw_data);
+
+        if (should_draw_center) {
+          AddDrawCylinderQuadCenter(view_projection, c, center_target_color, look_at, draw_data);
+        }
 
         continue;
       }
@@ -549,6 +557,15 @@ class DrawDataBuilder {
     data.color = glm::vec4(color, 1.0f);
   }
 
+  void MaybeRotatePillUp(const Cylinder& c, glm::mat4* model) {
+    if (c.up != glm::vec3(0, 0, 1) && c.up != glm::vec3(0, 0, -1)) {
+      glm::vec3 up = glm::vec3(0, 0, 1);
+      glm::vec3 rotate_axis = glm::normalize(glm::cross(up, c.up));
+      float angle = glm::acos(glm::dot(up, c.up));
+      *model = glm::rotate(*model, angle, rotate_axis);
+    }
+  }
+
   void AddDrawCylinder(const glm::mat4& view_projection,
                        const Cylinder& c,
                        const glm::vec3& color,
@@ -558,12 +575,7 @@ class DrawDataBuilder {
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, c.position);
-    if (c.up != glm::vec3(0, 0, 1) && c.up != glm::vec3(0, 0, -1)) {
-      glm::vec3 up = glm::vec3(0, 0, 1);
-      glm::vec3 rotate_axis = glm::normalize(glm::cross(up, c.up));
-      float angle = glm::acos(glm::dot(up, c.up));
-      model = glm::rotate(model, angle, rotate_axis);
-    }
+    MaybeRotatePillUp(c, &model);
     model = glm::scale(model, glm::vec3(c.radius, c.radius, c.height));
 
     data.transform = view_projection * model;
@@ -580,14 +592,32 @@ class DrawDataBuilder {
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, c.position);
-    if (c.up != glm::vec3(0, 0, 1) && c.up != glm::vec3(0, 0, -1)) {
-      glm::vec3 up = glm::vec3(0, 0, 1);
-      glm::vec3 rotate_axis = glm::normalize(glm::cross(up, c.up));
-      float angle = glm::acos(glm::dot(up, c.up));
-      model = glm::rotate(model, angle, rotate_axis);
-    }
+    MaybeRotatePillUp(c, &model);
     model = RotateBasicShapeTowardsCamera(look_at, c.position, model, /*rotate_z=*/false);
     model = glm::scale(model, glm::vec3(c.radius * 2, 1.0, c.height));
+
+    data.transform = view_projection * model;
+    data.color = glm::vec4(color, 1.0f);
+  }
+
+  void AddDrawCylinderQuadCenter(const glm::mat4& view_projection,
+                                 const Cylinder& c,
+                                 const glm::vec3& color,
+                                 const LookAtInfo& look_at,
+                                 DrawData* draw_data) {
+    draw_data->solid_quads.emplace_back();
+    SolidColorInstanceData& data = draw_data->solid_quads.back();
+
+    // Draw a quad on the outside of the cylinder.
+
+    glm::mat4 model(1.0f);
+    model = glm::translate(model, c.position);
+    MaybeRotatePillUp(c, &model);
+    model = RotateBasicShapeTowardsCamera(look_at, c.position, model, /*rotate_z=*/false);
+    // Translate to outside
+    model = glm::translate(model, glm::vec3(0, -1.0f * (c.radius + 0.05), 0));
+    model =
+        glm::scale(model, glm::vec3(c.radius * 2.0f * kCenterSphereSizeMultiplier, 1.0, c.height));
 
     data.transform = view_projection * model;
     data.color = glm::vec4(color, 1.0f);
