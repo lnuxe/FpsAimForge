@@ -17,6 +17,7 @@
 namespace aim {
 
 class BundleManager;
+class BundlePackUpdateManager;
 class ScenarioManager;
 class PlaylistManager;
 class GuideManager;
@@ -78,6 +79,7 @@ class Application {
   virtual PlaylistManager& playlist_manager() = 0;
   virtual GuideManager& guide_manager() = 0;
   virtual BundleManager& bundle_manager() = 0;
+  virtual BundlePackUpdateManager& bundle_pack_update_manager() = 0;
   virtual HistoryManager& history_manager() = 0;
   virtual LabelsManager& labels_manager() = 0;
   virtual LocalStore& local_store() = 0;

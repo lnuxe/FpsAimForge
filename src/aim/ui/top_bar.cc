@@ -143,7 +143,7 @@ class TopBarImpl : public TopBar {
       }
       {
         auto normal_font = app_.font_manager().UseDefault();
-        ImGui::HelpTooltip("Default bundle pack update available.");
+        ImGui::HelpTooltip("Bundle pack updates available.");
       }
       ImGui::SameLine();
     } else {

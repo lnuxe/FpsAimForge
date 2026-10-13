@@ -100,7 +100,7 @@ std::string LocalStoreDb::GetValue(const std::string& key) {
   int rc = sqlite3_prepare_v2(db_, kGetValueSql, -1, &stmt, nullptr);
   if (rc != SQLITE_OK) {
     Logger::get()->warn("Failed to fetch data: {}", sqlite3_errmsg(db_));
-    return {};
+    return "";
   }
   BindString(stmt, 1, key);
 

@@ -17,6 +17,7 @@
 #include "aim/common/log.h"
 #include "aim/common/times.h"
 #include "aim/core/bundle_manager.h"
+#include "aim/core/bundle_pack_update_manager.h"
 #include "aim/core/displays.h"
 #include "aim/core/guide_manager.h"
 #include "aim/core/history_manager.h"
@@ -338,6 +339,10 @@ class ApplicationImpl : public Application {
 
   BundleManager& bundle_manager() override {
     return *bundle_manager_;
+  }
+
+  BundlePackUpdateManager& bundle_pack_update_manager() override {
+    return *bundle_pack_update_manager_;
   }
 
   HistoryManager& history_manager() override {
@@ -680,6 +685,8 @@ class ApplicationImpl : public Application {
         file_system_->GetBasePath("resources/sounds"),
     };
     sound_manager_ = std::make_unique<SoundManager>(sdl_mixer_, sound_dirs);
+    bundle_pack_update_manager_ = CreateBundlePackUpdateManager(
+        file_system_.get(), bundle_manager_.get(), local_store_.get());
 
     auto settings_status = settings_manager_->Initialize();
     if (!settings_status.ok()) {
@@ -886,6 +893,7 @@ class ApplicationImpl : public Application {
   std::unique_ptr<FileSystem> file_system_;
   std::unique_ptr<ScenarioManager> scenario_manager_;
   std::unique_ptr<BundleManager> bundle_manager_;
+  std::unique_ptr<BundlePackUpdateManager> bundle_pack_update_manager_;
   std::unique_ptr<PlaylistManager> playlist_manager_;
   std::unique_ptr<GuideManager> guide_manager_;
   std::unique_ptr<PlayTimeManager> play_time_manager_;

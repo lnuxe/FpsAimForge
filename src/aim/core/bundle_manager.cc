@@ -2,20 +2,17 @@
 
 #include <cctype>
 #include <filesystem>
-#include <future>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/strip.h"
 #include "aim/common/collections.h"
 #include "aim/common/files.h"
-#include "aim/common/http.h"
 #include "aim/common/log.h"
 #include "aim/core/file_system.h"
 #include "aim/core/guide_manager.h"
 #include "aim/core/playlist_manager.h"
 #include "aim/core/scenario_manager.h"
 #include "miniz.h"
-#include "nlohmann/json.h"
 
 namespace aim {
 namespace {
@@ -23,126 +20,6 @@ namespace {
 constexpr const char* kBundleFileNameSuffix = ".bundle.json";
 constexpr const char* kBundlePackFileNameSuffix = ".pack.bin";
 constexpr const char* kDefaultBundlePackUrl = "https://github.com/mjohns/FpsAimForgeBundles";
-
-class GitCommitShaManager {
- public:
-  // Returns optional empty if still loading. Returns "" if results retrieved but no commit sha
-  // found.
-  std::optional<std::string> GetGitCommitSha(const std::string& url) {
-    std::string repo = GetGithubRepoNameFromUrl(url);
-    if (repo.empty()) {
-      return "";
-    }
-    CheckFuturesForResultsAndMerge();
-    auto it = repo_to_commit_sha_.find(repo);
-    if (it != repo_to_commit_sha_.end()) {
-      return it->second;
-    }
-
-    // Start work to get commit sha.
-    repo_to_commit_sha_futures_[repo] =
-        std::async(std::launch::async, GetGithubCommitShaOnBackgroundThread, repo);
-    repo_to_commit_sha_[repo] = {};
-    return {};
-  }
-
- private:
-  void CheckFuturesForResultsAndMerge() {
-    std::vector<std::string> to_erase;
-    for (auto& entry : repo_to_commit_sha_futures_) {
-      std::future_status status = entry.second.wait_for(std::chrono::seconds(0));
-      if (status == std::future_status::ready) {
-        std::string commit_sha = entry.second.get();
-        repo_to_commit_sha_[entry.first] = commit_sha;
-        to_erase.push_back(entry.first);
-      }
-    }
-
-    for (const std::string& repo : to_erase) {
-      repo_to_commit_sha_futures_.erase(repo);
-    }
-  }
-
-  // Takes the repo like mjohns/FpsAimForgeBundles
-  static std::string GetGithubCommitShaOnBackgroundThread(const std::string& repo) {
-    std::string url = std::format("https://api.github.com/repos/{}/branches/main", repo);
-    FileDownload download;
-    if (!DownloadFile(url, "", &download)) {
-      return "";
-    }
-    nlohmann::json json = nlohmann::json::parse(download.content);
-    if (json.is_discarded()) {
-      Logger::get()->warn("Unable to parse github api response: {}", download.content);
-      return "";
-    }
-
-    if (!json.is_object()) {
-      return "";
-    }
-    if (json.contains("commit") && json["commit"].is_object()) {
-      const auto& commit = json["commit"];
-      if (commit.contains("sha") && commit["sha"].is_string()) {
-        return commit["sha"].get<std::string>();
-      }
-    }
-
-    return "";
-  }
-
-  std::unordered_map<std::string, std::optional<std::string>> repo_to_commit_sha_;
-  std::unordered_map<std::string, std::future<std::string>> repo_to_commit_sha_futures_;
-};
-
-std::shared_ptr<BundlePack> DownloadBundlePackOnBackgroundThread(const std::string& url) {
-  FileDownload download;
-  if (!DownloadFile(url, "", &download)) {
-    return {};
-  }
-  std::shared_ptr<BundlePack> pack = ConvertZipToBundlePack(download.content);
-  if (!pack) {
-    Logger::get()->warn("Failed to convert bundle pack zip file. {}", url);
-    return {};
-  }
-  return pack;
-}
-
-// Takes the repo like mjohns/FpsAimForgeBundles
-std::string GetGithubCommitShaOnBackgroundThread(const std::string& repo) {
-  std::string url = std::format("https://api.github.com/repos/{}/branches/main", repo);
-  FileDownload download;
-  if (!DownloadFile(url, "", &download)) {
-    return "";
-  }
-  nlohmann::json json = nlohmann::json::parse(download.content);
-  if (json.is_discarded()) {
-    Logger::get()->warn("Unable to parse github api response: {}", download.content);
-    return "";
-  }
-
-  if (!json.is_object()) {
-    return "";
-  }
-  if (json.contains("commit") && json["commit"].is_object()) {
-    const auto& commit = json["commit"];
-    if (commit.contains("sha") && commit["sha"].is_string()) {
-      return commit["sha"].get<std::string>();
-    }
-  }
-
-  return "";
-}
-
-std::unordered_map<std::string, std::string> GetCurrentGitCommitShasOnBackgroundThread(
-    std::unordered_map<std::string, std::string> pack_to_github_repo) {
-  std::unordered_map<std::string, std::string> commit_sha_map;
-  for (auto& entry : pack_to_github_repo) {
-    std::string sha = GetGithubCommitShaOnBackgroundThread(entry.second);
-    if (!sha.empty()) {
-      commit_sha_map[entry.second] = sha;
-    }
-  }
-  return commit_sha_map;
-}
 
 bool IsValidBundleNameChar(char c) {
   return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
@@ -590,14 +467,6 @@ class BundleManagerImpl : public BundleManager {
     return names;
   }
 
-  std::optional<std::string> GetGitCommitShaForBundlePack(const std::string& pack_name) override {
-    auto it = bundle_pack_info_map_.find(pack_name);
-    if (it == bundle_pack_info_map_.end()) {
-      return "";
-    }
-    return git_commit_sha_manager_.GetGitCommitSha(it->second.source_url());
-  }
-
  private:
   std::filesystem::path GetMutableBundleFilePath(const std::string& bundle_name) {
     return fs_->GetUserDataPath("bundles") / (bundle_name + kBundleFileNameSuffix);
@@ -622,7 +491,6 @@ class BundleManagerImpl : public BundleManager {
   ScenarioManager* scenario_manager_;
   GuideManager* guide_manager_;
   std::filesystem::path bundle_info_file_path_;
-  GitCommitShaManager git_commit_sha_manager_;
 
   std::unordered_map<std::string, BundleInfo> bundle_info_map_;
   std::unordered_map<std::string, BundlePackInfo> bundle_pack_info_map_;

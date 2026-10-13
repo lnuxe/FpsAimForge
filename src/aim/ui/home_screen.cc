@@ -14,6 +14,7 @@
 #include "aim/common/system.h"
 #include "aim/common/times.h"
 #include "aim/core/bundle_manager.h"
+#include "aim/core/bundle_pack_update_manager.h"
 #include "aim/core/guide_manager.h"
 #include "aim/core/history_manager.h"
 #include "aim/core/local_store.h"
@@ -24,6 +25,7 @@
 #include "aim/proto/scenario.pb.h"
 #include "aim/scenario/scenario.h"
 #include "aim/scenario/scenario_factory.h"
+#include "aim/ui/bundle_pack_update_dialog.h"
 #include "aim/ui/bundle_ui.h"
 #include "aim/ui/guide_ui.h"
 #include "aim/ui/object_browser.h"
@@ -40,26 +42,6 @@ namespace {
 
 const char* kSelectedAppScreenKey = "SelectedAppScreen";
 const char* kLeftNavCollapsedKey = "LeftNavCollapsed";
-
-const char* kDefaultBundlePackCurrentCommitSha = "DefaultBundlePackCommitSha";
-const char* kDefaultBundlePackUrl =
-    "https://github.com/mjohns/FpsAimForgeBundles/archive/refs/heads/main.zip";
-const char* kDefaultBundlePackApiUrl =
-    "https://api.github.com/repos/mjohns/FpsAimForgeBundles/branches/main";
-const char* kDefaultBundlePackWebUrl = "https://github.com/mjohns/FpsAimForgeBundles";
-
-std::shared_ptr<BundlePack> DownloadBundlePackOnBackgroundThread(const std::string& url) {
-  FileDownload download;
-  if (!DownloadFile(url, "", &download)) {
-    return {};
-  }
-  std::shared_ptr<BundlePack> pack = ConvertZipToBundlePack(download.content);
-  if (!pack) {
-    Logger::get()->warn("Failed to convert bundle pack zip file. {}", url);
-    return {};
-  }
-  return pack;
-}
 
 class SetInitialDpiDialog {
  public:
@@ -123,112 +105,6 @@ class SetInitialDpiDialog {
   ImGui::Popup popup_{"SetDpiDialog"};
 };
 
-class UpdateDialog {
- public:
-  void NotifyOpen() {
-    bundle_pack_future_ =
-        std::async(std::launch::async, DownloadBundlePackOnBackgroundThread, kDefaultBundlePackUrl);
-    download_stopwatch_ = {};
-    download_stopwatch_.Start();
-    bundle_pack_ = {};
-    start_update_ = false;
-    do_update_ = false;
-    popup_.Open();
-  }
-
-  // Returns if the update is done and should be cleared from top_bar.
-  bool Draw() {
-    ImGui::IdGuard cid("UpdateDialog");
-    std::optional<int> set_dpi;
-    if (!popup_.BeginModal()) {
-      return false;
-    }
-    auto end_cleanup = absl::MakeCleanup([this] { popup_.End(); });
-
-    if (bundle_pack_future_) {
-      std::future_status status = bundle_pack_future_->wait_for(std::chrono::seconds(0));
-      if (status == std::future_status::ready) {
-        download_stopwatch_.Stop();
-        bundle_pack_ = bundle_pack_future_->get();
-        bundle_pack_future_ = {};
-        return false;
-      }
-
-      // Still waiting for download.
-      ImGui::TextFmt("Downloading update - {:.1f}s", download_stopwatch_.GetElapsedSeconds());
-
-      ImGui::SameLine();
-      DrawCancelButton();
-
-      return false;
-    }
-
-    // Download is done. Check if it failed.
-    if (!bundle_pack_) {
-      ImGui::Text("Update failed");
-      DrawCancelButton();
-      return false;
-    }
-
-    if (start_update_) {
-      ImGui::Text("Updating");
-      start_update_ = false;
-      do_update_ = true;
-      return false;
-    }
-
-    if (do_update_) {
-      do_update_ = false;
-      auto& app = GetUiApp();
-      if (!WriteBinaryMessageToFile(app.file_system().GetUserDataPath("bundles/Default.pack.bin"),
-                                    *bundle_pack_)) {
-        return false;
-      }
-      app.bundle_manager().LoadBundlesFromDisk();
-      ClosePopupAndCleanup();
-      return true;
-    }
-
-    ImGui::Text("Download complete");
-    ImGui::TextFmt("{} Bundles found", bundle_pack_->items_size());
-
-    if (ImGui::Button(std::format("{} View in browser", icons::kOpenInNew))) {
-      OpenUrlInBrowser(kDefaultBundlePackWebUrl);
-    }
-    ImGui::HelpTooltip(kDefaultBundlePackWebUrl);
-
-    ImGui::SpacedSeparator();
-    if (ImGui::Button("Update")) {
-      start_update_ = true;
-    }
-    ImGui::SameLine();
-    DrawCancelButton();
-    return false;
-  }
-
-  void DrawCancelButton() {
-    if (ImGui::Button("Cancel")) {
-      ClosePopupAndCleanup();
-    }
-  }
-
-  void ClosePopupAndCleanup() {
-    bundle_pack_future_ = {};
-    bundle_pack_ = {};
-    popup_.Close();
-  }
-
- private:
-  ImGui::Popup popup_{"UpdateDialog"};
-  std::optional<std::future<std::shared_ptr<BundlePack>>> bundle_pack_future_;
-  std::shared_ptr<BundlePack> bundle_pack_;
-  Stopwatch download_stopwatch_;
-
-  // Render updating text and then close.
-  bool start_update_ = false;
-  bool do_update_ = false;
-};
-
 class HomeScreen : public UiScreen {
  public:
   HomeScreen() : UiScreen() {
@@ -282,35 +158,27 @@ class HomeScreen : public UiScreen {
     }
     state_.scenario_run_option = {};
 
-    HandleCheckDefaultPackVersion();
+    HandleCheckForBundleUpdate();
   }
 
-  void HandleCheckDefaultPackVersion() {
-    auto pack_info = app_.bundle_manager().GetBundlePackInfo(kDefaultBundlePackName);
-    bool check_for_updates = pack_info && pack_info->automatically_check_for_updates();
-    if (!check_for_updates) {
+  void HandleCheckForBundleUpdate() {
+    if (bundle_packs_updated_) {
+      return;
+    }
+    if (bundle_pack_updates_available_.has_value()) {
       return;
     }
 
-    if (bundle_pack_updated_ || !default_bundle_pack_update_available_.empty()) {
-      return;
-    }
-    std::optional<std::string> commit_sha =
-        app_.bundle_manager().GetGitCommitShaForBundlePack(kDefaultBundlePackName);
-    if (!commit_sha) {
-      return;
-    }
-    std::string current_commit_sha = app_.local_store().Get(kDefaultBundlePackCurrentCommitSha);
-    if (current_commit_sha.empty()) {
-      current_commit_sha = kAimForgeDefaultBundlePackCommitSha;
-    }
-    if (current_commit_sha == *commit_sha) {
-      // No updated needed. Mark it as update complete.
-      bundle_pack_updated_ = true;
-      return;
+    std::vector<std::string> bundle_packs_to_check;
+    for (const std::string& pack_name : app_.bundle_manager().GetBundlePackNames()) {
+      auto maybe_pack = app_.bundle_manager().GetBundlePackInfo(pack_name);
+      if (maybe_pack && maybe_pack->automatically_check_for_updates()) {
+        bundle_packs_to_check.push_back(pack_name);
+      }
     }
 
-    default_bundle_pack_update_available_ = *commit_sha;
+    bundle_pack_updates_available_ =
+        app_.bundle_pack_update_manager().GetBundlePacksNeedingUpdate(bundle_packs_to_check);
   }
 
   void RunCurrentScenario() {
@@ -382,17 +250,36 @@ class HomeScreen : public UiScreen {
     }
 
     TopBar::Result top_bar_result;
-    top_bar_->DrawEx(!default_bundle_pack_update_available_.empty(), &top_bar_result);
-    if (top_bar_result.do_update_clicked) {
-      update_dialog_.NotifyOpen();
+    bool needs_update = !bundle_packs_updated_ && bundle_pack_updates_available_.has_value() &&
+                        !bundle_pack_updates_available_->empty();
+    top_bar_->DrawEx(needs_update, &top_bar_result);
+    if (top_bar_result.do_update_clicked && bundle_pack_updates_available_.has_value()) {
+      std::vector<BundlePackUpdateDialog::Item> items;
+      for (auto& entry : *bundle_pack_updates_available_) {
+        const std::string& pack_name = entry.first;
+        auto maybe_pack = app_.bundle_manager().GetBundlePackInfo(pack_name);
+        if (maybe_pack) {
+          items.push_back({});
+          auto& item = items.back();
+          item.bundle_pack_name = pack_name;
+          item.url = maybe_pack->source_url();
+          // std::cout << std::format("Update {} -> {}", item.bundle_pack_name, item.url) <<
+          // std::endl;
+        }
+      }
+      if (items.size() > 0) {
+        bundle_pack_update_dialog_->NotifyOpen(items);
+      }
     }
 
-    bool updated_version = update_dialog_.Draw();
-    if (updated_version) {
-      app_.local_store().Put(kDefaultBundlePackCurrentCommitSha,
-                             default_bundle_pack_update_available_);
-      default_bundle_pack_update_available_ = "";
-      bundle_pack_updated_ = true;
+    std::vector<std::string> updated_bundle_packs;
+    bundle_pack_update_dialog_->Draw(&updated_bundle_packs);
+    if (!updated_bundle_packs.empty()) {
+      bundle_packs_updated_ = true;
+      if (bundle_pack_updates_available_.has_value()) {
+        app_.bundle_pack_update_manager().MarkBundlePacksUpdated(updated_bundle_packs,
+                                                                 *bundle_pack_updates_available_);
+      }
     }
 
     ImGui::Spacing();
@@ -584,13 +471,14 @@ class HomeScreen : public UiScreen {
   std::unique_ptr<ScenariosComponent> scenarios_component_;
   std::unique_ptr<GuidesComponent> guides_component_;
   SetInitialDpiDialog set_dpi_dialog_;
-  UpdateDialog update_dialog_;
+  std::unique_ptr<BundlePackUpdateDialog> bundle_pack_update_dialog_ =
+      CreateBundlePackUpdateDialog();
   std::unique_ptr<TopBar> top_bar_ = CreateTopBar();
   ImGui::NotificationPopup notification_popup_{"Notification"};
 
-  // The commit sha of available default bundle pack update.
-  std::string default_bundle_pack_update_available_;
-  bool bundle_pack_updated_ = false;
+  // The bundle packs that have updates available.
+  std::optional<std::unordered_map<std::string, std::string>> bundle_pack_updates_available_;
+  bool bundle_packs_updated_ = false;
 };
 
 }  // namespace

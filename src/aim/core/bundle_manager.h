@@ -40,8 +40,6 @@ class BundleManager {
                           const std::string& target_bundle_name) = 0;
 
   virtual std::optional<BundlePackInfo> GetBundlePackInfo(const std::string& pack_name) = 0;
-  // Returns optional empty if the commit sha is still loading.
-  virtual std::optional<std::string> GetGitCommitShaForBundlePack(const std::string& pack_name) = 0;
   virtual std::vector<std::string> GetBundlePackNames() = 0;
   virtual void UpdateBundlePackInfo(const BundlePackInfo& info) = 0;
 };

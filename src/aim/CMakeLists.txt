@@ -51,6 +51,8 @@ set(SRCS
     "core/application_state.h"
     "core/bundle_manager.cc"
     "core/bundle_manager.h"
+    "core/bundle_pack_update_manager.cc"
+    "core/bundle_pack_update_manager.h"
     "core/camera.cc"
     "core/camera.h"
     "core/displays.h"
