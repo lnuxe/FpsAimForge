@@ -166,6 +166,8 @@ set(SRCS
     "ui/bundle_ui.h"
     "ui/copy_playlist_dialog.cc"
     "ui/copy_playlist_dialog.h"
+    "ui/bundle_pack_update_dialog.cc"
+    "ui/bundle_pack_update_dialog.h"
     "ui/crosshair_editor_screen.cc"
     "ui/crosshair_editor_screen.h"
     "ui/drag_and_drop.cc"

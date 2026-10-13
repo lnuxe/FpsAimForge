@@ -10,6 +10,7 @@
 #include "aim/core/playlist_manager.h"
 #include "aim/core/scenario_manager.h"
 #include "aim/proto/bundle.pb.h"
+#include "aim/ui/bundle_pack_update_dialog.h"
 #include "aim/ui/object_browser.h"
 #include "imgui.h"
 
@@ -102,6 +103,9 @@ class BundleUiComponentImpl : public BundleUiComponent {
       selected_bundle_name_ = "";
     };
 
+    std::vector<std::string> updated_bundle_packs;
+    bundle_pack_update_dialog_->Draw(&updated_bundle_packs);
+
     auto added_name = add_dialog_.Draw(app_);
     if (added_name) {
       selected_bundle_name_ = *added_name;
@@ -119,7 +123,6 @@ class BundleUiComponentImpl : public BundleUiComponent {
       ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthStretch);
 
       ImGui::TableNextColumn();
-      ImGui::BeginChild("BundleListColumn");
 
       ImGui::Spacing();
 
@@ -129,6 +132,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
       ImGui::SpacedSeparator();
 
+      ImGui::BeginChild("BundleListColumn");
       DrawBundlesList();
       ImGui::EndChild();
 
@@ -149,16 +153,22 @@ class BundleUiComponentImpl : public BundleUiComponent {
   void DrawBundlePackList() {
     ImGui::Spacing();
     if (ImGui::Button(std::format("{} Import bundle pack", icons::kAdd))) {
+      // BundlePackUpdateDialog::Item item;
+      // item.bundle_pack_name = kDefaultBundlePackName;
+      // item.url = "https://github.com/mjohns/FpsAimForgeBundles";
+      // bundle_pack_update_dialog_->NotifyOpen({item});
     }
     ImGui::SpacedSeparator();
 
+    ImGui::BeginChild("BundlePackListColumn");
     ImGui::LoopId loop_id;
     for (const std::string& bundle_pack : app_.bundle_manager().GetBundlePackNames()) {
       auto id_guard = loop_id.Get();
-      if (ImGui::Selectable(bundle_pack, bundle_pack == selected_bundle_pack_name_)) {
+      if (ImGui::Selectable(" " + bundle_pack, bundle_pack == selected_bundle_pack_name_)) {
         selected_bundle_pack_name_ = bundle_pack;
       }
     }
+    ImGui::EndChild();
   }
 
   void DrawBundlePackRightPanel() {
@@ -290,7 +300,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     auto bundle_infos = app_.bundle_manager().GetBundleInfos();
     for (const BundleInfo& bundle : bundle_infos) {
       auto id_guard = loop_id.Get();
-      std::string display_text = bundle.bundle_name();
+      std::string display_text = " " + bundle.bundle_name();
       std::string help_text;
       if (bundle.archived()) {
         display_text = std::format("{} {}", display_text, icons::kArchive);
@@ -337,6 +347,8 @@ class BundleUiComponentImpl : public BundleUiComponent {
   std::string selected_bundle_pack_name_ = kDefaultBundlePackName;
   AddBundleDialog add_dialog_{"AddBundleDialog"};
   std::unordered_map<std::string, CachedBundleDetails> bundle_details_map_;
+  std::unique_ptr<BundlePackUpdateDialog> bundle_pack_update_dialog_ =
+      CreateBundlePackUpdateDialog();
 };
 
 }  // namespace
