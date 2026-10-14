@@ -135,7 +135,7 @@ std::optional<std::string> InitializeAimForgeFolder(FileSystem* fs) {
 
   // Copy Default.pack.bin to bundles folder if it does not exist.
   auto default_pack_path = bundles_path / kDefaultBundlePackFilename;
-  auto bin_default_pack_path = fs->GetBasePath("bundles") / kDefaultBundlePackFilename;
+  auto bin_default_pack_path = fs->GetBasePath("resources/bundles") / kDefaultBundlePackFilename;
   if (!std::filesystem::exists(default_pack_path) &&
       std::filesystem::exists(bin_default_pack_path)) {
     std::filesystem::copy(bin_default_pack_path, default_pack_path);
@@ -155,7 +155,10 @@ class ApplicationImpl : public Application {
     application_start_time_micros_ = GetNowEpochMicros();
     state_ = std::make_unique<ApplicationState>();
     file_system_ = std::make_unique<FileSystem>();
+
+    CreateDirectories(file_system_->GetUserDataPath("db"));
     local_store_ = std::make_unique<LocalStore>(file_system_.get());
+
     scenario_manager_ = CreateScenarioManager();
     playlist_manager_ = CreatePlaylistManager();
     guide_manager_ = CreateGuideManager();
