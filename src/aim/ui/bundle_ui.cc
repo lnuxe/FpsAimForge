@@ -371,6 +371,15 @@ class BundleUiComponentImpl : public BundleUiComponent {
       open_edit = true;
     }
 
+    if (!info.source_url().empty()) {
+      if (ImGui::Button(std::format("{} Update", icons::kDownload))) {
+        BundlePackUpdateDialog::Item item;
+        item.bundle_pack_name = info.bundle_pack_name();
+        item.url = info.source_url();
+        bundle_pack_update_dialog_->NotifyOpen({item});
+      }
+    }
+
     if (info.bundle_pack_name() != kDefaultBundlePackName) {
       if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
         delete_pack_confirmation_dialog_.NotifyOpen(
