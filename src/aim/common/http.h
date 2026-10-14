@@ -28,11 +28,6 @@ bool DownloadFile(const std::string& url,
                   const std::vector<HttpHeader>& header,
                   FileDownload* download);
 
-struct FileDownloadResult {
-  bool success = false;
-  FileDownload download;
-};
-
 void GlobalInitializeHttp();
 void GlobalCleanupHttp();
 

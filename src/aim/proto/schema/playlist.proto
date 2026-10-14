@@ -12,7 +12,7 @@ message PlaylistDef {
 }
 
 message LevelsPlaylistDef {
-  // Specifies the changes to the scenario per level.
+  // The base scenario name which the L1, L2 suffixes are added to.
   string base_scenario = 1;
 
   // If unspecified defaults to 1.
