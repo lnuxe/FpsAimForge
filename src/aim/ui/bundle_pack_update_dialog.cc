@@ -1,5 +1,7 @@
 #include "bundle_pack_update_dialog.h"
 
+#include <future>
+
 #include "absl/cleanup/cleanup.h"
 #include "absl/container/linked_hash_map.h"
 #include "aim/common/files.h"
@@ -17,12 +19,14 @@ namespace {
 
 bool UpdateBundlePackOnBackgroundThread(const std::filesystem::path& write_path, std::string url) {
   std::string repo = GetGithubRepoNameFromUrl(url);
+  std::vector<HttpHeader> headers;
   if (!repo.empty()) {
     url = std::format("https://api.github.com/repos/{}/zipball/main", repo);
+    headers.push_back(kGithubApiVersionHeader);
   }
 
   FileDownload download;
-  if (!DownloadFile(url, "", &download)) {
+  if (!DownloadFile(url, headers, &download)) {
     return false;
   }
   std::shared_ptr<BundlePack> pack = ConvertZipToBundlePack(download.content);

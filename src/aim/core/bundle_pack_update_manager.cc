@@ -12,7 +12,7 @@ namespace aim {
 namespace {
 
 std::string GetGitRepoCommitShaKey(const std::string& url) {
-  return std::format("v2_GitRepoCommitSha__{}", url);
+  return std::format("GitRepoCommitSha__{}", url);
 }
 
 class GitCommitShaManager {
@@ -58,7 +58,7 @@ class GitCommitShaManager {
   static std::string GetGithubCommitShaOnBackgroundThread(const std::string& repo) {
     std::string url = std::format("https://api.github.com/repos/{}/branches/main", repo);
     FileDownload download;
-    if (!DownloadFile(url, "", &download)) {
+    if (!DownloadFile(url, {kGithubApiVersionHeader}, &download)) {
       return "";
     }
     nlohmann::json json = nlohmann::json::parse(download.content);

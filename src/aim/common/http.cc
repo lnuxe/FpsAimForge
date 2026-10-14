@@ -1,7 +1,6 @@
 #include "http.h"
 
 #include <format>
-#include <future>
 
 #include "absl/strings/ascii.h"
 
@@ -10,12 +9,6 @@ namespace aim {
 namespace {
 
 constexpr const std::string_view kEtagPrefix = "etag:";
-
-FileDownloadResult DownloadFileInternal(const std::string& url, const std::string& etag) {
-  FileDownloadResult result;
-  result.success = DownloadFile(url, etag, &result.download);
-  return result;
-}
 
 std::string EscapeEtag(std::string etag) {
   etag = absl::StripAsciiWhitespace(etag);
@@ -26,10 +19,6 @@ std::string EscapeEtag(std::string etag) {
 }
 
 }  // namespace
-
-std::future<FileDownloadResult> DownloadFileAsync(const std::string& url, const std::string& etag) {
-  return std::async(std::launch::async, DownloadFileInternal, url, etag);
-}
 
 std::optional<std::string> ParseEtagFromHeader(const std::string& header) {
   std::string lower_header = absl::AsciiStrToLower(header);

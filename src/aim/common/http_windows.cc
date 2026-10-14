@@ -47,7 +47,9 @@ HINTERNET g_winhttp_session = nullptr;
 
 }  // namespace
 
-bool DownloadFile(const std::string& url, const std::string& etag, FileDownload* download) {
+bool DownloadFile(const std::string& url,
+                  const std::vector<HttpHeader>& headers,
+                  FileDownload* download) {
   URL_COMPONENTS url_comp = {0};
   url_comp.dwStructSize = sizeof(url_comp);
 
@@ -95,6 +97,17 @@ bool DownloadFile(const std::string& url, const std::string& etag, FileDownload*
   auto request_cleanup = absl::MakeCleanup([=]() { WinHttpCloseHandle(hRequest); });
 
   bool success = false;
+
+  // Add headers individually or in bulk to the request handle
+  for (const auto& header : headers) {
+    std::wstring wheader = Utf8ToWstring(header.GetHeader());
+    if (!WinHttpAddRequestHeaders(hRequest,
+                                  wheader.c_str(),
+                                  static_cast<DWORD>(wheader.length()),
+                                  WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
+      return false;
+    }
+  }
 
   if (!WinHttpSendRequest(
           hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0, WINHTTP_NO_REQUEST_DATA, 0, 0, 0)) {

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <future>
+#include <format>
 #include <optional>
 #include <string>
+#include <vector>
 
 namespace aim {
 
@@ -12,14 +13,25 @@ struct FileDownload {
   bool content_unchanged = false;
 };
 
-bool DownloadFile(const std::string& url, const std::string& etag, FileDownload* download);
+struct HttpHeader {
+  std::string key;
+  std::string value;
+
+  std::string GetHeader() const {
+    return std::format("{}: {}", key, value);
+  }
+};
+
+inline const HttpHeader kGithubApiVersionHeader = {"X-GitHub-Api-Version", "2026-03-10"};
+
+bool DownloadFile(const std::string& url,
+                  const std::vector<HttpHeader>& header,
+                  FileDownload* download);
 
 struct FileDownloadResult {
   bool success = false;
   FileDownload download;
 };
-
-std::future<FileDownloadResult> DownloadFileAsync(const std::string& url, const std::string& etag);
 
 void GlobalInitializeHttp();
 void GlobalCleanupHttp();

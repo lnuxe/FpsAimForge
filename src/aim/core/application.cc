@@ -46,35 +46,6 @@
 namespace aim {
 namespace {
 
-const char* kDefaultBundlePackEtagKey = "DefaultBundlePackEtag";
-
-struct BundlePackAndEtag {
-  std::shared_ptr<BundlePack> pack;
-  std::string etag;
-};
-
-BundlePackAndEtag DownloadBundlePackOnBackgroundThread(const std::string& url,
-                                                       const std::string& etag) {
-  BundlePackAndEtag result;
-  FileDownload download;
-  if (!DownloadFile(url, etag, &download)) {
-    return result;
-  }
-  if (download.content_unchanged) {
-    return result;
-  }
-
-  std::shared_ptr<BundlePack> pack = ConvertZipToBundlePack(download.content);
-  if (!pack) {
-    Logger::get()->warn("Failed to convert bundle pack zip file. {}", url);
-    return result;
-  }
-
-  result.pack = pack;
-  result.etag = download.etag;
-  return result;
-}
-
 void InitializeImGui(const std::string& imgui_ini_filename,
                      SDL_Window* sdl_window,
                      SDL_GPUDevice* gpu_device,

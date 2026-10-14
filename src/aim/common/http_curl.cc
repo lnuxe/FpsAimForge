@@ -30,22 +30,22 @@ size_t HeaderCallback(char* buffer, size_t size, size_t nitems, void* userdata) 
 
 }  // namespace
 
-bool DownloadFile(const std::string& url, const std::string& etag, FileDownload* download) {
+bool DownloadFile(const std::string& url,
+                  const std::vector<HttpHeader>& headers,
+                  FileDownload* download) {
   CURL* curl = curl_easy_init();
   if (!curl) {
     return false;
   }
   auto curl_cleanup = absl::MakeCleanup([=]() { curl_easy_cleanup(curl); });
 
-  struct curl_slist* headers = curl_slist_append(nullptr, "User-Agent: FpsAimForge");
-  auto headers_cleanup = absl::MakeCleanup([=]() { curl_slist_free_all(headers); });
-
-  if (!etag.empty()) {
-    std::string etag_header = MakeEtagHeader(etag);
-    headers = curl_slist_append(headers, etag_header.c_str());
+  struct curl_slist* curl_headers = curl_slist_append(nullptr, "User-Agent: FpsAimForge");
+  for (const HttpHeader& header : headers) {
+    curl_headers = curl_slist_append(curl_headers, header.GetHeader().c_str());
   }
+  auto headers_cleanup = absl::MakeCleanup([=]() { curl_slist_free_all(curl_headers); });
 
-  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curl_headers);
 
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteStringCallback);
