@@ -1,5 +1,6 @@
 #include "bundle_ui.h"
 
+#include "absl/cleanup/cleanup.h"
 #include "absl/strings/ascii.h"
 #include "aim/common/files.h"
 #include "aim/common/imgui_ext.h"
@@ -90,6 +91,100 @@ class AddBundleDialog {
   ImGui::Popup popup_;
 };
 
+class UpdateBundlePackInfoDialog {
+ public:
+  explicit UpdateBundlePackInfoDialog(const BundlePackInfo& info)
+      : original_info_(info), info_(info) {
+    popup_.Open();
+  }
+
+  void Draw() {
+    ImGui::IdGuard cid("UpdateBundlePack");
+    notification_popup_.Draw();
+    if (!popup_.BeginModal()) {
+      return;
+    }
+    auto cleanup = absl::MakeCleanup([this]() { popup_.End(); });
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Bundle pack name");
+    ImGui::SameLine();
+    ImGui::InputText("##BundlePackNameInput", info_.mutable_bundle_pack_name());
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("URL");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    ImGui::InputText("##UrlInput", info_.mutable_source_url(), ImGuiInputTextFlags_ReadOnly);
+    absl::StripAsciiWhitespace(info_.mutable_source_url());
+
+    std::string repo_name = GetGithubRepoNameFromUrl(info_.source_url());
+    if (!repo_name.empty()) {
+      ImGui::InputBool("Automatically check for updates",
+                       PROTO_BOOL_FIELD(BundlePackInfo, &info_, automatically_check_for_updates));
+    } else {
+      info_.clear_automatically_check_for_updates();
+    }
+
+    ImGui::InputBool("Archived", PROTO_BOOL_FIELD(BundlePackInfo, &info_, archived));
+    ImGui::SameLine();
+    ImGui::HelpMarker("Bundle pack will not be loaded");
+
+    ImGui::SpacedSeparator();
+
+    if (ImGui::Button("Save")) {
+      std::string error_msg = Save();
+      if (!error_msg.empty()) {
+        notification_popup_.NotifyOpen(error_msg);
+      } else {
+        popup_.Close();
+      }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel")) {
+      popup_.Close();
+    }
+  }
+
+ private:
+  std::string Save() {
+    if (info_.bundle_pack_name().empty()) {
+      return "Missing name";
+    }
+
+    bool name_changed = original_info_.bundle_pack_name() != info_.bundle_pack_name();
+    if (name_changed) {
+      auto existing_pack = app_.bundle_manager().GetBundlePackInfo(info_.bundle_pack_name());
+      if (existing_pack) {
+        return std::format("Bundle pack \"{}\" already exists", info_.bundle_pack_name());
+      }
+      auto base_path = app_.file_system().GetUserDataPath("bundles");
+      auto source_file = base_path / (original_info_.bundle_pack_name() + ".pack.bin");
+      if (std::filesystem::exists(source_file)) {
+        std::error_code ec;
+        std::filesystem::rename(base_path / (original_info_.bundle_pack_name() + ".pack.bin"),
+                                base_path / (info_.bundle_pack_name() + ".pack.bin"),
+                                ec);
+        if (ec) {
+          return "Failed to rename existing bundle file";
+        }
+      }
+    }
+    std::string old_name_to_delete = name_changed ? original_info_.bundle_pack_name() : "";
+    app_.bundle_manager().UpdateBundlePackInfo(info_, old_name_to_delete);
+    if (info_.archived() != original_info_.archived()) {
+      app_.bundle_manager().LoadBundlesFromDisk();
+    }
+    return "";
+  }
+
+  Application& app_ = GetUiApp();
+  const BundlePackInfo original_info_;
+  BundlePackInfo info_;
+  ImGui::Popup popup_{"UpdateBundlePackPopup"};
+  ImGui::NotificationPopup notification_popup_{"Notification"};
+};
+
 class BundleUiComponentImpl : public BundleUiComponent {
  public:
   explicit BundleUiComponentImpl(UiScreen& screen) : screen_(screen), app_(screen.app()) {}
@@ -172,11 +267,32 @@ class BundleUiComponentImpl : public BundleUiComponent {
   }
 
   void DrawBundlePackRightPanel() {
+    ImGui::IdGuard cid("BundlePackRightPanel");
+    auto to_delete = delete_pack_confirmation_dialog_.Draw("Delete");
+    if (to_delete) {
+      app_.bundle_manager().DeleteBundlePack(*to_delete);
+      selected_bundle_pack_name_ = kDefaultBundlePackName;
+    };
+    if (update_bundle_pack_info_dialog_) {
+      update_bundle_pack_info_dialog_->Draw();
+    }
     auto pack = app_.bundle_manager().GetBundlePackInfo(selected_bundle_pack_name_);
     if (!pack) {
       return;
     }
     BundlePackInfo info = *pack;
+    bool open_edit = false;
+    if (ImGui::Button(std::format("{} Edit", icons::kEdit))) {
+      open_edit = true;
+    }
+    if (info.bundle_pack_name() != kDefaultBundlePackName) {
+      ImGui::SameLine();
+      if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
+        delete_pack_confirmation_dialog_.NotifyOpen(
+            std::format("Delete \"{}\"?", info.bundle_pack_name()), info.bundle_pack_name());
+        return;
+      }
+    }
     ImGui::AlignTextToFramePadding();
     ImGui::TextFmt("Bundle pack name: {}", info.bundle_pack_name());
 
@@ -184,30 +300,25 @@ class BundleUiComponentImpl : public BundleUiComponent {
     ImGui::Text("URL");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-    ImGui::InputText("##UrlInput", info.mutable_source_url());
-    absl::StripAsciiWhitespace(info.mutable_source_url());
+    ImGui::InputText("##UrlInput", info.mutable_source_url(), ImGuiInputTextFlags_ReadOnly);
 
     std::string repo_name = GetGithubRepoNameFromUrl(info.source_url());
     if (!repo_name.empty()) {
-      ImGui::InputBool("Automatically check for updates",
-                       PROTO_BOOL_FIELD(BundlePackInfo, &info, automatically_check_for_updates));
-    } else {
-      info.clear_automatically_check_for_updates();
+      if (ImGui::InputBool(
+              "Automatically check for updates",
+              PROTO_BOOL_FIELD(BundlePackInfo, &info, automatically_check_for_updates))) {
+        open_edit = true;
+      }
     }
 
-    ImGui::InputBool("Archived", PROTO_BOOL_FIELD(BundlePackInfo, &info, archived));
+    if (ImGui::InputBool("Archived", PROTO_BOOL_FIELD(BundlePackInfo, &info, archived))) {
+      open_edit = true;
+    }
     ImGui::SameLine();
     ImGui::HelpMarker("Bundle pack will not be loaded");
 
-    if (info.archived()) {
-      info.clear_automatically_check_for_updates();
-    }
-
-    if (!IsEquivalentProto(info, *pack)) {
-      app_.bundle_manager().UpdateBundlePackInfo(info);
-      if (info.archived() != pack->archived()) {
-        app_.bundle_manager().LoadBundlesFromDisk();
-      }
+    if (open_edit) {
+      update_bundle_pack_info_dialog_ = std::make_unique<UpdateBundlePackInfoDialog>(info);
     }
   }
 
@@ -343,12 +454,15 @@ class BundleUiComponentImpl : public BundleUiComponent {
   Application& app_;
 
   ImGui::ConfirmationDialog<std::string> delete_confirmation_dialog_{"DeleteConfirmationDialog"};
+  ImGui::ConfirmationDialog<std::string> delete_pack_confirmation_dialog_{
+      "DeletePackConfirmationDialog"};
   std::string selected_bundle_name_ = "AF";
   std::string selected_bundle_pack_name_ = kDefaultBundlePackName;
   AddBundleDialog add_dialog_{"AddBundleDialog"};
   std::unordered_map<std::string, CachedBundleDetails> bundle_details_map_;
   std::unique_ptr<BundlePackUpdateDialog> bundle_pack_update_dialog_ =
       CreateBundlePackUpdateDialog();
+  std::unique_ptr<UpdateBundlePackInfoDialog> update_bundle_pack_info_dialog_;
 };
 
 }  // namespace

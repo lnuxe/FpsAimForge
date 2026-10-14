@@ -400,10 +400,22 @@ class BundleManagerImpl : public BundleManager {
     SaveBundlesJsonFile();
   }
 
-  void UpdateBundlePackInfo(const BundlePackInfo& original_info) override {
+  void UpdateBundlePackInfo(const BundlePackInfo& original_info,
+                            const std::string& remove_old_pack_name) override {
+    if (!remove_old_pack_name.empty()) {
+      bundle_pack_info_map_.erase(remove_old_pack_name);
+    }
     BundlePackInfo& info = bundle_pack_info_map_[original_info.bundle_pack_name()];
     info = original_info;
     SaveBundlesJsonFile();
+  }
+
+  void DeleteBundlePack(const std::string& pack_name) override {
+    bundle_pack_info_map_.erase(pack_name);
+    std::error_code ec;
+    std::filesystem::remove(fs_->GetUserDataPath("bundles") / (pack_name + ".pack.bin"), ec);
+    SaveBundlesJsonFile();
+    LoadBundlesFromDisk();
   }
 
   void DeleteBundle(const std::string& bundle_name) override {

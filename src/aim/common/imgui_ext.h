@@ -259,8 +259,8 @@ struct InputBoolParams {
   std::string label;
 };
 
-void InputBool(const InputBoolParams& params, aim::Field<bool> field);
-void InputBool(const std::string& label, aim::Field<bool> field);
+bool InputBool(const InputBoolParams& params, aim::Field<bool> field);
+bool InputBool(const std::string& label, aim::Field<bool> field);
 
 struct InputIntParams {
   explicit InputIntParams(const std::string& id) : id(id) {}

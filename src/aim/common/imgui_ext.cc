@@ -347,7 +347,7 @@ void InputJitteredFloat(const InputFloatParams& params, aim::JitteredField<float
   }
 }
 
-void InputBool(const InputBoolParams& params, aim::Field<bool> field) {
+bool InputBool(const InputBoolParams& params, aim::Field<bool> field) {
   IdGuard cid(params.id);
   if (params.label.size() > 0) {
     ImGui::AlignTextToFramePadding();
@@ -356,12 +356,13 @@ void InputBool(const InputBoolParams& params, aim::Field<bool> field) {
   }
 
   bool value = field.get();
-  ImGui::Checkbox("##Checkbox", &value);
+  bool changed = ImGui::Checkbox("##Checkbox", &value);
   field.set(value);
+  return changed;
 }
 
-void InputBool(const std::string& label, aim::Field<bool> field) {
-  InputBool(ImGui::InputBoolParams::WithLabelAsId(label), field);
+bool InputBool(const std::string& label, aim::Field<bool> field) {
+  return InputBool(ImGui::InputBoolParams::WithLabelAsId(label), field);
 }
 
 void InputInt(const InputIntParams& params, aim::Field<int> field) {
