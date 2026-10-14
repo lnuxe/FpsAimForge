@@ -23,6 +23,58 @@ struct CachedBundleDetails {
   i64 num_scenarios = 0;
 };
 
+class AddBundlePackDialog {
+ public:
+  void NotifyOpen() {
+    bundle_pack_name_ = "";
+    popup_.Open();
+  }
+
+  std::string Draw() {
+    ImGui::IdGuard cid("AddBundlePackDialogContent");
+    if (!popup_.Begin()) {
+      return "";
+    }
+    auto cleanup = absl::MakeCleanup([this]() { popup_.End(); });
+
+    std::optional<std::string> added_name;
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Bundle pack name");
+    ImGui::SameLine();
+    ImGui::InputText("##BundlePackNameInput", &bundle_pack_name_);
+    absl::StripAsciiWhitespace(&bundle_pack_name_);
+
+    bool name_taken = app_.bundle_manager().GetBundlePackInfo(bundle_pack_name_).has_value();
+    bool is_invalid = bundle_pack_name_.empty() || name_taken;
+
+    if (is_invalid) {
+      ImGui::BeginDisabled();
+      if (name_taken) {
+        ImGui::TextFmt("Bundle pack \"{}\" already exists", bundle_pack_name_);
+      }
+    }
+
+    if (ImGui::Button("Add")) {
+      popup_.Close();
+      return bundle_pack_name_;
+    }
+    if (is_invalid) {
+      ImGui::EndDisabled();
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel")) {
+      popup_.Close();
+    }
+
+    return "";
+  }
+
+ private:
+  Application& app_ = GetUiApp();
+  std::string bundle_pack_name_;
+  ImGui::Popup popup_{"AddBundlePackDialog"};
+};
+
 class AddBundleDialog {
  public:
   explicit AddBundleDialog(const std::string& id) : popup_(id) {}
@@ -246,12 +298,19 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
  private:
   void DrawBundlePackList() {
+    ImGui::IdGuard cid("BundlePackList");
+
+    auto added_name = add_pack_dialog_.Draw();
+    if (!added_name.empty()) {
+      selected_bundle_name_ = added_name;
+      BundlePackInfo info;
+      info.set_bundle_pack_name(added_name);
+      app_.bundle_manager().UpdateBundlePackInfo(info);
+    }
+
     ImGui::Spacing();
-    if (ImGui::Button(std::format("{} Import bundle pack", icons::kAdd))) {
-      // BundlePackUpdateDialog::Item item;
-      // item.bundle_pack_name = kDefaultBundlePackName;
-      // item.url = "https://github.com/mjohns/FpsAimForgeBundles";
-      // bundle_pack_update_dialog_->NotifyOpen({item});
+    if (ImGui::Button(std::format("{} Bundle pack", icons::kAdd))) {
+      add_pack_dialog_.NotifyOpen();
     }
     ImGui::SpacedSeparator();
 
@@ -282,17 +341,6 @@ class BundleUiComponentImpl : public BundleUiComponent {
     }
     BundlePackInfo info = *pack;
     bool open_edit = false;
-    if (ImGui::Button(std::format("{} Edit", icons::kEdit))) {
-      open_edit = true;
-    }
-    if (info.bundle_pack_name() != kDefaultBundlePackName) {
-      ImGui::SameLine();
-      if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
-        delete_pack_confirmation_dialog_.NotifyOpen(
-            std::format("Delete \"{}\"?", info.bundle_pack_name()), info.bundle_pack_name());
-        return;
-      }
-    }
     ImGui::AlignTextToFramePadding();
     ImGui::TextFmt("Bundle pack name: {}", info.bundle_pack_name());
 
@@ -316,6 +364,19 @@ class BundleUiComponentImpl : public BundleUiComponent {
     }
     ImGui::SameLine();
     ImGui::HelpMarker("Bundle pack will not be loaded");
+
+    ImGui::SpacedSeparator();
+
+    if (ImGui::Button(std::format("{} Edit", icons::kEdit))) {
+      open_edit = true;
+    }
+
+    if (info.bundle_pack_name() != kDefaultBundlePackName) {
+      if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
+        delete_pack_confirmation_dialog_.NotifyOpen(
+            std::format("Delete \"{}\"?", info.bundle_pack_name()), info.bundle_pack_name());
+      }
+    }
 
     if (open_edit) {
       update_bundle_pack_info_dialog_ = std::make_unique<UpdateBundlePackInfoDialog>(info);
@@ -459,6 +520,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
   std::string selected_bundle_name_ = "AF";
   std::string selected_bundle_pack_name_ = kDefaultBundlePackName;
   AddBundleDialog add_dialog_{"AddBundleDialog"};
+  AddBundlePackDialog add_pack_dialog_;
   std::unordered_map<std::string, CachedBundleDetails> bundle_details_map_;
   std::unique_ptr<BundlePackUpdateDialog> bundle_pack_update_dialog_ =
       CreateBundlePackUpdateDialog();
