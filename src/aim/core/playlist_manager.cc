@@ -329,11 +329,10 @@ class PlaylistManagerImpl : public PlaylistManager {
     std::string old_base_name = GetNameInfo(old_name).base_name;
     std::string new_base_name = GetNameInfo(new_name).base_name;
 
-    auto playlists_copy = playlists_;
-    for (const Playlist& playlist : *playlists_copy) {
+    for (auto& entry : playlist_map_) {
       bool changed = false;
-      PlaylistDef def = playlist.def();
-      for (auto& item : *def.mutable_items()) {
+      PlaylistDef* def = entry.second.mutable_def();
+      for (auto& item : *def->mutable_items()) {
         NameInfo item_name_info = GetNameInfo(item.scenario());
         if (item_name_info.base_name == old_base_name) {
           changed = true;
@@ -342,18 +341,18 @@ class PlaylistManagerImpl : public PlaylistManager {
         }
       }
 
-      const std::string& level_scenario = def.levels().base_scenario();
+      const std::string& level_scenario = def->levels().base_scenario();
       if (level_scenario.size() > 0) {
         NameInfo item_name_info = GetNameInfo(level_scenario);
         if (item_name_info.base_name == old_base_name) {
           changed = true;
           item_name_info.base_name = new_base_name;
-          def.mutable_levels()->set_base_scenario(item_name_info.GetFullName());
+          def->mutable_levels()->set_base_scenario(item_name_info.GetFullName());
         }
       }
-
       if (changed) {
-        UpdatePlaylist(playlist.name, def);
+        UpdatePlaylistRun(entry.second.name, *def);
+        dirty_bundles_.insert(GetBundleName(entry.second.name));
       }
     }
   }
@@ -362,7 +361,8 @@ class PlaylistManagerImpl : public PlaylistManager {
       const std::string& scenario_name) const override {
     std::string base_name = GetNameInfo(scenario_name).base_name;
     std::vector<std::string> matching_playlists;
-    for (const Playlist& playlist : *playlists_) {
+    for (const auto& entry : playlist_map_) {
+      const Playlist& playlist = entry.second;
       bool is_match = false;
       for (const auto& item : playlist.def().items()) {
         if (GetNameInfo(item.scenario()).base_name == base_name) {
@@ -385,8 +385,8 @@ class PlaylistManagerImpl : public PlaylistManager {
 
   std::vector<std::string> GetAllRelativeNamesInBundle(const std::string& bundle_name) override {
     std::vector<std::string> names;
-    for (const Playlist& playlist : *playlists_) {
-      ResourceName name = ResourceName::Parse(playlist.name);
+    for (const std::string& playlist_name : *playlist_names_) {
+      ResourceName name = ResourceName::Parse(playlist_name);
       if (name.bundle_name() == bundle_name) {
         names.push_back(name.relative_name());
       }
@@ -482,22 +482,15 @@ class PlaylistManagerImpl : public PlaylistManager {
   }
 
   void UpdatePlaylistListFromMap() {
-    auto new_playlists = std::make_shared<std::vector<Playlist>>();
     auto new_playlist_names = std::make_shared<std::vector<std::string>>();
-    new_playlists->reserve(playlist_map_.size());
     new_playlist_names->reserve(playlist_map_.size());
     for (auto& entry : playlist_map_) {
-      new_playlists->push_back(entry.second);
       new_playlist_names->push_back(entry.second.name);
     }
-    std::sort(new_playlists->begin(),
-              new_playlists->end(),
-              [](const Playlist& lhs, const Playlist& rhs) { return lhs.name < rhs.name; });
     std::sort(new_playlist_names->begin(),
               new_playlist_names->end(),
               [](const std::string& lhs, const std::string& rhs) { return lhs < rhs; });
 
-    playlists_ = new_playlists;
     playlist_names_ = new_playlist_names;
   }
 
@@ -545,7 +538,6 @@ class PlaylistManagerImpl : public PlaylistManager {
   }
 
   std::string current_playlist_name_;
-  std::shared_ptr<std::vector<Playlist>> playlists_;
   std::shared_ptr<std::vector<std::string>> playlist_names_;
   absl::flat_hash_map<std::string, Playlist> playlist_map_;
   std::unordered_map<std::string, std::shared_ptr<PlaylistRun>> playlist_run_map_;
