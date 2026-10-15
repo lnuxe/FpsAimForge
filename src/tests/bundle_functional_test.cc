@@ -113,16 +113,8 @@ class BundleFunctionalTest : public ::testing::Test {
     return result;
   }
 
-  std::filesystem::path BaseBundlePackPath(const std::string& pack_name) {
-    return base_bundle_path_ / (pack_name + ".pack.bin");
-  }
-
   std::filesystem::path UserBundlePackPath(const std::string& pack_name) {
     return user_bundle_path_ / (pack_name + ".pack.bin");
-  }
-
-  std::filesystem::path BaseBundlePath(const std::string& bundle_name) {
-    return base_bundle_path_ / (bundle_name + ".bundle.json");
   }
 
   std::filesystem::path UserBundlePath(const std::string& bundle_name) {
@@ -416,7 +408,7 @@ TEST_F(BundleFunctionalTest, LoadInitialBundles) {
   BundleFile other_bundle;
   other_bundle.add_playlists()->set_name("Playlist3");
 
-  ASSERT_TRUE(WriteJsonMessageToFile(BaseBundlePath("AF"), af_bundle));
+  ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("AF"), af_bundle));
   ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("USER"), user_bundle));
   ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("OTHER"), other_bundle));
 
@@ -469,7 +461,7 @@ TEST_F(BundleFunctionalTest, LoadInitialBundles_JustDefaultPack) {
   BundlePack default_pack;
   *default_pack.add_items() = MakePackItem("B1", "pack_bundle1");
   *default_pack.add_items() = MakePackItem("B2", "pack_bundle2");
-  ASSERT_TRUE(WriteBinaryMessageToFile(BaseBundlePackPath("Default"), default_pack));
+  ASSERT_TRUE(WriteBinaryMessageToFile(UserBundlePackPath("Default"), default_pack));
 
   EXPECT_THAT(bundle_manager_->LoadBundlesFromDisk(), IsEmpty());
 
@@ -499,9 +491,9 @@ TEST_F(BundleFunctionalTest, LoadInitialBundles_BundleOverridesFromPack) {
   *default_pack.add_items() = MakePackItem("B1", "pack_bundle1");
   *default_pack.add_items() = MakePackItem("B2", "pack_bundle2");
   *default_pack.add_items() = MakePackItem("B3", "pack_bundle3");
-  ASSERT_TRUE(WriteBinaryMessageToFile(BaseBundlePackPath("Default"), default_pack));
+  ASSERT_TRUE(WriteBinaryMessageToFile(UserBundlePackPath("Default"), default_pack));
 
-  ASSERT_TRUE(WriteJsonMessageToFile(BaseBundlePath("AF"), MakeBundleFile("af_bundle")));
+  ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("AF"), MakeBundleFile("af_bundle")));
   ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("B1"), MakeBundleFile("explicit_bundle1")));
 
   EXPECT_THAT(bundle_manager_->LoadBundlesFromDisk(), IsEmpty());
@@ -540,7 +532,7 @@ TEST_F(BundleFunctionalTest, TestUpdateBundleInfo) {
   BundleFile user_bundle;
   user_bundle.add_playlists()->set_name("Playlist2");
 
-  ASSERT_TRUE(WriteJsonMessageToFile(BaseBundlePath("AF"), af_bundle));
+  ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("AF"), af_bundle));
   ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("USER"), user_bundle));
 
   EXPECT_THAT(bundle_manager_->LoadBundlesFromDisk(), IsEmpty());
@@ -579,7 +571,7 @@ TEST_F(BundleFunctionalTest, TestDeleteBundle) {
   BundleFile user_bundle;
   user_bundle.add_playlists()->set_name("Playlist2");
 
-  ASSERT_TRUE(WriteJsonMessageToFile(BaseBundlePath("AF"), af_bundle));
+  ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("AF"), af_bundle));
   ASSERT_TRUE(WriteJsonMessageToFile(UserBundlePath("USER"), user_bundle));
 
   EXPECT_THAT(bundle_manager_->LoadBundlesFromDisk(), IsEmpty());
@@ -595,14 +587,6 @@ TEST_F(BundleFunctionalTest, TestDeleteBundle) {
               ElementsAre(EqualsProto(af_info), EqualsProto(user_info)));
 
   bundle_manager_->DeleteBundle("USER");
-
-  EXPECT_THAT(bundle_manager_->GetBundleInfos(), ElementsAre(EqualsProto(af_info)));
-
-  EXPECT_THAT(bundle_manager_->LoadBundlesFromDisk(), IsEmpty());
-  EXPECT_THAT(bundle_manager_->GetBundleInfos(), ElementsAre(EqualsProto(af_info)));
-
-  // Can't delete bin version of AF.
-  bundle_manager_->DeleteBundle("AF");
 
   EXPECT_THAT(bundle_manager_->GetBundleInfos(), ElementsAre(EqualsProto(af_info)));
 
