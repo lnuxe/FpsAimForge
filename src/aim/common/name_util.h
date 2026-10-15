@@ -23,6 +23,7 @@ struct NameInfo {
   std::optional<float> wall_smaller;
   std::optional<float> wall_larger;
   bool is_poke = false;
+  bool is_cm360_variations = false;
 
   // Combines the base name and suffixes into the final name.
   std::string GetFullName() const;
@@ -31,7 +32,8 @@ struct NameInfo {
 
   bool HasDynamicSuffix() const {
     return cm_per_360 || level || duration || fov || radius_smaller || radius_larger || faster ||
-           slower || wider || taller || is_poke || wall_smaller || wall_larger;
+           slower || wider || taller || is_poke || wall_smaller || wall_larger ||
+           is_cm360_variations;
   }
 
   // Returns whether the suffix was a valid dynamic suffix.

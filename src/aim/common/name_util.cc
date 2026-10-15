@@ -171,6 +171,10 @@ bool ParseFloatValueSuffix(std::string_view word, std::string_view* suffix, floa
 }
 
 bool NameInfo::SetDynamicSuffixValue(std::string_view word) {
+  if (word == "cm360") {
+    is_cm360_variations = true;
+    return true;
+  }
   if (word == "Poke") {
     is_poke = true;
     return true;
@@ -278,6 +282,9 @@ std::string NameInfo::GetFullName() const {
   }
   if (cm_per_360) {
     result.append(std::format(" {}cm", MaybeIntToString(*cm_per_360, 1)));
+  }
+  if (is_cm360_variations) {
+    result.append(" cm360");
   }
   return result;
 }
