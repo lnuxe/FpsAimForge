@@ -177,6 +177,9 @@ class BundleManagerImpl : public BundleManager {
     bundle_pack_info_map_.clear();
 
     std::vector<std::string> error_messages;
+    Stopwatch stopwatch;
+    stopwatch.Start();
+    bool print_times = false;
 
     BundleInfoFile bundle_info_file;
     if (std::filesystem::exists(bundle_info_file_path_)) {
@@ -184,6 +187,11 @@ class BundleManagerImpl : public BundleManager {
         Logger::get()->warn("Unable to parse bundles.json");
         error_messages.push_back("Unable to parse bundles.json");
       }
+    }
+
+    if (print_times) {
+      std::cout << std::format("Loaded bundles.json: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
     }
 
     for (const auto& bundle_info : bundle_info_file.bundles()) {
@@ -208,11 +216,26 @@ class BundleManagerImpl : public BundleManager {
     AddBundlesFromDirectory(
         fs_->GetUserDataPath("bundles"), &bundle_path_map, &bundle_pack_path_map, &error_messages);
 
+    if (print_times) {
+      std::cout << std::format("Read file paths: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
+    }
+
     std::unordered_map<std::string, BundlePack> pack_map =
         LoadBundlePackFiles(bundle_pack_path_map, bundle_pack_info_map_, &error_messages);
 
+    if (print_times) {
+      std::cout << std::format("Load bundle pack files: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
+    }
+
     std::unordered_map<std::string, BundleFile> bundle_map =
         GetBundlesFromPacks(pack_map, bundle_info_map_);
+
+    if (print_times) {
+      std::cout << std::format("Get bundles from packs: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
+    }
 
     // Individual bundle files always overwrite the same bundle found in a pack.
     // If a bundle becomes writable and changes are made, the changes will always be in
@@ -229,8 +252,10 @@ class BundleManagerImpl : public BundleManager {
       }
     }
 
-    // std::cout << std::format("Loading bundles from disk took {}ms", s.GetElapsedMicros() / 1000)
-    // << std::endl;
+    if (print_times) {
+      std::cout << std::format("Read bundle files: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
+    }
 
     scenario_manager_->StartReload();
     playlist_manager_->StartReload();
@@ -258,6 +283,10 @@ class BundleManagerImpl : public BundleManager {
     playlist_manager_->FinishReload();
     guide_manager_->FinishReload();
 
+    if (print_times) {
+      std::cout << std::format("Total time: {:.2f}s", stopwatch.GetElapsedSeconds())
+                << std::endl;
+    }
     // std::cout << std::format("Loading bundles took {}ms", s.GetElapsedMicros() / 1000) <<
     // std::endl;
     return error_messages;

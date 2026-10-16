@@ -379,6 +379,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
         bundle_pack_update_dialog_->NotifyOpen({item});
       }
     }
+    DrawOpenBundlesFolderButton();
 
     if (info.bundle_pack_name() != kDefaultBundlePackName) {
       if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
@@ -396,7 +397,9 @@ class BundleUiComponentImpl : public BundleUiComponent {
     if (!selected_bundle_name_.empty()) {
       DrawSelectedBundle();
     }
+  }
 
+  void DrawOpenBundlesFolderButton() {
     if (ImGui::Button(std::format("{} Folder", icons::kOpenInNew))) {
       OpenFolderInExplorer(app_.file_system().GetUserDataPath("bundles"));
     }
@@ -462,6 +465,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     if (ImGui::Button(std::format("{} Copy", icons::kContentCopy))) {
       add_dialog_.NotifyOpen(selected_bundle_name_);
     }
+    DrawOpenBundlesFolderButton();
 
     if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
       delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", selected_bundle_name_),
