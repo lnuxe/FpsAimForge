@@ -284,8 +284,7 @@ class BundleManagerImpl : public BundleManager {
     guide_manager_->FinishReload();
 
     if (print_times) {
-      std::cout << std::format("Total time: {:.2f}s", stopwatch.GetElapsedSeconds())
-                << std::endl;
+      std::cout << std::format("Total time: {:.2f}s", stopwatch.GetElapsedSeconds()) << std::endl;
     }
     // std::cout << std::format("Loading bundles took {}ms", s.GetElapsedMicros() / 1000) <<
     // std::endl;
