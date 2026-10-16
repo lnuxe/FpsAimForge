@@ -26,6 +26,29 @@
 namespace aim {
 namespace {
 
+struct AllNames {
+  std::shared_ptr<std::vector<std::string>> names1 = std::make_shared<std::vector<std::string>>();
+  std::shared_ptr<std::vector<std::string>> names2 = std::make_shared<std::vector<std::string>>();
+
+  size_t size() {
+    return names1->size() + names2->size();
+  }
+
+  // names2 is always dynamic readonly items
+  bool IsReadonly(int i) {
+    return i >= names1->size();
+  }
+
+  const std::string& get(int i) const {
+    if (i < names1->size()) {
+      return (*names1)[i];
+    }
+    return (*names2)[i - names1->size()];
+  }
+
+  bool operator==(const AllNames&) const = default;
+};
+
 enum class ViewType : int {
   RECENT = 1,
   ALL = 2,
@@ -181,9 +204,6 @@ class ObjectBrowserImpl : public ObjectBrowser {
     auto child_cleanup = absl::MakeCleanup([] { ImGui::EndChild(); });
 
     auto new_names = GetNames();
-    if (new_names == nullptr) {
-      return;
-    }
     if (new_names != all_names_) {
       all_names_ = new_names;
       UpdateFilteredNames();
@@ -199,25 +219,25 @@ class ObjectBrowserImpl : public ObjectBrowser {
       while (clipper.Step()) {
         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
           int names_i = (*filtered_names_indices_)[i];
-          const std::string& name = (*all_names_)[names_i];
+          const std::string& name = all_names_.get(names_i);
           ImGui::IdGuard cid(name, names_i);
-          DrawItem(name, result);
+          DrawItem(name, all_names_.IsReadonly(i), result);
         }
       }
     } else {
-      clipper.Begin(all_names_->size());
+      clipper.Begin(all_names_.size());
       while (clipper.Step()) {
         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
-          const std::string& name = (*all_names_)[i];
+          const std::string& name = all_names_.get(i);
           ImGui::IdGuard cid(name, i);
-          DrawItem(name, result);
+          DrawItem(name, all_names_.IsReadonly(i), result);
         }
       }
     }
   }
 
  private:
-  void DrawItem(const std::string& name, Result* result) {
+  void DrawItem(const std::string& name, bool is_readonly_object, Result* result) {
     if (!ItemExists(name)) {
       DrawMissingItem(name);
       return;
@@ -233,7 +253,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
     const char* menu_id = "ItemMenu";
     if (ImGui::BeginPopupContextItem(menu_id)) {
       auto resource_name = ResourceName::Parse(name);
-      bool is_readonly = app_.bundle_manager().IsBundleReadonly(resource_name.bundle_name());
+      bool is_readonly =
+          is_readonly_object || app_.bundle_manager().IsBundleReadonly(resource_name.bundle_name());
 
       if (!is_readonly) {
         if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
@@ -332,14 +353,15 @@ class ObjectBrowserImpl : public ObjectBrowser {
   void DrawMissingItem(const std::string& name) {
     ImGui::AlignTextToFramePadding();
     ImGui::Text(name);
-    ImGui::SameLine();
     if (view_type_ == ViewType::RECENT) {
+      ImGui::SameLine();
       if (ImGui::IconButton(icons::kDelete)) {
         app_.history_manager().DeleteRecentView(type_, name);
       }
       ImGui::HelpTooltip("Delete from recents");
     }
     if (view_type_ == ViewType::STARRED) {
+      ImGui::SameLine();
       if (ImGui::IconButton(icons::kStar)) {
         app_.labels_manager().UnstarItem(type_, name);
       }
@@ -362,27 +384,34 @@ class ObjectBrowserImpl : public ObjectBrowser {
     return false;
   }
 
-  std::shared_ptr<std::vector<std::string>> GetNames() {
+  AllNames GetNames() {
+    AllNames all_names;
     if (view_type_ == ViewType::RECENT) {
-      return app_.history_manager().GetCachedRecentNames(type_);
+      all_names.names1 = app_.history_manager().GetCachedRecentNames(type_);
+      return all_names;
     }
     if (view_type_ == ViewType::STARRED) {
       auto items = app_.labels_manager().ListStarredItems(type_);
-      return std::shared_ptr<std::vector<std::string>>(items, &items->items);
+      all_names.names1 = std::shared_ptr<std::vector<std::string>>(items, &items->items);
+      return all_names;
     }
     switch (type_) {
       case ObjectType::SCENARIO:
-        return app_.scenario_manager().scenario_names();
+        all_names.names1 = app_.scenario_manager().scenario_names();
+        return all_names;
       case ObjectType::PLAYLIST:
-        return app_.playlist_manager().playlist_names();
+        all_names.names1 = app_.playlist_manager().playlist_names();
+        all_names.names2 = app_.scenario_manager().scenario_playlist_names();
+        return all_names;
       case ObjectType::GUIDE:
-        return app_.guide_manager().guide_names();
+        all_names.names1 = app_.guide_manager().guide_names();
+        return all_names;
       case ObjectType::THEME:
       case ObjectType::CROSSHAIR:
         break;
     }
     assert(false && "Unsupported object type");
-    return nullptr;
+    return all_names;
   }
 
   bool HasAdvancedFilters() {
@@ -401,7 +430,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (search_text_.empty() && !HasAdvancedFilters()) {
       // All match. Clear the filter.
       filtered_names_indices_ = {};
-      num_matches_ = all_names_->size();
+      num_matches_ = all_names_.size();
       return;
     }
 
@@ -412,10 +441,10 @@ class ObjectBrowserImpl : public ObjectBrowser {
     }
     auto& indices = *filtered_names_indices_;
     indices.clear();
-    indices.reserve(all_names_->size());
+    indices.reserve(all_names_.size());
 
-    for (int i = 0; i < all_names_->size(); ++i) {
-      const std::string& name = (*all_names_)[i];
+    for (int i = 0; i < all_names_.size(); ++i) {
+      const std::string& name = all_names_.get(i);
       if (!search_text_.empty() && !StringMatchesSearch(name, search_words)) {
         continue;
       }
@@ -442,7 +471,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
   const std::string type_name_ = ObjectTypeToString(type_);
   ViewType view_type_ = ViewType::ALL;
   ImGui::ConfirmationDialog<std::string> delete_confirmation_dialog_{"DeleteConfirmationDialog"};
-  std::shared_ptr<std::vector<std::string>> all_names_;
+  AllNames all_names_;
   std::optional<std::vector<int>> filtered_names_indices_;
   SelectVariationDialog select_variation_dialog_{"ObjectBrowserVariationDialog"};
   Lazy<std::vector<std::string>> bundle_names_;

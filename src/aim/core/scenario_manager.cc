@@ -34,6 +34,7 @@ class ScenarioManagerImpl : public ScenarioManager {
  public:
   explicit ScenarioManagerImpl() {
     scenario_names_ = std::make_shared<std::vector<std::string>>();
+    scenario_playlist_names_ = std::make_shared<std::vector<std::string>>();
   }
 
   void AddScenariosForBundle(const std::string& bundle_name, BundleFile* bundle_file) override {
@@ -123,6 +124,10 @@ class ScenarioManagerImpl : public ScenarioManager {
 
   std::shared_ptr<std::vector<std::string>> scenario_names() const override {
     return scenario_names_;
+  }
+
+  std::shared_ptr<std::vector<std::string>> scenario_playlist_names() const override {
+    return scenario_playlist_names_;
   }
 
   void UpdateScenario(const std::string& name, const ScenarioDef& def) override {
@@ -362,18 +367,33 @@ class ScenarioManagerImpl : public ScenarioManager {
   }
 
   void RebuildCachedScenarioList() {
-    auto new_scenario_names = std::make_shared<std::vector<std::string>>();
-    new_scenario_names->reserve(scenario_map_.size());
+    {
+      auto new_names = std::make_shared<std::vector<std::string>>();
+      new_names->reserve(scenario_map_.size());
 
-    for (auto& entry : scenario_map_) {
-      new_scenario_names->push_back(entry.second.name);
+      for (auto& entry : scenario_map_) {
+        new_names->push_back(entry.second.name);
+      }
+      SortScenarioNames(new_names.get());
+
+      scenario_names_ = new_names;
     }
-    SortScenarioNames(new_scenario_names.get());
 
-    scenario_names_ = new_scenario_names;
+    {
+      // Add the default playlists that exist for every scenario.
+      auto new_names = std::make_shared<std::vector<std::string>>();
+      new_names->reserve(scenario_names_->size());
+
+      for (const std::string& scenario_name : *scenario_names_) {
+        new_names->push_back(std::format("{} cm360", scenario_name));
+      }
+      scenario_playlist_names_ = new_names;
+    }
   }
 
   std::shared_ptr<std::vector<std::string>> scenario_names_;
+  // Names of playlists automatically available for scenarios.
+  std::shared_ptr<std::vector<std::string>> scenario_playlist_names_;
   absl::flat_hash_map<std::string, ScenarioCacheItem> scenario_map_;
 
   std::shared_ptr<Screen> current_running_scenario_;

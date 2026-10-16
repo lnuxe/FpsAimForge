@@ -70,8 +70,8 @@ bool SelectVariationDialog::Draw(std::string* updated_name) {
 
     ImGui::SameLine();
     if (ImGui::Button("Clear")) {
-      NameInfo cleared;
-      cleared.base_name = name_info_.base_name;
+      NameInfo cleared = name_info_;
+      cleared.ClearVariations();
       name_info_ = cleared;
       selected = true;
       popup_.Close();

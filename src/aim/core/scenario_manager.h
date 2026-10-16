@@ -39,6 +39,7 @@ class ScenarioManager {
   virtual std::optional<ScenarioDef> GetEvaluatedScenarioDef(const std::string& scenario_name) = 0;
 
   virtual std::shared_ptr<std::vector<std::string>> scenario_names() const = 0;
+  virtual std::shared_ptr<std::vector<std::string>> scenario_playlist_names() const = 0;
 
   virtual void UpdateScenario(const std::string& name, const ScenarioDef& def) = 0;
 

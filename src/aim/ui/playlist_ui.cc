@@ -64,7 +64,9 @@ class PlaylistComponentImpl : public PlaylistComponent {
 
     const char* menu_id = "CurrentPlaylistMenu";
     if (ImGui::BeginPopupContextItem(menu_id)) {
-      bool is_readonly = app_.bundle_manager().IsBundleReadonly(GetBundleName(run->playlist.name));
+      NameInfo name_info = GetNameInfo(run->playlist.name);
+      bool is_readonly = name_info.IsUnderlyingItemReadonly() ||
+                         app_.bundle_manager().IsBundleReadonly(GetBundleName(run->playlist.name));
       if (!is_readonly) {
         if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
           PlaylistEditorOptions opts;
@@ -87,9 +89,11 @@ class PlaylistComponentImpl : public PlaylistComponent {
         select_variation_dialog_.NotifyOpen(run->playlist.name);
       }
       if (ImGui::Selectable(std::format("{} Clear variation", icons::kClear))) {
-        NameInfo clear_name = GetNameInfo(run->playlist.name);
-        app_.playlist_manager().SetCurrentPlaylist(clear_name.base_name);
-        app_.history_manager().UpdateRecentView(ObjectType::PLAYLIST, clear_name.base_name);
+        NameInfo clear_name = name_info;
+        clear_name.ClearVariations();
+        std::string new_name = clear_name.GetFullName();
+        app_.playlist_manager().SetCurrentPlaylist(new_name);
+        app_.history_manager().UpdateRecentView(ObjectType::PLAYLIST, new_name);
       }
 
       bool hide_description = app_.local_store().GetBool(kHideDescriptionsKey);

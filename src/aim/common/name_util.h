@@ -30,6 +30,19 @@ struct NameInfo {
 
   std::string GetBundleName() const;
 
+  // Clears variation suffixes leaving fully dynamic suffixes like cm360 where the name has no
+  // meaning without it.
+  void ClearVariations() {
+    NameInfo new_info;
+    new_info.base_name = base_name;
+    new_info.is_cm360_variations = is_cm360_variations;
+    *this = new_info;
+  }
+
+  bool IsUnderlyingItemReadonly() {
+    return is_cm360_variations;
+  }
+
   bool HasDynamicSuffix() const {
     return cm_per_360 || level || duration || fov || radius_smaller || radius_larger || faster ||
            slower || wider || taller || is_poke || wall_smaller || wall_larger ||

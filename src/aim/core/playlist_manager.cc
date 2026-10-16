@@ -18,6 +18,9 @@
 namespace aim {
 namespace {
 
+// TODO: Get this list of cm360s from settings and allow overriding defaults.
+constexpr std::array kDefaultCm360s = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70};
+
 struct CopiedScenario {
   std::string old_name;
   std::string new_name;
@@ -214,6 +217,25 @@ class PlaylistManagerImpl : public PlaylistManager {
     }
     visited->insert(playlist_name);
     NameInfo name_info = GetNameInfo(playlist_name);
+
+    if (name_info.is_cm360_variations) {
+      NameInfo stripped_name_info = name_info;
+      stripped_name_info.is_cm360_variations = false;
+
+      // TODO: confirm it is a real scenario name?
+      Playlist playlist;
+      playlist.name = playlist_name;
+      playlist.playlist_name_info = name_info;
+      auto* d = playlist.mutable_def();
+      for (int cm : kDefaultCm360s) {
+        auto* item = d->add_items();
+        stripped_name_info.cm_per_360 = cm;
+        item->set_scenario(stripped_name_info.GetFullName());
+        item->set_num_plays(1);
+      }
+      return playlist;
+    }
+
     if (name_info.HasDynamicSuffix()) {
       auto playlist = GetPlaylistInternal(name_info.base_name, depth + 1, visited);
       if (playlist) {
