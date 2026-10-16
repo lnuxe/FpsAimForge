@@ -1,18 +1,13 @@
 #include "home_screen.h"
 
-#include <future>
 #include <optional>
 
 #include "SDL3/SDL.h"  // IWYU pragma: keep
-#include "absl/cleanup/cleanup.h"
 #include "aim/common/files.h"
-#include "aim/common/http.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/log.h"
 #include "aim/common/mat_icons.h"
 #include "aim/common/simple_types.h"
-#include "aim/common/system.h"
-#include "aim/common/times.h"
 #include "aim/core/bundle_manager.h"
 #include "aim/core/bundle_pack_update_manager.h"
 #include "aim/core/guide_manager.h"
@@ -21,7 +16,6 @@
 #include "aim/core/scenario_manager.h"
 #include "aim/core/settings_manager.h"
 #include "aim/core/stats_manager.h"
-#include "aim/core/version.h"
 #include "aim/proto/scenario.pb.h"
 #include "aim/scenario/scenario.h"
 #include "aim/scenario/scenario_factory.h"
