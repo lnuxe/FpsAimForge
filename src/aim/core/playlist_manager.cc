@@ -235,6 +235,20 @@ class PlaylistManagerImpl : public PlaylistManager {
       }
       return playlist;
     }
+    if (name_info.is_level_variations) {
+      NameInfo stripped_name_info = name_info;
+      stripped_name_info.is_level_variations = false;
+
+      // TODO: confirm it is a real scenario name?
+      Playlist playlist;
+      playlist.name = playlist_name;
+      playlist.playlist_name_info = name_info;
+      auto* l = playlist.mutable_def()->mutable_levels();
+      l->set_base_scenario(stripped_name_info.GetFullName());
+      l->set_min_level(1);
+      l->set_max_level(40);
+      return playlist;
+    }
 
     if (name_info.HasDynamicSuffix()) {
       auto playlist = GetPlaylistInternal(name_info.base_name, depth + 1, visited);

@@ -382,10 +382,11 @@ class ScenarioManagerImpl : public ScenarioManager {
     {
       // Add the default playlists that exist for every scenario.
       auto new_names = std::make_shared<std::vector<std::string>>();
-      new_names->reserve(scenario_names_->size());
+      new_names->reserve(scenario_names_->size() * 2);
 
       for (const std::string& scenario_name : *scenario_names_) {
         new_names->push_back(std::format("{} cm360", scenario_name));
+        new_names->push_back(std::format("{} Levels", scenario_name));
       }
       scenario_playlist_names_ = new_names;
     }
