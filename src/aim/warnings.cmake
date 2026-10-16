@@ -8,6 +8,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang
     -Wno-unused-variable
     -Wno-sign-compare
     -Wno-unused-but-set-variable
+    -Wno-deprecated-attributes
+    -Wno-unused-private-field
 
     -Wcast-align         # Pointer casts which increase alignment.
     -Wcast-qual          # A pointer is cast to remove a type qualifier, or add an unsafe one.
