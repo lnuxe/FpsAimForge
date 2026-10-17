@@ -205,7 +205,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
           "between search terms means name must match all provided terms. This allows further "
           "refining results by adding more terms/filters. \"cli\" matches \"AF Clicking\" and "
           "\"AF MyClick\" as camel case words get split when matching. \"cli m\" matches \"AF "
-          "MyClick\".");
+          "MyClick\". Use search terms like \"-cli\" to exclude matches.");
     }
 
     ImGui::BeginChild("SearchContent");
