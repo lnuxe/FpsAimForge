@@ -474,7 +474,7 @@ void DrawOverridesEditor(const char* id, ScenarioOverrides* overrides, bool is_l
   if (is_levels) {
     ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Level offset")
                           .set_step(1, 2)
-                          .set_default(0)
+                          .set_default(15)
                           .set_is_optional()
                           .set_width(char_x * 10),
                       PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, level_offset));

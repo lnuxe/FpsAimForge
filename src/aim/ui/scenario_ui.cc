@@ -12,6 +12,7 @@
 #include "aim/common/util.h"
 #include "aim/core/application.h"
 #include "aim/core/bundle_manager.h"
+#include "aim/core/guide_manager.h"
 #include "aim/core/history_manager.h"
 #include "aim/core/playlist_manager.h"
 #include "aim/core/scenario_manager.h"
@@ -388,16 +389,55 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::Unindent();
     }
 
-    if (!matching_playlists_->empty()) {
+    NameInfo base_name = GetNameInfo(item.name);
+    {
+      ImGui::IdGuard playlist_id("RelatedPlaylists");
       ImGui::SpacedSeparator();
       ImGui::Text("Related playlists");
       ImGui::Indent();
-      for (const std::string& playlist_name : *matching_playlists_) {
-        if (ImGui::Button(playlist_name)) {
-          app_.playlist_manager().SetCurrentPlaylist(playlist_name);
-          app_.state().go_to_app_screen = AppScreen::PLAYLISTS;
+      auto related_playlist_button = [](const std::string& name, Application& app) {
+        if (ImGui::Button(name)) {
+          app.playlist_manager().SetCurrentPlaylist(name);
+          app.state().go_to_app_screen = AppScreen::PLAYLISTS;
+        }
+      };
+
+      NameInfo levels_name = base_name;
+      levels_name.level = {};
+      levels_name.is_level_variations = true;
+      related_playlist_button(levels_name.GetFullName(), app_);
+
+      NameInfo cm_name = base_name;
+      cm_name.cm_per_360 = {};
+      cm_name.is_cm360_variations = true;
+      related_playlist_button(cm_name.GetFullName(), app_);
+
+      if (!matching_playlists_->empty()) {
+        for (const std::string& playlist_name : *matching_playlists_) {
+          related_playlist_button(playlist_name, app_);
         }
       }
+      ImGui::Unindent();
+    }
+
+    {
+      ImGui::IdGuard playlist_id("RelatedGuides");
+      ImGui::SpacedSeparator();
+      ImGui::Text("Related guides");
+      ImGui::Indent();
+      auto related_guide_button = [](const std::string& name, Application& app) {
+        if (ImGui::Button(name)) {
+          app.guide_manager().SetCurrentGuide(name);
+          app.state().go_to_app_screen = AppScreen::GUIDES;
+        }
+      };
+      NameInfo guide_name = base_name;
+      guide_name.level = {};
+      guide_name.level = {};
+      guide_name.is_level_variations = true;
+      guide_name.is_cm360_variations = true;
+      related_guide_button(guide_name.GetFullName(), app_);
+
       ImGui::Unindent();
     }
   }
