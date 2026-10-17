@@ -125,6 +125,7 @@ class PlaylistManagerImpl : public PlaylistManager {
  public:
   explicit PlaylistManagerImpl() {
     playlist_names_ = std::make_shared<std::vector<std::string>>();
+    playlist_guide_names_ = std::make_shared<std::vector<std::string>>();
   }
 
   void StartReload() override {
@@ -198,6 +199,10 @@ class PlaylistManagerImpl : public PlaylistManager {
 
   std::shared_ptr<std::vector<std::string>> playlist_names() const override {
     return playlist_names_;
+  }
+
+  std::shared_ptr<std::vector<std::string>> playlist_guide_names() const override {
+    return playlist_guide_names_;
   }
 
   std::optional<Playlist> GetPlaylist(const std::string& playlist_name) const override {
@@ -518,16 +523,29 @@ class PlaylistManagerImpl : public PlaylistManager {
   }
 
   void UpdatePlaylistListFromMap() {
-    auto new_playlist_names = std::make_shared<std::vector<std::string>>();
-    new_playlist_names->reserve(playlist_map_.size());
-    for (auto& entry : playlist_map_) {
-      new_playlist_names->push_back(entry.second.name);
-    }
-    std::sort(new_playlist_names->begin(),
-              new_playlist_names->end(),
-              [](const std::string& lhs, const std::string& rhs) { return lhs < rhs; });
+    {
+      auto new_playlist_names = std::make_shared<std::vector<std::string>>();
+      new_playlist_names->reserve(playlist_map_.size());
+      for (auto& entry : playlist_map_) {
+        new_playlist_names->push_back(entry.second.name);
+      }
+      std::sort(new_playlist_names->begin(),
+                new_playlist_names->end(),
+                [](const std::string& lhs, const std::string& rhs) { return lhs < rhs; });
 
-    playlist_names_ = new_playlist_names;
+      playlist_names_ = new_playlist_names;
+    }
+
+    {
+      // Add the default guides that exist for every playlist.
+      auto new_names = std::make_shared<std::vector<std::string>>();
+      new_names->reserve(playlist_names_->size());
+
+      for (const std::string& playlist_name : *playlist_names_) {
+        new_names->push_back(std::format("{} cm360", playlist_name));
+      }
+      playlist_guide_names_ = new_names;
+    }
   }
 
   void UpdatePlaylistRun(const std::string& playlist_name, const PlaylistDef& new_def) {
@@ -575,6 +593,7 @@ class PlaylistManagerImpl : public PlaylistManager {
 
   std::string current_playlist_name_;
   std::shared_ptr<std::vector<std::string>> playlist_names_;
+  std::shared_ptr<std::vector<std::string>> playlist_guide_names_;
   absl::flat_hash_map<std::string, Playlist> playlist_map_;
   std::unordered_map<std::string, std::shared_ptr<PlaylistRun>> playlist_run_map_;
   std::unordered_set<std::string> dirty_bundles_;

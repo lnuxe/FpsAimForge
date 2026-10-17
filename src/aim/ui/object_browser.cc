@@ -29,12 +29,13 @@ namespace {
 struct AllNames {
   std::shared_ptr<std::vector<std::string>> names1 = std::make_shared<std::vector<std::string>>();
   std::shared_ptr<std::vector<std::string>> names2 = std::make_shared<std::vector<std::string>>();
+  std::shared_ptr<std::vector<std::string>> names3 = std::make_shared<std::vector<std::string>>();
 
   size_t size() {
-    return names1->size() + names2->size();
+    return names1->size() + names2->size() + names3->size();
   }
 
-  // names2 is always dynamic readonly items
+  // names2/3 are always dynamic readonly items
   bool IsReadonly(int i) {
     return i >= names1->size();
   }
@@ -43,7 +44,12 @@ struct AllNames {
     if (i < names1->size()) {
       return (*names1)[i];
     }
-    return (*names2)[i - names1->size()];
+    i -= names1->size();
+    if (i < names2->size()) {
+      return (*names2)[i];
+    }
+    i -= names2->size();
+    return (*names3)[i];
   }
 
   bool operator==(const AllNames&) const = default;
@@ -407,6 +413,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
       case ObjectType::GUIDE:
         all_names.names1 = app_.guide_manager().guide_names();
         all_names.names2 = app_.scenario_manager().scenario_guide_names();
+        all_names.names3 = app_.playlist_manager().playlist_guide_names();
         return all_names;
       case ObjectType::THEME:
       case ObjectType::CROSSHAIR:

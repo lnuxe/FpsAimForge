@@ -103,6 +103,7 @@ class PlaylistManager {
   virtual std::shared_ptr<PlaylistRun> GetCurrentRun() = 0;
 
   virtual std::shared_ptr<std::vector<std::string>> playlist_names() const = 0;
+  virtual std::shared_ptr<std::vector<std::string>> playlist_guide_names() const = 0;
 
   virtual std::vector<std::string> FindPlaylistsContainingScenario(
       const std::string& scenario_name) const = 0;
