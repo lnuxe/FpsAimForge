@@ -433,7 +433,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
       };
       NameInfo guide_name = base_name;
       guide_name.level = {};
-      guide_name.level = {};
+      guide_name.cm_per_360 = {};
       guide_name.is_level_variations = true;
       guide_name.is_cm360_variations = true;
       related_guide_button(guide_name.GetFullName(), app_);
