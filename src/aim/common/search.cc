@@ -1,5 +1,6 @@
 #include "search.h"
 
+#include <iostream>
 #include <string_view>
 
 #include "absl/strings/ascii.h"
@@ -35,7 +36,18 @@ std::vector<std::string_view> SplitCamelCase(const std::string_view& full_word) 
 }
 
 bool InputMatchesSearchWord(const std::vector<std::string>& input_word_parts,
-                            const std::string& search_word) {
+                            const std::string_view search_word) {
+  if (search_word.starts_with("-")) {
+    if (search_word.size() == 1) {
+      return true;
+    }
+    for (const std::string& value : input_word_parts) {
+      if (absl::StartsWith(value, search_word.substr(1))) {
+        return false;
+      }
+    }
+    return true;
+  }
   for (const std::string& value : input_word_parts) {
     if (absl::StartsWith(value, search_word)) {
       return true;
