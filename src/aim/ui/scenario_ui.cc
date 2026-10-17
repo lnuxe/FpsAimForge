@@ -115,21 +115,28 @@ void DrawScenarioRightClickMenu(const char* popup_id,
   }
 
   bool is_readonly = app.bundle_manager().IsBundleReadonly(GetBundleName(scenario_name));
-  if (!is_readonly && ImGui::Selectable("Edit")) {
+  if (!is_readonly && ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
     ScenarioEditorOptions opts;
     opts.scenario_name = scenario_name;
     app.PushNextScreen(CreateScenarioEditorScreen(opts));
   }
-  if (ImGui::Selectable("Copy")) {
+  if (ImGui::Selectable(std::format("{} Copy", icons::kContentCopy))) {
     ScenarioEditorOptions opts;
     opts.scenario_name = scenario_name;
     opts.is_new_copy = true;
     app.PushNextScreen(CreateScenarioEditorScreen(opts));
   }
-  if (ImGui::Selectable("Select variation")) {
+  if (ImGui::Selectable(std::format("{} Select variation", icons::kTune))) {
     dialogs->select_variation_dialog.NotifyOpen(scenario_name);
   }
-  if (ImGui::Selectable("Remove from recents")) {
+  if (ImGui::Selectable(std::format("{} Clear variation", icons::kClear))) {
+    NameInfo clear_name = GetNameInfo(scenario_name);
+    clear_name.ClearVariations();
+    std::string new_name = clear_name.GetFullName();
+    app.scenario_manager().SetCurrentScenario(new_name);
+    app.history_manager().UpdateRecentView(ObjectType::SCENARIO, new_name);
+  }
+  if (ImGui::Selectable(std::format("{} Recents", icons::kClear))) {
     app.history_manager().DeleteRecentView(ObjectType::SCENARIO, scenario_name);
   }
   if (ImGui::BeginMenu("Add to playlist")) {
@@ -177,7 +184,7 @@ void DrawScenarioRightClickMenu(const char* popup_id,
   }
   if (!is_readonly) {
     ImGui::SpacedSeparator();
-    if (ImGui::Selectable("Delete")) {
+    if (ImGui::Selectable(std::format("{} Delete", icons::kDelete))) {
       std::string base_name = GetNameInfo(scenario_name).base_name;
       dialogs->delete_confirmation_dialog.NotifyOpen(std::format("Delete \"{}\"?", base_name),
                                                      base_name);
