@@ -81,6 +81,10 @@ message Settings {
   string explicit_display_name = 24;
 
   BackupSettings db_backups = 25;
+
+  // The cm360 variations to include for the automatically generated "cm360" playlists
+  // and guides.
+  repeated float default_cm_per_360s = 26;
 }
 
 message SoundItem {

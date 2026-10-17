@@ -15,6 +15,7 @@
 namespace aim {
 
 class ScenarioManager;
+class SettingsManager;
 
 struct CopyPlaylistOptions {
   std::string remove_prefix;
@@ -131,6 +132,7 @@ class PlaylistManager {
 
   virtual void RegisterRenameListener(
       std::function<void(const std::string& old_name, const std::string& new_name)> listener) = 0;
+  virtual void RegisterSetttingManager(SettingsManager* settings_manager) = 0;
 };
 
 std::unique_ptr<PlaylistManager> CreatePlaylistManager();

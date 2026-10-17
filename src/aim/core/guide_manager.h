@@ -10,6 +10,8 @@
 
 namespace aim {
 
+class SettingsManager;
+
 struct GuideItem {
   std::string name;
   GuideDef def;
@@ -55,6 +57,7 @@ class GuideManager {
 
   virtual void RegisterRenameListener(
       std::function<void(const std::string& old_name, const std::string& new_name)> listener) = 0;
+  virtual void RegisterSetttingManager(SettingsManager* settings_manager) = 0;
 };
 
 std::unique_ptr<GuideManager> CreateGuideManager();

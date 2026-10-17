@@ -7,10 +7,10 @@
 #include "absl/container/flat_hash_map.h"
 #include "aim/common/name_util.h"
 #include "aim/common/resource_name.h"
+#include "aim/core/settings_manager.h"
 
 namespace aim {
 namespace {
-constexpr std::array kDefaultCm360s = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70};
 
 class GuideManagerImpl : public GuideManager {
  public:
@@ -69,9 +69,19 @@ class GuideManagerImpl : public GuideManager {
       base_name.cm_per_360 = {};
 
       s->add_playlists(base_name.GetFullName());
-      for (int cm : kDefaultCm360s) {
+      auto add_item = [&](float cm) {
         base_name.cm_per_360 = cm;
         s->add_playlists(base_name.GetFullName());
+      };
+      if (settings_manager_ != nullptr &&
+          settings_manager_->GetCurrentSettings().default_cm_per_360s_size() > 0) {
+        for (float cm : settings_manager_->GetCurrentSettings().default_cm_per_360s()) {
+          add_item(cm);
+        }
+      } else {
+        for (int cm : kDefaultCm360s) {
+          add_item(cm);
+        }
       }
 
       return item;
@@ -232,6 +242,10 @@ class GuideManagerImpl : public GuideManager {
     rename_listeners_.push_back(std::move(listener));
   }
 
+  void RegisterSetttingManager(SettingsManager* settings_manager) override {
+    settings_manager_ = settings_manager;
+  }
+
  private:
   void UpdateGuideListFromMap() {
     auto new_guides = std::make_shared<std::vector<GuideItem>>();
@@ -260,6 +274,7 @@ class GuideManagerImpl : public GuideManager {
   std::vector<std::function<void(const std::string& old_name, const std::string& new_name)>>
       rename_listeners_;
   std::string current_guide_name_;
+  SettingsManager* settings_manager_ = nullptr;
 };
 
 }  // namespace

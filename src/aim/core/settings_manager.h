@@ -16,6 +16,9 @@
 
 namespace aim {
 
+inline constexpr std::array kDefaultCm360s = {
+    10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90};
+
 std::string GetMouseButtonName(u8 button);
 std::string GetKeyNameForEvent(const SDL_Event& event);
 bool KeyNameMatchesEvent(const SDL_Event& event, const std::string& name);

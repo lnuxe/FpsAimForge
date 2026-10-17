@@ -14,12 +14,10 @@
 #include "aim/common/resource_name.h"
 #include "aim/common/util.h"
 #include "aim/core/scenario_manager.h"
+#include "aim/core/settings_manager.h"
 
 namespace aim {
 namespace {
-
-// TODO: Get this list of cm360s from settings and allow overriding defaults.
-constexpr std::array kDefaultCm360s = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70};
 
 struct CopiedScenario {
   std::string old_name;
@@ -232,11 +230,21 @@ class PlaylistManagerImpl : public PlaylistManager {
       playlist.name = playlist_name;
       playlist.playlist_name_info = name_info;
       auto* d = playlist.mutable_def();
-      for (int cm : kDefaultCm360s) {
+      auto add_item = [&](float cm) {
         auto* item = d->add_items();
         stripped_name_info.cm_per_360 = cm;
         item->set_scenario(stripped_name_info.GetFullName());
         item->set_num_plays(1);
+      };
+      if (settings_manager_ != nullptr &&
+          settings_manager_->GetCurrentSettings().default_cm_per_360s_size() > 0) {
+        for (float cm : settings_manager_->GetCurrentSettings().default_cm_per_360s()) {
+          add_item(cm);
+        }
+      } else {
+        for (int cm : kDefaultCm360s) {
+          add_item(cm);
+        }
       }
       return playlist;
     }
@@ -501,6 +509,10 @@ class PlaylistManagerImpl : public PlaylistManager {
     rename_listeners_.push_back(std::move(listener));
   }
 
+  void RegisterSetttingManager(SettingsManager* settings_manager) override {
+    settings_manager_ = settings_manager;
+  }
+
  private:
   std::shared_ptr<PlaylistRun> GetOptionalExistingRun(const std::string& name) {
     auto it = playlist_run_map_.find(name);
@@ -599,6 +611,7 @@ class PlaylistManagerImpl : public PlaylistManager {
   std::unordered_set<std::string> dirty_bundles_;
   std::vector<std::function<void(const std::string& old_name, const std::string& new_name)>>
       rename_listeners_;
+  SettingsManager* settings_manager_ = nullptr;
 };
 
 std::vector<PlaylistItem> GetPlaylistItemsNoSuffix(const PlaylistDef& def) {
