@@ -24,6 +24,6 @@ class ObjectBrowser {
   virtual void Draw(Result* result) = 0;
 };
 
-std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type);
+std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type, bool is_selector = false);
 
 }  // namespace aim

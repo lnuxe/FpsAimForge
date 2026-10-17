@@ -61,27 +61,29 @@ enum class ViewType : int {
   STARRED = 3,
 };
 
-static std::string GetViewTypeKey(ObjectType type) {
+static std::string GetViewTypeKey(ObjectType type, bool is_selector) {
+  std::string prefix = is_selector ? "Selector" : "";
   switch (type) {
     case ObjectType::SCENARIO:
-      return "ScenarioViewType";
+      return prefix + "ScenarioViewType";
     case ObjectType::PLAYLIST:
-      return "PlaylistViewType";
+      return prefix + "PlaylistViewType";
     case ObjectType::GUIDE:
-      return "GuideViewType";
+      return prefix + "GuideViewType";
     case ObjectType::THEME:
     case ObjectType::CROSSHAIR:
       break;
   }
   assert(false && "Unsupported object for ViewType");
-  return "UnknownViewType";
+  return prefix + "UnknownViewType";
 }
 
 class ObjectBrowserImpl : public ObjectBrowser {
  public:
-  explicit ObjectBrowserImpl(ObjectType type) : type_(type), bundle_names_(SecondsToMicros(0.6)) {
+  explicit ObjectBrowserImpl(ObjectType type, bool is_selector)
+      : is_selector_(is_selector), type_(type), bundle_names_(SecondsToMicros(0.6)) {
     bundle_names_.SetLoader([&]() { return app_.bundle_manager().GetBundleNames(); });
-    auto maybe_initial_view_type = app_.local_store().GetInt(GetViewTypeKey(type));
+    auto maybe_initial_view_type = app_.local_store().GetInt(GetViewTypeKey(type, is_selector_));
     if (maybe_initial_view_type) {
       view_type_ = static_cast<ViewType>(*maybe_initial_view_type);
     }
@@ -142,7 +144,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
                                 {ViewType::RECENT, "Recent"},
                                 {ViewType::STARRED, "Starred"},
                             })) {
-      app_.local_store().PutInt(GetViewTypeKey(type_), (int)view_type_);
+      app_.local_store().PutInt(GetViewTypeKey(type_, is_selector_), (int)view_type_);
     }
 
     if (num_matches_ > 0) {
@@ -257,50 +259,52 @@ class ObjectBrowserImpl : public ObjectBrowser {
     }
     ImGui::HelpTooltip(name, 0.6);
 
-    const char* menu_id = "ItemMenu";
-    if (ImGui::BeginPopupContextItem(menu_id)) {
-      auto resource_name = ResourceName::Parse(name);
-      bool is_readonly =
-          is_readonly_object || app_.bundle_manager().IsBundleReadonly(resource_name.bundle_name());
+    if (!is_selector_) {
+      const char* menu_id = "ItemMenu";
+      if (ImGui::BeginPopupContextItem(menu_id)) {
+        auto resource_name = ResourceName::Parse(name);
+        bool is_readonly = is_readonly_object ||
+                           app_.bundle_manager().IsBundleReadonly(resource_name.bundle_name());
 
-      if (!is_readonly) {
-        if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
-          result->edit_object_name = name;
+        if (!is_readonly) {
+          if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
+            result->edit_object_name = name;
+          }
         }
-      }
 
-      if (ImGui::Selectable(std::format("{} Copy", icons::kContentCopy))) {
-        result->copy_object_name = name;
-      }
-
-      if (ImGui::Selectable(std::format("{} Select variation", icons::kTune))) {
-        select_variation_dialog_.NotifyOpen(name);
-      }
-
-      if (ImGui::Selectable(std::format("{} Recents", icons::kClose))) {
-        app_.history_manager().DeleteRecentView(type_, name);
-      }
-
-      if (is_scenario) {
-        if (ImGui::BeginMenu("Add to")) {
-          DrawAddScenarioToPlaylistMenu(name);
-          ImGui::EndMenu();
+        if (ImGui::Selectable(std::format("{} Copy", icons::kContentCopy))) {
+          result->copy_object_name = name;
         }
-        if (ImGui::BeginMenu("Advanced")) {
-          DrawAdvancedScenarioMenu(name, result);
-          ImGui::EndMenu();
-        }
-      }
 
-      if (!is_readonly) {
-        ImGui::SpacedSeparator();
-        if (ImGui::Selectable(std::format("{} Delete", icons::kDelete))) {
-          delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", name), name);
+        if (ImGui::Selectable(std::format("{} Select variation", icons::kTune))) {
+          select_variation_dialog_.NotifyOpen(name);
         }
+
+        if (ImGui::Selectable(std::format("{} Recents", icons::kClose))) {
+          app_.history_manager().DeleteRecentView(type_, name);
+        }
+
+        if (is_scenario) {
+          if (ImGui::BeginMenu("Add to")) {
+            DrawAddScenarioToPlaylistMenu(name);
+            ImGui::EndMenu();
+          }
+          if (ImGui::BeginMenu("Advanced")) {
+            DrawAdvancedScenarioMenu(name, result);
+            ImGui::EndMenu();
+          }
+        }
+
+        if (!is_readonly) {
+          ImGui::SpacedSeparator();
+          if (ImGui::Selectable(std::format("{} Delete", icons::kDelete))) {
+            delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", name), name);
+          }
+        }
+        ImGui::EndPopup();
       }
-      ImGui::EndPopup();
+      ImGui::OpenPopupOnItemClick(menu_id, ImGuiPopupFlags_MouseButtonRight);
     }
-    ImGui::OpenPopupOnItemClick(menu_id, ImGuiPopupFlags_MouseButtonRight);
 
     ImGui::SameLine();
     if (app_.labels_manager().IsStarred(type_, name)) {
@@ -472,6 +476,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
   }
 
   Application& app_ = GetUiApp();
+  bool is_selector_;
   std::string search_text_;
   std::string exclude_search_text_;
   std::string handled_search_text_;
@@ -491,8 +496,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
 
 }  // namespace
 
-std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type) {
-  return std::make_unique<ObjectBrowserImpl>(type);
+std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type, bool is_selector) {
+  return std::make_unique<ObjectBrowserImpl>(type, is_selector);
 }
 
 float GetDefaultObjectBrowserWidth() {

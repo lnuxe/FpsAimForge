@@ -9,7 +9,7 @@
 namespace aim {
 namespace {
 
-const int kCachedRecentNamesSize = 240;
+const int kCachedRecentNamesSize = 500;
 
 class HistoryManagerImpl : public HistoryManager {
  public:
