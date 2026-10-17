@@ -284,11 +284,11 @@ std::string NameInfo::GetFullName() const {
   if (duration) {
     result.append(std::format(" {}s", MaybeIntToString(*duration, 0)));
   }
-  if (cm_per_360) {
-    result.append(std::format(" {}cm", MaybeIntToString(*cm_per_360, 1)));
-  }
   if (is_level_variations) {
     result.append(" Levels");
+  }
+  if (cm_per_360) {
+    result.append(std::format(" {}cm", MaybeIntToString(*cm_per_360, 1)));
   }
   if (is_cm360_variations) {
     result.append(" cm360");

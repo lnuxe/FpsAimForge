@@ -249,6 +249,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (ImGui::Button(name)) {
       result->selected_object_name = name;
     }
+    ImGui::HelpTooltip(name, 0.6);
 
     const char* menu_id = "ItemMenu";
     if (ImGui::BeginPopupContextItem(menu_id)) {
@@ -405,6 +406,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
         return all_names;
       case ObjectType::GUIDE:
         all_names.names1 = app_.guide_manager().guide_names();
+        all_names.names2 = app_.scenario_manager().scenario_guide_names();
         return all_names;
       case ObjectType::THEME:
       case ObjectType::CROSSHAIR:

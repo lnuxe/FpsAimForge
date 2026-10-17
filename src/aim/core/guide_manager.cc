@@ -10,6 +10,7 @@
 
 namespace aim {
 namespace {
+constexpr std::array kDefaultCm360s = {10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70};
 
 class GuideManagerImpl : public GuideManager {
  public:
@@ -58,6 +59,24 @@ class GuideManagerImpl : public GuideManager {
       item.name = guide_name;
       return item;
     }
+
+    if (name_info.is_cm360_variations) {
+      GuideItem item;
+      item.name = guide_name;
+      auto* s = item.def.add_sections();
+      NameInfo base_name = name_info;
+      base_name.is_cm360_variations = false;
+      base_name.cm_per_360 = {};
+
+      s->add_playlists(base_name.GetFullName());
+      for (int cm : kDefaultCm360s) {
+        base_name.cm_per_360 = cm;
+        s->add_playlists(base_name.GetFullName());
+      }
+
+      return item;
+    }
+
     return {};
   }
 

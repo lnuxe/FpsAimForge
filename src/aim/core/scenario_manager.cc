@@ -35,6 +35,7 @@ class ScenarioManagerImpl : public ScenarioManager {
   explicit ScenarioManagerImpl() {
     scenario_names_ = std::make_shared<std::vector<std::string>>();
     scenario_playlist_names_ = std::make_shared<std::vector<std::string>>();
+    scenario_guide_names_ = std::make_shared<std::vector<std::string>>();
   }
 
   void AddScenariosForBundle(const std::string& bundle_name, BundleFile* bundle_file) override {
@@ -128,6 +129,10 @@ class ScenarioManagerImpl : public ScenarioManager {
 
   std::shared_ptr<std::vector<std::string>> scenario_playlist_names() const override {
     return scenario_playlist_names_;
+  }
+
+  std::shared_ptr<std::vector<std::string>> scenario_guide_names() const override {
+    return scenario_guide_names_;
   }
 
   void UpdateScenario(const std::string& name, const ScenarioDef& def) override {
@@ -390,11 +395,23 @@ class ScenarioManagerImpl : public ScenarioManager {
       }
       scenario_playlist_names_ = new_names;
     }
+
+    {
+      // Add level/cm360 guides for all scenarios.
+      auto new_names = std::make_shared<std::vector<std::string>>();
+      new_names->reserve(scenario_names_->size());
+
+      for (const std::string& scenario_name : *scenario_names_) {
+        new_names->push_back(std::format("{} Levels cm360", scenario_name));
+      }
+      scenario_guide_names_ = new_names;
+    }
   }
 
   std::shared_ptr<std::vector<std::string>> scenario_names_;
   // Names of playlists automatically available for scenarios.
   std::shared_ptr<std::vector<std::string>> scenario_playlist_names_;
+  std::shared_ptr<std::vector<std::string>> scenario_guide_names_;
   absl::flat_hash_map<std::string, ScenarioCacheItem> scenario_map_;
 
   std::shared_ptr<Screen> current_running_scenario_;
