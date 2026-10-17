@@ -374,6 +374,7 @@ void PlaylistRunComponent(const std::string& id, std::shared_ptr<PlaylistRun> ru
       app.ReturnToHomeScreen();
     }
     PlaylistRunRightClickMenu(item.scenario(), *run);
+    ImGui::HelpTooltip(label, 0.8);
 
     ImGui::TableNextColumn();
     if (scores[i] > 0) {
