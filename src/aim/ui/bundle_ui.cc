@@ -381,6 +381,8 @@ class BundleUiComponentImpl : public BundleUiComponent {
     }
     DrawOpenBundlesFolderButton();
 
+    ImGui::SpacedSeparator();
+
     if (info.bundle_pack_name() != kDefaultBundlePackName) {
       if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
         delete_pack_confirmation_dialog_.NotifyOpen(
@@ -466,6 +468,8 @@ class BundleUiComponentImpl : public BundleUiComponent {
       add_dialog_.NotifyOpen(selected_bundle_name_);
     }
     DrawOpenBundlesFolderButton();
+
+    ImGui::SpacedSeparator();
 
     if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
       delete_confirmation_dialog_.NotifyOpen(std::format("Delete \"{}\"?", selected_bundle_name_),
