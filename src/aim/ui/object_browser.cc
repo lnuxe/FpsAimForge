@@ -59,6 +59,8 @@ enum class ViewType : int {
   RECENT = 1,
   ALL = 2,
   STARRED = 3,
+  // Excludes dynamic items like Levels/cm360.
+  BASE = 4,
 };
 
 static std::string GetViewTypeKey(ObjectType type, bool is_selector) {
@@ -143,6 +145,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
                                 {ViewType::ALL, "All"},
                                 {ViewType::RECENT, "Recent"},
                                 {ViewType::STARRED, "Starred"},
+                                {ViewType::BASE, "Base"},
                             })) {
       app_.local_store().PutInt(GetViewTypeKey(type_, is_selector_), (int)view_type_);
     }
@@ -412,12 +415,16 @@ class ObjectBrowserImpl : public ObjectBrowser {
         return all_names;
       case ObjectType::PLAYLIST:
         all_names.names1 = app_.playlist_manager().playlist_names();
-        all_names.names2 = app_.scenario_manager().scenario_playlist_names();
+        if (view_type_ == ViewType::ALL) {
+          all_names.names2 = app_.scenario_manager().scenario_playlist_names();
+        }
         return all_names;
       case ObjectType::GUIDE:
         all_names.names1 = app_.guide_manager().guide_names();
-        all_names.names2 = app_.scenario_manager().scenario_guide_names();
-        all_names.names3 = app_.playlist_manager().playlist_guide_names();
+        if (view_type_ == ViewType::ALL) {
+          all_names.names2 = app_.scenario_manager().scenario_guide_names();
+          all_names.names3 = app_.playlist_manager().playlist_guide_names();
+        }
         return all_names;
       case ObjectType::THEME:
       case ObjectType::CROSSHAIR:
