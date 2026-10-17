@@ -4,6 +4,8 @@
 #include <functional>
 
 #include "SDL3/SDL.h"  // IWYU pragma: keep
+#include "absl/strings/str_join.h"
+#include "absl/strings/str_split.h"
 #include "aim/audio/sound_manager.h"
 #include "aim/common/field.h"
 #include "aim/common/files.h"
@@ -11,6 +13,7 @@
 #include "aim/common/mat_icons.h"
 #include "aim/common/search.h"
 #include "aim/common/system.h"
+#include "aim/common/util.h"
 #include "aim/core/application.h"
 #include "aim/core/displays.h"
 #include "aim/core/settings_manager.h"
@@ -390,6 +393,12 @@ class SettingsScreen : public UiScreen {
       ImGui::EndTabItem();
     }
 
+    if (ImGui::BeginTabItem("Dynamic Items")) {
+      ImGui::Spacing();
+      DrawDynamicItemsSettings();
+      ImGui::EndTabItem();
+    }
+
     if (ImGui::BeginTabItem("Backups")) {
       ImGui::Spacing();
       DrawBackupSettings();
@@ -403,6 +412,72 @@ class SettingsScreen : public UiScreen {
     }
 
     ImGui::EndTabBar();
+  }
+
+  std::string FloatsToCommaSeparatedList(const google::protobuf::RepeatedField<float>& list) {
+    return absl::StrJoin(list, ", ", [](std::string* out, float val) {
+      absl::StrAppendFormat(out, "%s", MaybeIntToString(val, 1));
+    });
+  }
+
+  std::vector<float> ParseCommaSeparatedFloats(absl::string_view input) {
+    std::vector<float> numbers;
+
+    for (absl::string_view token : absl::StrSplit(input, ',', absl::SkipEmpty())) {
+      float val;
+      if (absl::SimpleAtof(absl::StripAsciiWhitespace(token), &val)) {
+        numbers.push_back(val);
+      }
+    }
+
+    return numbers;
+  }
+
+  void DrawDynamicItemsSettings() {
+    ImGui::IdGuard cid("DynamicItemsSettings");
+
+    // Dynamic cm360s settings
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextWrapped(
+        "Specify the cm/360 variations that appear in automatically generated cm360 playlists and "
+        "guides.");
+
+    ImGui::Indent();
+    Settings& s = updater_.settings;
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Override defaults");
+    ImGui::SameLine();
+    bool has_override = !cm360s_text_.empty();
+    ImGui::Checkbox("##InputCheck", &has_override);
+    if (has_override) {
+      if (cm360s_text_.empty()) {
+        if (s.default_cm_per_360s().empty()) {
+          for (int cm : kDefaultCm360s) {
+            s.add_default_cm_per_360s(cm);
+          }
+        }
+        cm360s_text_ = FloatsToCommaSeparatedList(s.default_cm_per_360s());
+      }
+
+      ImGui::InputText("##InputText", &cm360s_text_);
+
+      s.clear_default_cm_per_360s();
+      ImGui::Indent();
+      for (float val : ParseCommaSeparatedFloats(cm360s_text_)) {
+        s.add_default_cm_per_360s(val);
+        ImGui::TextFmt("AF Example Scenario {}cm", MaybeIntToString(val, 1));
+      }
+      ImGui::Unindent();
+
+
+    } else {
+      s.clear_default_cm_per_360s();
+      cm360s_text_ = "";
+    }
+    ImGui::Unindent();
+
+
   }
 
   void DrawBackupSettings() {
@@ -887,6 +962,8 @@ class SettingsScreen : public UiScreen {
   std::vector<std::string> display_names_;
 
   ImGui::MultilineTextEntryDialog debug_info_dialog_{"DebugInfoDialog"};
+
+  std::string cm360s_text_;
 };
 
 }  // namespace
