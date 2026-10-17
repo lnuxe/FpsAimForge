@@ -480,8 +480,8 @@ void DrawOverridesEditor(const char* id, ScenarioOverrides* overrides, bool is_l
                       PROTO_FLOAT_FIELD(ScenarioOverrides, overrides, level_offset));
     ImGui::SameLine();
     ImGui::HelpMarker(
-        "Add this offset when evaluating levels. With +2 offset L1 is now equivalent to L3 "
-        "(without offset). Or think of it as L2 is now the equivalent to the base scenario.");
+        "Add this offset when evaluating levels. Offset 2 means that the base scenario is now the "
+        "same as L2.");
   }
 }
 

@@ -54,7 +54,7 @@ class ScenarioEditorScreen : public UiScreen {
 
     if (!opts.scenario_name.empty()) {
       NameInfo original_name_info = GetNameInfo(opts.scenario_name);
-      original_level_ = original_name_info.level;
+      current_level_ = original_name_info.level;
       original_cm_per_360_ = original_name_info.cm_per_360;
 
       // Initialize scenario def if source is found otherwise show error and exit.
@@ -302,6 +302,16 @@ class ScenarioEditorScreen : public UiScreen {
 
     ImGui::SpacedSeparator();
     DrawNameEntryInputs();
+    ImGui::SpacedSeparator();
+
+    ImGui::InputFloat(ImGui::InputFloatParams::WithLabelAsId("Current play level")
+                          .set_step(1, 2)
+                          .set_is_optional()
+                          .set_default(1)
+                          .set_width(char_x_ * 8),
+                      CreateOptionalFloatField(&current_level_));
+    ImGui::SameLine();
+    ImGui::HelpMarker("The level to use when playing the scenario from the editor");
     ImGui::SpacedSeparator();
 
     if (def_.has_reference_def()) {
@@ -615,7 +625,7 @@ class ScenarioEditorScreen : public UiScreen {
     {
       // Make sure we preserve the original level/sens in the name for the current scenario.
       NameInfo current_name = GetNameInfo(name_.full_name());
-      current_name.level = original_level_;
+      current_name.level = current_level_;
       current_name.cm_per_360 = original_cm_per_360_;
       app_.scenario_manager().SetCurrentScenario(current_name.GetFullName());
       app_.history_manager().UpdateRecentView(ObjectType::SCENARIO, current_name.GetFullName());
@@ -704,11 +714,15 @@ class ScenarioEditorScreen : public UiScreen {
                                     def_.reference_def().scenario_name()));
         return;
       }
-      ApplyReferenceFieldOverrides(def_, &(*base_scenario));
-      params.def = ApplyScenarioOverrides(*base_scenario);
+      params.def = *base_scenario;
+      ApplyReferenceFieldOverrides(def_, &params.def);
     } else {
       params.def = def_;
     }
+
+    params.def = current_level_ ? ApplyScenarioLevelOverrides(params.def, *current_level_)
+                                : ApplyScenarioOverrides(params.def);
+
     params.name = name_.full_name();
     params.force_start_immediately = true;
     params.from_scenario_editor = true;
@@ -724,7 +738,7 @@ class ScenarioEditorScreen : public UiScreen {
   std::vector<std::string> bundle_names_;
   std::optional<ResourceName> original_name_;
   std::optional<float> original_cm_per_360_;
-  std::optional<float> original_level_;
+  std::optional<float> current_level_;
   ResourceName name_;
   Settings settings_;
 

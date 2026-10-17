@@ -281,7 +281,7 @@ ScenarioDef ApplyScenarioLevelOverrides(const ScenarioDef& original_def, float l
     return result;
   }
   if (result.level_overrides().has_level_offset()) {
-    levels += result.level_overrides().level_offset();
+    levels -= result.level_overrides().level_offset();
   }
   return ApplyLeveledOverrides(result, result.level_overrides(), levels);
 }
