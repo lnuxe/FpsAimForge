@@ -6,6 +6,7 @@
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
 #include "aim/common/proto_util.h"
+#include "aim/common/system.h"
 #include "aim/core/application.h"
 #include "aim/core/bundle_manager.h"
 #include "aim/core/playlist_manager.h"
@@ -167,7 +168,7 @@ class UpdateBundlePackInfoDialog {
     ImGui::Text("URL");
     ImGui::SameLine();
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-    ImGui::InputText("##UrlInput", info_.mutable_source_url(), ImGuiInputTextFlags_ReadOnly);
+    ImGui::InputText("##UrlInput", info_.mutable_source_url());
     absl::StripAsciiWhitespace(info_.mutable_source_url());
 
     std::string repo_name = GetGithubRepoNameFromUrl(info_.source_url());
@@ -347,8 +348,14 @@ class BundleUiComponentImpl : public BundleUiComponent {
     ImGui::AlignTextToFramePadding();
     ImGui::Text("URL");
     ImGui::SameLine();
-    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    float open_icon_right_size = ImGui::GetDefaultCharSizeX() * 2.1;
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - open_icon_right_size);
     ImGui::InputText("##UrlInput", info.mutable_source_url(), ImGuiInputTextFlags_ReadOnly);
+    ImGui::SameLine();
+    if (ImGui::IconButton(icons::kOpenInNew)) {
+      OpenUrlInBrowser(info.source_url());
+    }
+    ImGui::HelpTooltip("Open url in browser");
 
     std::string repo_name = GetGithubRepoNameFromUrl(info.source_url());
     if (!repo_name.empty()) {
@@ -372,7 +379,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     }
 
     if (!info.source_url().empty()) {
-      if (ImGui::Button(std::format("{} Update", icons::kDownload))) {
+      if (ImGui::Button(std::format("{} Download update", icons::kDownload))) {
         BundlePackUpdateDialog::Item item;
         item.bundle_pack_name = info.bundle_pack_name();
         item.url = info.source_url();
