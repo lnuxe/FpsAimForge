@@ -295,7 +295,9 @@ class GuidesComponentImpl : public GuidesComponent {
 
     const char* menu_id = "GuideMenu";
     if (ImGui::BeginPopupContextItem(menu_id)) {
-      bool is_readonly = app_.bundle_manager().IsBundleReadonly(GetBundleName(guide->name));
+      NameInfo name_info = GetNameInfo(guide->name);
+      bool is_readonly = name_info.IsUnderlyingItemReadonly() ||
+                         app_.bundle_manager().IsBundleReadonly(GetBundleName(guide->name));
       if (!is_readonly) {
         if (ImGui::Selectable(std::format("{} Edit", icons::kEdit))) {
           GuideEditorOptions opts;
