@@ -53,13 +53,6 @@ class GuideManagerImpl : public GuideManager {
 
   std::optional<GuideItem> GetGuide(const std::string& guide_name) override {
     NameInfo name_info = GetNameInfo(guide_name);
-    auto it = guide_map_.find(name_info.base_name);
-    if (it != guide_map_.end()) {
-      GuideItem item = it->second;
-      item.name = guide_name;
-      return item;
-    }
-
     if (name_info.is_cm360_variations) {
       GuideItem item;
       item.name = guide_name;
@@ -86,6 +79,14 @@ class GuideManagerImpl : public GuideManager {
 
       return item;
     }
+
+    auto it = guide_map_.find(name_info.base_name);
+    if (it != guide_map_.end()) {
+      GuideItem item = it->second;
+      item.name = guide_name;
+      return item;
+    }
+
 
     return {};
   }

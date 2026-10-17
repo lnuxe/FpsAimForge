@@ -589,9 +589,11 @@ class ScenarioEditorScreen : public UiScreen {
 
     NameInfo name_info = GetNameInfo(name_.full_name());
     if (name_info.HasDynamicSuffix()) {
+      name_info.base_name = "";
       SetErrorMessage(
-          "Unable to save scenario with name ending in 'L#' or '#cm'. These scenarios are "
-          "automatically defined.");
+          std::format("Unable to save names ending in 'L#' or '#cm'. These are reserved dynamic "
+                      "endings. Invalid ending \"{}\"",
+                      absl::StripLeadingAsciiWhitespace(name_info.GetFullName())));
       return false;
     }
 
