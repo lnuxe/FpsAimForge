@@ -222,8 +222,9 @@ class PlaylistManagerImpl : public PlaylistManager {
     NameInfo name_info = GetNameInfo(playlist_name);
 
     if (name_info.is_cm360_variations) {
-      NameInfo stripped_name_info = name_info;
-      stripped_name_info.is_cm360_variations = false;
+      NameInfo stripped_name_info;
+      stripped_name_info.base_name = name_info.base_name;
+      stripped_name_info.is_level_variations = name_info.is_level_variations;
 
       // TODO: confirm it is a real scenario name?
       Playlist playlist;
@@ -249,8 +250,9 @@ class PlaylistManagerImpl : public PlaylistManager {
       return playlist;
     }
     if (name_info.is_level_variations) {
-      NameInfo stripped_name_info = name_info;
-      stripped_name_info.is_level_variations = false;
+      NameInfo stripped_name_info;
+      stripped_name_info.base_name = name_info.base_name;
+      stripped_name_info.is_cm360_variations = name_info.is_cm360_variations;
 
       // TODO: confirm it is a real scenario name?
       Playlist playlist;

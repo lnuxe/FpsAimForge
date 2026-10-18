@@ -57,9 +57,9 @@ class GuideManagerImpl : public GuideManager {
       GuideItem item;
       item.name = guide_name;
       auto* s = item.def.add_sections();
-      NameInfo base_name = name_info;
-      base_name.is_cm360_variations = false;
-      base_name.cm_per_360 = {};
+      NameInfo base_name;
+      base_name.base_name = name_info.base_name;
+      base_name.is_level_variations = name_info.is_level_variations;
 
       s->add_playlists(base_name.GetFullName());
       auto add_item = [&](float cm) {
