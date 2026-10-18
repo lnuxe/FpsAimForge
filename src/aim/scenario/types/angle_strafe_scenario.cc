@@ -1,12 +1,12 @@
 #include <memory>
 
 #include "aim/common/geometry.h"
-#include "aim/common/util.h"
 #include "aim/core/application.h"
 #include "aim/core/profile_selection.h"
 #include "aim/scenario/base_scenario.h"
 #include "aim/scenario/basic_movement_controller.h"
 #include "aim/scenario/scenario.h"
+#include "aim/scenario/strafe_controller.h"
 #include "aim/scenario/target_placement.h"
 #include "glm/vec2.hpp"  // IWYU pragma: keep
 #include "glm/vec3.hpp"  // IWYU pragma: keep

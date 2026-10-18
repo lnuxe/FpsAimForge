@@ -131,6 +131,8 @@ set(SRCS
     "scenario/base_scenario.h"
     "scenario/basic_movement_controller.cc"
     "scenario/basic_movement_controller.h"
+    "scenario/strafe_controller.cc"
+    "scenario/strafe_controller.h"
     "scenario/metronome.cc"
     "scenario/metronome.h"
     "scenario/replay.cc"
