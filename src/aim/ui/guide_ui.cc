@@ -49,6 +49,7 @@ class GuideViewer {
   };
 
   void Draw(const GuideItem& guide_item, Result* result) {
+    notification_popup_.Draw();
     if (guide_item.name != guide_name_) {
       guide_name_ = guide_item.name;
       guide_name_info_ = GetNameInfo(guide_name_);
@@ -107,6 +108,10 @@ class GuideViewer {
       }
       if (ImGui::Selectable(std::format("{} {}", icons::kList, playlist), is_selected)) {
         app_.playlist_manager().SetCurrentPlaylist(playlist);
+        bool exists = app_.playlist_manager().GetPlaylist(playlist).has_value();
+        if (!exists) {
+          notification_popup_.NotifyOpen(std::format("Playlist \"{}\" does not exist.", playlist));
+        }
       }
 
       std::optional<float> highest_level = highest_level_cache_.Get(playlist);
@@ -140,6 +145,10 @@ class GuideViewer {
       ImGui::TableNextColumn();
       if (ImGui::Selectable(std::format("{} {}", icons::kMap, guide))) {
         result->selected_guide = guide;
+        bool exists = app_.guide_manager().GetGuide(guide).has_value();
+        if (!exists) {
+          notification_popup_.NotifyOpen(std::format("Guide \"{}\" does not exist.", guide));
+        }
       }
     }
 
@@ -181,6 +190,7 @@ class GuideViewer {
   i64 cache_refresh_time_micros_ = SecondsToMicros(0.6);
   std::string guide_name_;
   NameInfo guide_name_info_;
+  ImGui::NotificationPopup notification_popup_{"GuideNotification"};
 };
 
 class GuidesComponentImpl : public GuidesComponent {
