@@ -40,6 +40,7 @@ struct Wall {
   float GetRegionLength(const RegionLength& r) const;
   glm::vec2 GetRegionVec2(const RegionVec2& v) const;
   WallBounds GetWallBounds(const Bounds& b) const;
+  WallBounds GetAbsoluteWallBounds() const;
   WallRelativeBounds GetWallRelativeBounds(const Bounds& b) const;
   bool IsPointInBounds(const glm::vec2& point, float padding = 0) const;
 };

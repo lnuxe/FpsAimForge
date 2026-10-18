@@ -20,6 +20,7 @@ class MovementControllerImpl : public MovementController {
     auto d = def_.strafe_def();
     const WallBounds bounds = wall.GetWallBounds(d.bounds());
     const WallRelativeBounds relative_bounds = wall.GetWallRelativeBounds(d.relative_bounds());
+    const WallBounds absolute_bounds = wall.GetAbsoluteWallBounds();
 
     DirectionParams params;
     params.acceleration = acceleration;
@@ -29,6 +30,8 @@ class MovementControllerImpl : public MovementController {
                                                 bounds.max_x,
                                                 relative_bounds.min_x,
                                                 relative_bounds.max_x,
+                                                absolute_bounds.min_x,
+                                                absolute_bounds.max_x,
                                                 d.left_right_initial_direction(),
                                                 params,
                                                 wall);
@@ -39,6 +42,8 @@ class MovementControllerImpl : public MovementController {
                                              bounds.max_y,
                                              relative_bounds.min_y,
                                              relative_bounds.max_y,
+                                             absolute_bounds.min_y,
+                                             absolute_bounds.max_y,
                                              d.up_down_initial_direction(),
                                              params,
                                              wall);
@@ -49,6 +54,8 @@ class MovementControllerImpl : public MovementController {
                                                   bounds.max_depth,
                                                   relative_bounds.min_depth,
                                                   relative_bounds.max_depth,
+                                                  absolute_bounds.min_depth,
+                                                  absolute_bounds.max_depth,
                                                   d.forward_back_initial_direction(),
                                                   params,
                                                   wall);

@@ -22,13 +22,21 @@ class ForwardBackStrafeMovementController : public MovementController {
                                       Application& app)
       : profiles_(profiles), profiles_info_(profiles_info), app_(app) {
     const WallBounds bounds = wall.GetWallBounds(bounds_def);
+    const WallBounds absolute_bounds = wall.GetAbsoluteWallBounds();
 
     DirectionParams params;
     params.acceleration = target.acceleration;
 
     if (bounds.max_depth > 0 && profiles.size() > 0) {
-      strafe_controller_ = StrafeController(
-          bounds.min_depth, bounds.max_depth, {}, {}, initial_direction, params, wall);
+      strafe_controller_ = StrafeController(bounds.min_depth,
+                                            bounds.max_depth,
+                                            {},
+                                            {},
+                                            absolute_bounds.min_depth,
+                                            absolute_bounds.max_depth,
+                                            initial_direction,
+                                            params,
+                                            wall);
     }
   }
 
@@ -104,6 +112,10 @@ float StrafeController::GetUpdatedPosition(Target& t,
       stop_max = *next_direction_change_pos_;
     }
   }
+  // Make sure stop is within the absolute bounds.
+  // Note: this does not handle y direction correctly for pill targets.
+  stop_min = std::max(stop_min, absolute_min_ + t.radius);
+  stop_max = std::min(stop_max, absolute_max_ - t.radius);
 
   bool too_left = going_left_ && current_position <= stop_min;
   bool too_right = !going_left_ && current_position >= stop_max;

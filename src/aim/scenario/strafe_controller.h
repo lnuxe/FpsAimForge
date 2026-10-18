@@ -22,6 +22,8 @@ class StrafeController {
                    float max,
                    std::optional<float> relative_min,
                    std::optional<float> relative_max,
+                   float absolute_min,
+                   float absolute_max,
                    Direction initial_direction,
                    DirectionParams params,
                    Wall wall)
@@ -30,6 +32,8 @@ class StrafeController {
         max_(max),
         relative_min_(relative_min),
         relative_max_(relative_max),
+        absolute_min_(absolute_min),
+        absolute_max_(absolute_max),
         unscaled_acceleration_(params.acceleration),
         absolute_center_((min + max) / 2.0f),
         wall_(wall) {}
@@ -59,6 +63,8 @@ class StrafeController {
   float max_;
   std::optional<float> relative_min_;
   std::optional<float> relative_max_;
+  float absolute_min_;
+  float absolute_max_;
   float unscaled_acceleration_;
   float absolute_center_;
   float center_ = 0;

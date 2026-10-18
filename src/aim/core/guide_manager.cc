@@ -87,7 +87,6 @@ class GuideManagerImpl : public GuideManager {
       return item;
     }
 
-
     return {};
   }
 

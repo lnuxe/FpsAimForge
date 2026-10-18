@@ -39,6 +39,14 @@ glm::vec2 Wall::GetRegionVec2(const RegionVec2& v) const {
   return glm::vec2(GetRegionLength(v.x()), GetRegionLength(v.y()));
 }
 
+WallBounds Wall::GetAbsoluteWallBounds() const {
+  Bounds b;
+  b.mutable_depth()->set_depth_percent_value(1);
+  b.mutable_width()->set_x_percent_value(1);
+  b.mutable_height()->set_y_percent_value(1);
+  return GetWallBounds(b);
+}
+
 WallBounds Wall::GetWallBounds(const Bounds& b) const {
   WallBounds result;
   float width_value = b.has_width() ? GetRegionLength(b.width()) : 0.9 * this->width;

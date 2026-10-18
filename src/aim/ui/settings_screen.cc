@@ -470,14 +470,11 @@ class SettingsScreen : public UiScreen {
       }
       ImGui::Unindent();
 
-
     } else {
       s.clear_default_cm_per_360s();
       cm360s_text_ = "";
     }
     ImGui::Unindent();
-
-
   }
 
   void DrawBackupSettings() {

@@ -5,8 +5,8 @@
 #include "aim/core/profile_selection.h"
 #include "aim/core/target.h"
 #include "aim/scenario/base_scenario.h"
-#include "aim/scenario/strafe_controller.h"
 #include "aim/scenario/scenario.h"
+#include "aim/scenario/strafe_controller.h"
 #include "aim/scenario/target_placement.h"
 #include "glm/vec2.hpp"  // IWYU pragma: keep
 #include "glm/vec3.hpp"  // IWYU pragma: keep
@@ -218,6 +218,7 @@ class MovementControllerImpl : public MovementController {
     auto d = def_.bounce_def();
     const WallBounds bounds = wall.GetWallBounds(d.bounds());
     const WallRelativeBounds relative_bounds = wall.GetWallRelativeBounds(d.relative_bounds());
+    const WallBounds absolute_bounds = wall.GetAbsoluteWallBounds();
     bounce_controller_ =
         std::make_unique<BounceController>(min_y, wall.height / 2.0f, acceleration);
 
@@ -229,6 +230,8 @@ class MovementControllerImpl : public MovementController {
                                                 bounds.max_x,
                                                 relative_bounds.min_x,
                                                 relative_bounds.max_x,
+                                                absolute_bounds.min_x,
+                                                absolute_bounds.max_x,
                                                 d.left_right_initial_direction(),
                                                 params,
                                                 wall);
@@ -239,6 +242,8 @@ class MovementControllerImpl : public MovementController {
                                                   bounds.max_depth,
                                                   relative_bounds.min_depth,
                                                   relative_bounds.max_depth,
+                                                  absolute_bounds.min_depth,
+                                                  absolute_bounds.max_depth,
                                                   d.forward_back_initial_direction(),
                                                   params,
                                                   wall);

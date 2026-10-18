@@ -78,7 +78,6 @@ void WallDepthMovementController::UpdatePosition(float now_seconds,
   t.position = WallPositionToWorldPosition(*t.wall_position, t.radius, room, t.wall_depth);
 }
 
-
 std::unique_ptr<MovementController> CreateCompositeMovementController(
     std::vector<std::unique_ptr<MovementController>> controllers) {
   return std::make_unique<CompositeMovementController>(std::move(controllers));
