@@ -8,6 +8,8 @@
 
 namespace aim {
 
+class Application;
+
 float GetDefaultObjectBrowserWidth();
 
 class ObjectBrowser {
@@ -25,5 +27,7 @@ class ObjectBrowser {
 };
 
 std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type, bool is_selector = false);
+
+void DrawStarButton(ObjectType type, const std::string& name, Application& app);
 
 }  // namespace aim

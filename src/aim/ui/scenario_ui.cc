@@ -287,6 +287,9 @@ class ScenariosComponentImpl : public ScenariosComponent {
       ImGui::OpenPopup(popup_id);
     }
 
+    ImGui::SameLine();
+    DrawStarButton(ObjectType::SCENARIO, item.name, app_);
+
     if (evaluated_def) {
       std::vector<std::string> chips;
       auto type_it = kScenarioTypeDisplayNameMap.find(evaluated_def->type_case());

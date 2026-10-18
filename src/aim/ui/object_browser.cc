@@ -310,15 +310,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
     }
 
     ImGui::SameLine();
-    if (app_.labels_manager().IsStarred(type_, name)) {
-      if (ImGui::IconButton(icons::kStar)) {
-        app_.labels_manager().UnstarItem(type_, name);
-      }
-    } else {
-      if (ImGui::IconButton(icons::kStarOutline)) {
-        app_.labels_manager().StarItem(type_, name);
-      }
-    }
+    DrawStarButton(type_, name, app_);
   }
 
   void DrawAddScenarioToPlaylistMenu(const std::string& name) {
@@ -510,6 +502,18 @@ std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type, bool is_sele
 float GetDefaultObjectBrowserWidth() {
   float char_x = ImGui::GetDefaultCharSizeX();
   return char_x * 50;
+}
+
+void DrawStarButton(ObjectType type, const std::string& name, Application& app) {
+  if (app.labels_manager().IsStarred(type, name)) {
+    if (ImGui::IconButton(icons::kStar)) {
+      app.labels_manager().UnstarItem(type, name);
+    }
+  } else {
+    if (ImGui::IconButton(icons::kStarOutline)) {
+      app.labels_manager().StarItem(type, name);
+    }
+  }
 }
 
 }  // namespace aim

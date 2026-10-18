@@ -126,6 +126,9 @@ class PlaylistComponentImpl : public PlaylistComponent {
       ImGui::OpenPopup(menu_id);
     }
 
+    ImGui::SameLine();
+    DrawStarButton(ObjectType::PLAYLIST, playlist_name, app_);
+
     const PlaylistDef& def = run->playlist.def();
 
     bool hide_description = app_.local_store().GetBool(kHideDescriptionsKey);

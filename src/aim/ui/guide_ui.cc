@@ -334,6 +334,9 @@ class GuidesComponentImpl : public GuidesComponent {
       ImGui::OpenPopup(menu_id);
     }
 
+    ImGui::SameLine();
+    DrawStarButton(ObjectType::GUIDE, guide->name, app_);
+
     ImGui::SpacedSeparator();
 
     ImGui::BeginChild("CurrentGuideContent");
