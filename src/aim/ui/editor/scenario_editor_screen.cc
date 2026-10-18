@@ -312,6 +312,20 @@ class ScenarioEditorScreen : public UiScreen {
                       CreateOptionalFloatField(&current_level_));
     ImGui::SameLine();
     ImGui::HelpMarker("The level to use when playing the scenario from the editor");
+    if (current_level_.has_value()) {
+      ImGui::SameLine();
+      if (ImGui::Button("1")) {
+        current_level_ = 1;
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("20")) {
+        current_level_ = 20;
+      }
+      ImGui::SameLine();
+      if (ImGui::Button("40")) {
+        current_level_ = 40;
+      }
+    }
     ImGui::SpacedSeparator();
 
     if (def_.has_reference_def()) {

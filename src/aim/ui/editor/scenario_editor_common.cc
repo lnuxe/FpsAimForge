@@ -518,8 +518,9 @@ void DrawScoreTargetsEditor(PtrField<ScoreTargets> score_targets) {
     ScoreTargets* t = score_targets.get_mutable();
     ImGui::SameLine();
     ImGui::InputFloat(ImGui::InputFloatParams("TargetScoreInput")
+                          .set_default(75)
                           .set_min(0.1)
-                          .set_step(0.1, 2)
+                          .set_step(1, 10)
                           .set_width(char_x * 12),
                       PROTO_FLOAT_FIELD(ScoreTargets, t, target_score));
   } else {

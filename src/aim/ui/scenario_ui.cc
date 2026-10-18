@@ -277,6 +277,7 @@ class ScenariosComponentImpl : public ScenariosComponent {
     }
     ImGui::SameLine();
     ImGui::Text(item.name);
+    const NameInfo name_info = GetNameInfo(item.name);
 
     ImGui::SameLine();
     const char* popup_id = "CurrentScenarioMenu";
@@ -312,6 +313,21 @@ class ScenariosComponentImpl : public ScenariosComponent {
         }
         ImGui::EndDisabled();
       }
+
+      if (evaluated_def->score_targets().target_score() > 0) {
+        ImGui::AlignTextToFramePadding();
+        ImGui::TextFmt("Target score: {}",
+                       MaybeIntToString(evaluated_def->score_targets().target_score(), 1));
+      }
+
+      ImGui::AlignTextToFramePadding();
+      std::string l_string = MaybeIntToString(evaluated_def->level_overrides().level_offset(), 1);
+      ImGui::TextFmt("Base level: {}", l_string);
+      ImGui::SameLine();
+      ImGui::HelpMarker(std::format("Scenario \"{}\" is equivalent to \"{} L{}\"",
+                                    name_info.base_name,
+                                    name_info.base_name,
+                                    l_string));
     }
 
     auto stats = app_.stats_manager().GetAggregateStats(item.name);
