@@ -509,7 +509,7 @@ std::unique_ptr<ObjectBrowser> CreateObjectBrowser(ObjectType type, bool is_sele
 
 float GetDefaultObjectBrowserWidth() {
   float char_x = ImGui::GetDefaultCharSizeX();
-  return char_x * 45;
+  return char_x * 50;
 }
 
 }  // namespace aim
