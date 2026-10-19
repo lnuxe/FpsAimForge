@@ -602,7 +602,6 @@ typedef struct MetalCommandBuffer
 
     // Fences
     MetalFence *fence;
-    bool autoReleaseFence;
 
     // Reference Counting
     MetalBuffer **usedBuffers;
@@ -1437,10 +1436,10 @@ static MetalTexture *METAL_INTERNAL_CreateTexture(
     // This format isn't natively supported so let's swizzle!
     if (createinfo->format == SDL_GPU_TEXTUREFORMAT_B4G4R4A4_UNORM) {
         if (@available(macOS 10.15, iOS 13.0, tvOS 13.0, *)) {
-            textureDescriptor.swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleGreen,
-                                                                      MTLTextureSwizzleBlue,
-                                                                      MTLTextureSwizzleAlpha,
-                                                                      MTLTextureSwizzleRed);
+            textureDescriptor.swizzle = MTLTextureSwizzleChannelsMake(MTLTextureSwizzleBlue,
+                                                                      MTLTextureSwizzleGreen,
+                                                                      MTLTextureSwizzleRed,
+                                                                      MTLTextureSwizzleAlpha);
         } else {
             SET_STRING_ERROR_AND_RETURN("SDL_GPU_TEXTUREFORMAT_B4G4R4A4_UNORM is not supported", NULL);
         }
@@ -2155,8 +2154,6 @@ static SDL_GPUCommandBuffer *METAL_AcquireCommandBuffer(
             commandBuffer->fragmentUniformBuffers[i] = NULL;
             commandBuffer->computeUniformBuffers[i] = NULL;
         }
-
-        commandBuffer->autoReleaseFence = true;
 
         SDL_UnlockMutex(renderer->acquireCommandBufferLock);
 
@@ -3400,8 +3397,9 @@ static void METAL_ReleaseFence(
     SDL_GPUFence *fence)
 {
     MetalFence *metalFence = (MetalFence *)fence;
-    metalFence->commandBuffer = nil;
     if (SDL_AtomicDecRef(&metalFence->referenceCount)) {
+        // Nothing references the fence anymore, so the command buffer can go too.
+        metalFence->commandBuffer = nil;
         METAL_INTERNAL_ReleaseFenceToPool(
             (MetalRenderer *)driverData,
             (MetalFence *)fence);
@@ -3507,8 +3505,9 @@ static void METAL_INTERNAL_CleanCommandBuffer(
     commandBuffer->needComputeReadOnlyStorageTextureBind = false;
     SDL_zeroa(commandBuffer->needComputeUniformBufferBind);
 
-    // The fence is now available (unless SubmitAndAcquireFence was called)
-    if (commandBuffer->autoReleaseFence) {
+    // Drop the command buffer's reference to the fence. A cancelled
+    // command buffer never acquired one.
+    if (!cancel) {
         METAL_ReleaseFence(
             (SDL_GPURenderer *)renderer,
             (SDL_GPUFence *)commandBuffer->fence);
@@ -3832,6 +3831,10 @@ static void METAL_ReleaseWindow(
         }
         SDL_UnlockMutex(renderer->windowLock);
 
+        windowData->layer = nil;
+        windowData->drawable = nil;
+        windowData->texture.handle = nil;
+
         SDL_free(windowData);
 
         SDL_ClearProperty(SDL_GetWindowProperties(window), WINDOW_PROPERTY_DATA);
@@ -4063,8 +4066,9 @@ static bool METAL_SetAllowedFramesInFlight(
 
 // Submission
 
-static bool METAL_Submit(
-    SDL_GPUCommandBuffer *commandBuffer)
+static bool METAL_INTERNAL_Submit(
+    SDL_GPUCommandBuffer *commandBuffer,
+    SDL_GPUFence **fence)
 {
     @autoreleasepool {
         MetalCommandBuffer *metalCommandBuffer = (MetalCommandBuffer *)commandBuffer;
@@ -4075,6 +4079,13 @@ static bool METAL_Submit(
         if (!METAL_INTERNAL_AcquireFence(renderer, metalCommandBuffer)) {
             SDL_UnlockMutex(renderer->submitLock);
             return false;
+        }
+
+        // Give the caller its own reference while submitLock is held, another
+        // thread could recycle this command buffer as soon as the lock is released.
+        if (fence) {
+            (void)SDL_AtomicIncRef(&metalCommandBuffer->fence->referenceCount);
+            *fence = (SDL_GPUFence *)metalCommandBuffer->fence;
         }
 
         // Enqueue present requests, if applicable
@@ -4123,15 +4134,20 @@ static bool METAL_Submit(
     }
 }
 
+static bool METAL_Submit(
+    SDL_GPUCommandBuffer *commandBuffer)
+{
+    return METAL_INTERNAL_Submit(commandBuffer, NULL);
+}
+
 static SDL_GPUFence *METAL_SubmitAndAcquireFence(
     SDL_GPUCommandBuffer *commandBuffer)
 {
-    MetalCommandBuffer *metalCommandBuffer = (MetalCommandBuffer *)commandBuffer;
-    metalCommandBuffer->autoReleaseFence = false;
-    if (!METAL_Submit(commandBuffer)) {
+    SDL_GPUFence *fence = NULL;
+    if (!METAL_INTERNAL_Submit(commandBuffer, &fence)) {
         return NULL;
     }
-    return (SDL_GPUFence *)metalCommandBuffer->fence;
+    return fence;
 }
 
 static bool METAL_Cancel(
@@ -4140,7 +4156,6 @@ static bool METAL_Cancel(
     MetalCommandBuffer *metalCommandBuffer = (MetalCommandBuffer *)commandBuffer;
     MetalRenderer *renderer = metalCommandBuffer->renderer;
 
-    metalCommandBuffer->autoReleaseFence = false;
     SDL_LockMutex(renderer->submitLock);
     METAL_INTERNAL_CleanCommandBuffer(renderer, metalCommandBuffer, true);
     SDL_UnlockMutex(renderer->submitLock);
@@ -4341,7 +4356,6 @@ static bool METAL_SupportsTextureFormat(
 
 static bool METAL_PrepareDriver(SDL_VideoDevice *this, SDL_PropertiesID props)
 {
-
     if (!SDL_GetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_MSL_BOOLEAN, false) &&
         !SDL_GetBooleanProperty(props, SDL_PROP_GPU_DEVICE_CREATE_SHADERS_METALLIB_BOOLEAN, false)) {
         return false;
