@@ -99,12 +99,66 @@ TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems) {
   levels.set_max_level(5);
   levels.set_base_scenario("Base Scenario");
 
-  EXPECT_THAT(GetPlaylistItems(playlist),
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  playlist_manager_->UpdatePlaylist("P 1", playlist);
+  auto p = playlist_manager_->GetPlaylist("P 1");
+  ASSERT_TRUE(p.has_value());
+
+  EXPECT_THAT(p->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("Base Scenario L1")),
                           EqualsProto(MakeItem("Base Scenario L2")),
                           EqualsProto(MakeItem("Base Scenario L3")),
                           EqualsProto(MakeItem("Base Scenario L4")),
                           EqualsProto(MakeItem("Base Scenario L5"))));
+}
+
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_MergePlaylistNameLevel) {
+  PlaylistDef playlist;
+  auto& levels = *playlist.mutable_levels();
+
+  // No base name
+  levels.set_max_level(5);
+  levels.set_base_scenario("Base Scenario");
+
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  playlist_manager_->UpdatePlaylist("P 1", playlist);
+  auto p = playlist_manager_->GetPlaylist("P 1 L2");
+  ASSERT_TRUE(p.has_value());
+
+  EXPECT_THAT(p->items(scenario_manager_.get()),
+              ElementsAre(EqualsProto(MakeItem("Base Scenario L3")),
+                          EqualsProto(MakeItem("Base Scenario L4")),
+                          EqualsProto(MakeItem("Base Scenario L5")),
+                          EqualsProto(MakeItem("Base Scenario L6")),
+                          EqualsProto(MakeItem("Base Scenario L7"))));
+}
+
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_MergePlaylistNameLevel_LevelOffset) {
+  PlaylistDef playlist;
+  *playlist.add_items() = MakeItem("Base Scenario");
+  *playlist.add_items() = MakeItem("Base Scenario L2");
+  *playlist.add_items() = MakeItem("Other Scenario");
+  *playlist.add_items() = MakeItem("Other Scenario L3");
+
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  playlist_manager_->UpdatePlaylist("P 1", playlist);
+  auto p = playlist_manager_->GetPlaylist("P 1 L2");
+  ASSERT_TRUE(p.has_value());
+
+  EXPECT_THAT(p->items(scenario_manager_.get()),
+              ElementsAre(EqualsProto(MakeItem("Base Scenario L22")),
+                          EqualsProto(MakeItem("Base Scenario L4")),
+                          EqualsProto(MakeItem("Other Scenario L2")),
+                          EqualsProto(MakeItem("Other Scenario L5"))));
 }
 
 TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_Cm360Suffix) {
@@ -115,7 +169,15 @@ TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_Cm360Suffix) {
   levels.set_max_level(5);
   levels.set_base_scenario("Base Scenario 25cm");
 
-  EXPECT_THAT(GetPlaylistItems(playlist),
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  playlist_manager_->UpdatePlaylist("P 1", playlist);
+  auto p = playlist_manager_->GetPlaylist("P 1");
+  ASSERT_TRUE(p.has_value());
+
+  EXPECT_THAT(p->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("Base Scenario L1 25cm")),
                           EqualsProto(MakeItem("Base Scenario L2 25cm")),
                           EqualsProto(MakeItem("Base Scenario L3 25cm")),
@@ -131,7 +193,15 @@ TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_MultipleSuffix) {
   levels.set_max_level(5);
   levels.set_base_scenario("Base Scenario 120fov 40s 25cm");
 
-  EXPECT_THAT(GetPlaylistItems(playlist),
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  playlist_manager_->UpdatePlaylist("P 1", playlist);
+  auto p = playlist_manager_->GetPlaylist("P 1");
+  ASSERT_TRUE(p.has_value());
+
+  EXPECT_THAT(p->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("Base Scenario L1 120fov 40s 25cm")),
                           EqualsProto(MakeItem("Base Scenario L2 120fov 40s 25cm")),
                           EqualsProto(MakeItem("Base Scenario L3 120fov 40s 25cm")),

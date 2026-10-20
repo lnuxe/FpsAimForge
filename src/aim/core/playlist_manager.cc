@@ -667,15 +667,21 @@ std::vector<PlaylistItem> GetPlaylistItemsNoSuffix(const PlaylistDef& def) {
 
 }  // namespace
 
-std::vector<PlaylistItem> GetPlaylistItems(const PlaylistDef& def) {
-  return GetPlaylistItemsNoSuffix(def);
-}
-
 std::vector<PlaylistItem> Playlist::items(ScenarioManager* scenario_manager) const {
   auto item_list = GetPlaylistItemsNoSuffix(def_);
   for (auto& item : item_list) {
     if (playlist_name_info.HasDynamicSuffix()) {
       NameInfo scenario_name_info = GetNameInfo(item.scenario());
+      if (!scenario_name_info.level && playlist_name_info.level && scenario_manager != nullptr) {
+        // Scenario does not have explicit level. Increment off the base level for the scenario.
+        auto scenario = scenario_manager->GetEvaluatedScenarioDef(item.scenario());
+        if (scenario) {
+          float level_offset = scenario->level_overrides().level_offset();
+          if (level_offset != 0) {
+            scenario_name_info.level = level_offset;
+          }
+        }
+      }
       scenario_name_info.MergeDynamicSuffixes(playlist_name_info);
       item.set_scenario(scenario_name_info.GetFullName());
     }

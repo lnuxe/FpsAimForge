@@ -51,8 +51,6 @@ struct Playlist {
   PlaylistDef def_;
 };
 
-std::vector<PlaylistItem> GetPlaylistItems(const PlaylistDef& def);
-
 struct PlaylistRun {
   Playlist playlist;
 
