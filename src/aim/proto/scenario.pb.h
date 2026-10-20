@@ -3268,6 +3268,8 @@ class TargetProfile final : public ::google::protobuf::Message
     kTargetRadiusGrowthSizeFieldNumber = 13,
     kTargetRadiusGrowthFinalSizeTimeSecondsFieldNumber = 14,
     kTargetRadiusGrowthAccelerationFactorFieldNumber = 15,
+    kTargetRadiusGrowthInitialDelaySecondsFieldNumber = 16,
+    kTargetRadiusGrowthInitialDelaySecondsJitterFieldNumber = 17,
     kPillFieldNumber = 10,
   };
   // .aim.ProfileInfo info = 1;
@@ -3406,6 +3408,28 @@ class TargetProfile final : public ::google::protobuf::Message
   void _internal_set_target_radius_growth_acceleration_factor(float value);
 
   public:
+  // float target_radius_growth_initial_delay_seconds = 16;
+  bool has_target_radius_growth_initial_delay_seconds() const;
+  void clear_target_radius_growth_initial_delay_seconds() ;
+  float target_radius_growth_initial_delay_seconds() const;
+  void set_target_radius_growth_initial_delay_seconds(float value);
+
+  private:
+  float _internal_target_radius_growth_initial_delay_seconds() const;
+  void _internal_set_target_radius_growth_initial_delay_seconds(float value);
+
+  public:
+  // float target_radius_growth_initial_delay_seconds_jitter = 17;
+  bool has_target_radius_growth_initial_delay_seconds_jitter() const;
+  void clear_target_radius_growth_initial_delay_seconds_jitter() ;
+  float target_radius_growth_initial_delay_seconds_jitter() const;
+  void set_target_radius_growth_initial_delay_seconds_jitter(float value);
+
+  private:
+  float _internal_target_radius_growth_initial_delay_seconds_jitter() const;
+  void _internal_set_target_radius_growth_initial_delay_seconds_jitter(float value);
+
+  public:
   // .aim.PillTargetDef pill = 10;
   bool has_pill() const;
   private:
@@ -3434,7 +3458,7 @@ class TargetProfile final : public ::google::protobuf::Message
   inline bool has_type() const;
   inline void clear_has_type();
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<4, 13,
+  static const ::google::protobuf::internal::TcParseTable<4, 15,
                                    2, 0,
                                    2>
       _table_;
@@ -3468,6 +3492,8 @@ class TargetProfile final : public ::google::protobuf::Message
     float target_radius_growth_size_;
     float target_radius_growth_final_size_time_seconds_;
     float target_radius_growth_acceleration_factor_;
+    float target_radius_growth_initial_delay_seconds_;
+    float target_radius_growth_initial_delay_seconds_jitter_;
     union TypeUnion {
       constexpr TypeUnion() : _constinit_{} {}
       ::google::protobuf::internal::ConstantInitialized _constinit_;
@@ -26291,6 +26317,64 @@ inline float TargetProfile::_internal_target_radius_growth_acceleration_factor()
 inline void TargetProfile::_internal_set_target_radius_growth_acceleration_factor(float value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.target_radius_growth_acceleration_factor_ = value;
+}
+
+// float target_radius_growth_initial_delay_seconds = 16;
+inline bool TargetProfile::has_target_radius_growth_initial_delay_seconds() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00001000U);
+  return value;
+}
+inline void TargetProfile::clear_target_radius_growth_initial_delay_seconds() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_radius_growth_initial_delay_seconds_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00001000U);
+}
+inline float TargetProfile::target_radius_growth_initial_delay_seconds() const {
+  // @@protoc_insertion_point(field_get:aim.TargetProfile.target_radius_growth_initial_delay_seconds)
+  return _internal_target_radius_growth_initial_delay_seconds();
+}
+inline void TargetProfile::set_target_radius_growth_initial_delay_seconds(float value) {
+  _internal_set_target_radius_growth_initial_delay_seconds(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00001000U);
+  // @@protoc_insertion_point(field_set:aim.TargetProfile.target_radius_growth_initial_delay_seconds)
+}
+inline float TargetProfile::_internal_target_radius_growth_initial_delay_seconds() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_radius_growth_initial_delay_seconds_;
+}
+inline void TargetProfile::_internal_set_target_radius_growth_initial_delay_seconds(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_radius_growth_initial_delay_seconds_ = value;
+}
+
+// float target_radius_growth_initial_delay_seconds_jitter = 17;
+inline bool TargetProfile::has_target_radius_growth_initial_delay_seconds_jitter() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00002000U);
+  return value;
+}
+inline void TargetProfile::clear_target_radius_growth_initial_delay_seconds_jitter() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_radius_growth_initial_delay_seconds_jitter_ = 0;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00002000U);
+}
+inline float TargetProfile::target_radius_growth_initial_delay_seconds_jitter() const {
+  // @@protoc_insertion_point(field_get:aim.TargetProfile.target_radius_growth_initial_delay_seconds_jitter)
+  return _internal_target_radius_growth_initial_delay_seconds_jitter();
+}
+inline void TargetProfile::set_target_radius_growth_initial_delay_seconds_jitter(float value) {
+  _internal_set_target_radius_growth_initial_delay_seconds_jitter(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00002000U);
+  // @@protoc_insertion_point(field_set:aim.TargetProfile.target_radius_growth_initial_delay_seconds_jitter)
+}
+inline float TargetProfile::_internal_target_radius_growth_initial_delay_seconds_jitter() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.target_radius_growth_initial_delay_seconds_jitter_;
+}
+inline void TargetProfile::_internal_set_target_radius_growth_initial_delay_seconds_jitter(float value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.target_radius_growth_initial_delay_seconds_jitter_ = value;
 }
 
 // .aim.PillTargetDef pill = 10;

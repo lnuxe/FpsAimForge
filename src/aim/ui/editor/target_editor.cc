@@ -135,12 +135,25 @@ void DrawTargetProfile(float char_x, ScenarioDef& def, TargetProfile* profile) {
         "The rate of radius size change will increase over time (acceleration). 0 is default "
         "constant growth rate - same as unset. 1 is max acceleration meaning the growth rate will "
         "be highest possible right at end and 0 at start.");
+
+    ImGui::InputJitteredFloat(
+        ImGui::InputFloatParams::WithLabelAsId("Initial delay seconds")
+            .set_is_optional(true)
+            .set_step(0.1, 0.5)
+            .set_min(0.01)
+            .set_default(0.5)
+            .set_width(char_x * 10),
+        PROTO_JITTERED_FIELD(TargetProfile, profile, target_radius_growth_initial_delay_seconds));
+    ImGui::SameLine();
+    ImGui::HelpMarker("Time spent at initial radius size before size change starts.");
     ImGui::Unindent();
   } else {
     profile->clear_target_radius_growth_time_seconds();
     profile->clear_target_radius_growth_final_size_time_seconds();
     profile->clear_target_radius_growth_size();
     profile->clear_target_radius_growth_acceleration_factor();
+    profile->clear_target_radius_growth_initial_delay_seconds();
+    profile->clear_target_radius_growth_initial_delay_seconds_jitter();
   }
 
   if (def.shot_type().type_case() == ShotType::kClickMulti ||

@@ -767,7 +767,12 @@ Target Scenario::GetTargetTemplate(const TargetProfile& profile) {
   }
   if (profile.target_radius_growth_time_seconds() > 0) {
     TargetGrowthInfo g;
-    g.start_time_seconds = timer_.GetElapsedSeconds();
+    if (profile.target_radius_growth_initial_delay_seconds() > 0) {
+      g.initial_delay_seconds =
+          app_.rand().GetJittered(profile.target_radius_growth_initial_delay_seconds(),
+                                  profile.target_radius_growth_initial_delay_seconds_jitter());
+    }
+    g.start_time_seconds = timer_.GetElapsedSeconds() + g.initial_delay_seconds;
     g.grow_time_seconds = profile.target_radius_growth_time_seconds();
     g.time_at_final_size_seconds = profile.target_radius_growth_final_size_time_seconds();
     g.start_radius = target.radius;

@@ -605,6 +605,10 @@ message TargetProfile {
   // accelerate to final size. The higher the value the faster the rate of growth will accelerate.
   float target_radius_growth_acceleration_factor = 15;
 
+  // Specify time before growth starts. Target will stay at initial size for this amount of time.
+  float target_radius_growth_initial_delay_seconds = 16;
+  float target_radius_growth_initial_delay_seconds_jitter = 17;
+
   // Defaults to spehere if no more specific type is specified.
   oneof type {
     PillTargetDef pill = 10;

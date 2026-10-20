@@ -113,7 +113,7 @@ void BaseScenario::UpdateState(UpdateStateData* data) {
     if (target.growth_info.has_value()) {
       auto g = *target.growth_info;
       float delta_seconds = now_seconds - g.start_time_seconds;
-      bool is_growing = delta_seconds < g.grow_time_seconds;
+      bool is_growing = delta_seconds >= 0 && delta_seconds < g.grow_time_seconds;
       if (is_growing) {
         // Change radius.
         float radius_change = GetDistance(g.speed, g.acceleration, delta_seconds);
@@ -581,7 +581,8 @@ void BaseScenario::AddNewTarget(u16 old_target_id, bool is_init) {
     RunAfterSeconds(def_.target_def().new_target_delay_seconds(), [=, this]() {
       Target new_target = target;
       if (new_target.growth_info) {
-        new_target.growth_info->start_time_seconds = timer_.GetElapsedSeconds();
+        new_target.growth_info->start_time_seconds =
+            timer_.GetElapsedSeconds() + new_target.growth_info->initial_delay_seconds;
       }
       if (def_.target_def().remove_target_after_seconds() > 0) {
         new_target.remove_after_time_seconds =
