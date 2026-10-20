@@ -8,8 +8,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang
     -Wno-unused-variable
     -Wno-sign-compare
     -Wno-unused-but-set-variable
-    -Wno-deprecated-attributes
-    -Wno-unused-private-field
 
     -Wcast-align         # Pointer casts which increase alignment.
     -Wcast-qual          # A pointer is cast to remove a type qualifier, or add an unsafe one.
@@ -24,6 +22,12 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang
     #-Wundef              # An undefined identifier is evaluated in an #if directive.
     #-Wunused             # Enable all -Wunused- warnings.
     )
+  if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    list(APPEND PROJECT_WARNING_FLAGS
+      -Wno-deprecated-attributes
+      -Wno-unused-private-field
+    )
+  endif ()
   # Enable additional warnings depending on the compiler and compiler version in use.
   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     list(APPEND PROJECT_WARNING_FLAGS

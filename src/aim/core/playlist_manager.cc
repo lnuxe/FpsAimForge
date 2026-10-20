@@ -237,9 +237,12 @@ class PlaylistManagerImpl : public PlaylistManager {
         item->set_scenario(stripped_name_info.GetFullName());
         item->set_num_plays(1);
       };
-      if (settings_manager_ != nullptr &&
-          settings_manager_->GetCurrentSettings().default_cm_per_360s_size() > 0) {
-        for (float cm : settings_manager_->GetCurrentSettings().default_cm_per_360s()) {
+      Settings settings;
+      if (settings_manager_ != nullptr) {
+        settings = settings_manager_->GetCurrentSettings();
+      }
+      if (settings.default_cm_per_360s_size() > 0) {
+        for (float cm : settings.default_cm_per_360s()) {
           add_item(cm);
         }
       } else {
