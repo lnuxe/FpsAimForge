@@ -756,7 +756,7 @@ class ApplicationImpl : public Application {
     bundle_manager_->LoadBundlesFromDisk();
     state_->initialization_times.load_bundles.end = stopwatch.GetElapsedMicros();
 
-    playlist_manager_->RegisterSetttingManager(settings_manager_.get());
+    playlist_manager_->RegisterDependencies(settings_manager_.get(), scenario_manager_.get());
     guide_manager_->RegisterSetttingManager(settings_manager_.get());
 
     scenario_manager_->RegisterRenameListener(

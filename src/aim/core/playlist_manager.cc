@@ -252,7 +252,7 @@ class PlaylistManagerImpl : public PlaylistManager {
     if (name_info.is_level_variations) {
       NameInfo stripped_name_info;
       stripped_name_info.base_name = name_info.base_name;
-      stripped_name_info.is_cm360_variations = name_info.is_cm360_variations;
+      stripped_name_info.is_cm360_variations = name_info.is_level_variations;
 
       // TODO: confirm it is a real scenario name?
       Playlist playlist;
@@ -447,8 +447,11 @@ class PlaylistManagerImpl : public PlaylistManager {
 
   std::optional<std::string> CopyPlaylist(const std::string& source_playlist_full_name,
                                           const std::string& new_playlist_full_name,
-                                          ScenarioManager* scenario_manager,
                                           CopyPlaylistOptions options) override {
+    if (scenario_manager_ == nullptr) {
+      assert(false && "ScenarioManager not initialized");
+      return {};
+    }
     auto source_playlist = GetPlaylist(source_playlist_full_name);
     if (!source_playlist) {
       return {};
@@ -468,12 +471,12 @@ class PlaylistManagerImpl : public PlaylistManager {
       if (is_levels) {
         scenarios_to_copy.insert(dest.levels().base_scenario());
       } else {
-        for (const auto& source_item : source_playlist->items()) {
+        for (const auto& source_item : source_playlist->items(scenario_manager_)) {
           scenarios_to_copy.insert(source_item.scenario());
         }
       }
       std::unordered_map<std::string, CopiedScenario> copied_scenario_map = CopyPlaylistScenarios(
-          scenarios_to_copy, new_playlist_name.bundle_name(), scenario_manager, options);
+          scenarios_to_copy, new_playlist_name.bundle_name(), scenario_manager_, options);
 
       dest.clear_items();
       if (is_levels) {
@@ -482,7 +485,7 @@ class PlaylistManagerImpl : public PlaylistManager {
           dest.mutable_levels()->set_base_scenario(it->second.new_name);
         }
       } else {
-        for (const auto& source_item : source_playlist->items()) {
+        for (const auto& source_item : source_playlist->items(scenario_manager_)) {
           auto it = copied_scenario_map.find(source_item.scenario());
           if (it != copied_scenario_map.end()) {
             const CopiedScenario& copied_scenario = it->second;
@@ -511,8 +514,10 @@ class PlaylistManagerImpl : public PlaylistManager {
     rename_listeners_.push_back(std::move(listener));
   }
 
-  void RegisterSetttingManager(SettingsManager* settings_manager) override {
+  void RegisterDependencies(SettingsManager* settings_manager,
+                            ScenarioManager* scenario_manager) override {
     settings_manager_ = settings_manager;
+    scenario_manager_ = scenario_manager;
   }
 
  private:
@@ -527,7 +532,7 @@ class PlaylistManagerImpl : public PlaylistManager {
   PlaylistRun InitializeRun(const Playlist& playlist) {
     PlaylistRun run;
     run.playlist = playlist;
-    auto items = playlist.items();
+    auto items = playlist.items(scenario_manager_);
     for (int i = 0; i < items.size(); ++i) {
       PlaylistItemProgress progress;
       progress.item = items[i];
@@ -586,7 +591,7 @@ class PlaylistManagerImpl : public PlaylistManager {
       *run->playlist.mutable_def() = new_def;
       run->progress_list.clear();
 
-      auto items = run->playlist.items();
+      auto items = run->playlist.items(scenario_manager_);
       for (int i = 0; i < items.size(); ++i) {
         auto& item = items[i];
         PlaylistItemProgress progress;
@@ -614,6 +619,7 @@ class PlaylistManagerImpl : public PlaylistManager {
   std::vector<std::function<void(const std::string& old_name, const std::string& new_name)>>
       rename_listeners_;
   SettingsManager* settings_manager_ = nullptr;
+  ScenarioManager* scenario_manager_ = nullptr;
 };
 
 std::vector<PlaylistItem> GetPlaylistItemsNoSuffix(const PlaylistDef& def) {
@@ -665,7 +671,7 @@ std::vector<PlaylistItem> GetPlaylistItems(const PlaylistDef& def) {
   return GetPlaylistItemsNoSuffix(def);
 }
 
-std::vector<PlaylistItem> Playlist::items() const {
+std::vector<PlaylistItem> Playlist::items(ScenarioManager* scenario_manager) const {
   auto item_list = GetPlaylistItemsNoSuffix(def_);
   for (auto& item : item_list) {
     if (playlist_name_info.HasDynamicSuffix()) {

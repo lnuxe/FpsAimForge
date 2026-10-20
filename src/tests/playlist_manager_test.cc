@@ -43,37 +43,47 @@ auto EqualsRunsDone(int runs_done) {
   return AllOf(Field(&PlaylistItemProgress::runs_done, Eq(runs_done)));
 }
 
-TEST(PlaylistManagerTest, GetLevelsPlaylistItems_NoBaseName) {
+class PlaylistManagerTest : public ::testing::Test {
+ protected:
+  std::unique_ptr<ScenarioManager> scenario_manager_;
+  std::unique_ptr<PlaylistManager> playlist_manager_;
+
+  void SetUp() override {
+    scenario_manager_ = CreateScenarioManager();
+    playlist_manager_ = CreatePlaylistManager();
+    playlist_manager_->RegisterDependencies(nullptr, scenario_manager_.get());
+  }
+};
+
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_NoBaseName) {
   PlaylistDef def;
   auto& levels = *def.mutable_levels();
 
   // No base name
   levels.set_max_level(2);
 
-  auto mgr = CreatePlaylistManager();
   std::string playlist_name = "Playlist One";
-  mgr->UpdatePlaylist(playlist_name, def);
+  playlist_manager_->UpdatePlaylist(playlist_name, def);
 
-  auto playlist = mgr->GetPlaylist(playlist_name);
+  auto playlist = playlist_manager_->GetPlaylist(playlist_name);
   ASSERT_TRUE(playlist.has_value());
-  EXPECT_THAT(playlist->items(), IsEmpty());
+  EXPECT_THAT(playlist->items(scenario_manager_.get()), IsEmpty());
 }
 
-TEST(PlaylistManagerTest, GetLevelsPlaylistItems_CmPer360) {
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_CmPer360) {
   PlaylistDef def;
   auto& levels = *def.mutable_levels();
 
   levels.set_max_level(5);
   levels.set_base_scenario("Base Scenario");
 
-  auto mgr = CreatePlaylistManager();
   std::string playlist_name = "Playlist One";
-  mgr->UpdatePlaylist(playlist_name, def);
+  playlist_manager_->UpdatePlaylist(playlist_name, def);
 
-  auto playlist = mgr->GetPlaylist("Playlist One 25cm");
+  auto playlist = playlist_manager_->GetPlaylist("Playlist One 25cm");
   ASSERT_TRUE(playlist.has_value());
   EXPECT_THAT(playlist->name, StrEq("Playlist One 25cm"));
-  EXPECT_THAT(playlist->items(),
+  EXPECT_THAT(playlist->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("Base Scenario L1 25cm")),
                           EqualsProto(MakeItem("Base Scenario L2 25cm")),
                           EqualsProto(MakeItem("Base Scenario L3 25cm")),
@@ -81,7 +91,7 @@ TEST(PlaylistManagerTest, GetLevelsPlaylistItems_CmPer360) {
                           EqualsProto(MakeItem("Base Scenario L5 25cm"))));
 }
 
-TEST(PlaylistManagerTest, GetLevelsPlaylistItems) {
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems) {
   PlaylistDef playlist;
   auto& levels = *playlist.mutable_levels();
 
@@ -97,7 +107,7 @@ TEST(PlaylistManagerTest, GetLevelsPlaylistItems) {
                           EqualsProto(MakeItem("Base Scenario L5"))));
 }
 
-TEST(PlaylistManagerTest, GetLevelsPlaylistItems_Cm360Suffix) {
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_Cm360Suffix) {
   PlaylistDef playlist;
   auto& levels = *playlist.mutable_levels();
 
@@ -113,7 +123,7 @@ TEST(PlaylistManagerTest, GetLevelsPlaylistItems_Cm360Suffix) {
                           EqualsProto(MakeItem("Base Scenario L5 25cm"))));
 }
 
-TEST(PlaylistManagerTest, GetLevelsPlaylistItems_MultipleSuffix) {
+TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_MultipleSuffix) {
   PlaylistDef playlist;
   auto& levels = *playlist.mutable_levels();
 
@@ -129,7 +139,7 @@ TEST(PlaylistManagerTest, GetLevelsPlaylistItems_MultipleSuffix) {
                           EqualsProto(MakeItem("Base Scenario L5 120fov 40s 25cm"))));
 }
 
-TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone) {
+TEST_F(PlaylistManagerTest, PlaylistRun_IncrementRunDone) {
   PlaylistDef def;
   auto item1 = MakeItem("S1", 1);
   auto item2 = MakeItem("S2", 2);
@@ -140,10 +150,9 @@ TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone) {
 
   std::string playlist = "Playlist One";
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist(playlist, def);
+  playlist_manager_->UpdatePlaylist(playlist, def);
 
-  auto run = mgr->GetRun(playlist);
+  auto run = playlist_manager_->GetRun(playlist);
   ASSERT_TRUE(run);
   EXPECT_THAT(run->progress_list.size(), Eq(3));
   EXPECT_THAT(run->current_index, Eq(-1));
@@ -187,7 +196,7 @@ TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone) {
                           EqualsProgressItem(item3, 2)));
 }
 
-TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone_MultipleOfSameScenario) {
+TEST_F(PlaylistManagerTest, PlaylistRun_IncrementRunDone_MultipleOfSameScenario) {
   PlaylistDef def;
   auto item1 = MakeItem("S1", 1);
   auto item2 = MakeItem("S2", 2);
@@ -202,10 +211,9 @@ TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone_MultipleOfSameScenario) {
 
   std::string playlist = "Playlist One";
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist(playlist, def);
+  playlist_manager_->UpdatePlaylist(playlist, def);
 
-  auto run = mgr->GetRun(playlist);
+  auto run = playlist_manager_->GetRun(playlist);
   ASSERT_TRUE(run);
 
   run->IncrementRunDone("S1");
@@ -261,7 +269,7 @@ TEST(PlaylistManagerTest, PlaylistRun_IncrementRunDone_MultipleOfSameScenario) {
                           EqualsProgressItem(item3_2, 1)));
 }
 
-TEST(PlaylistManagerTest, PlaylistRun_Next) {
+TEST_F(PlaylistManagerTest, PlaylistRun_Next) {
   PlaylistDef def;
   auto item1 = MakeItem("S1", 1);
   auto item2 = MakeItem("S2", 2);
@@ -273,10 +281,9 @@ TEST(PlaylistManagerTest, PlaylistRun_Next) {
 
   std::string playlist = "Playlist One";
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist(playlist, def);
+  playlist_manager_->UpdatePlaylist(playlist, def);
 
-  auto run = mgr->GetRun(playlist);
+  auto run = playlist_manager_->GetRun(playlist);
   ASSERT_TRUE(run);
 
   EXPECT_THAT(run->Next(), Optional(StrEq("S1")));
@@ -304,15 +311,14 @@ TEST(PlaylistManagerTest, PlaylistRun_Next) {
   EXPECT_THAT(run->Next(), Optional(StrEq("S2")));
 }
 
-TEST(PlaylistManagerTest, CopyBasicPlaylist) {
+TEST_F(PlaylistManagerTest, CopyBasicPlaylist) {
   ScenarioDef scenario_def1 = MakeScenario(1);
   ScenarioDef scenario_def2 = MakeScenario(1);
   ScenarioDef scenario_def3 = MakeScenario(1);
 
-  auto scenario_mgr = CreateScenarioManager();
-  scenario_mgr->UpdateScenario("B S1", scenario_def1);
-  scenario_mgr->UpdateScenario("B S2", scenario_def2);
-  scenario_mgr->UpdateScenario("B S3", scenario_def3);
+  scenario_manager_->UpdateScenario("B S1", scenario_def1);
+  scenario_manager_->UpdateScenario("B S2", scenario_def2);
+  scenario_manager_->UpdateScenario("B S3", scenario_def3);
 
   PlaylistDef def;
   auto item1 = MakeItem("B S1", 1);
@@ -323,49 +329,47 @@ TEST(PlaylistManagerTest, CopyBasicPlaylist) {
   *def.add_items() = item2;
   *def.add_items() = item3;
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist("B P1", def);
+  playlist_manager_->RegisterDependencies(nullptr, scenario_manager_.get());
+  playlist_manager_->UpdatePlaylist("B P1", def);
 
   CopyPlaylistOptions opts;
-  EXPECT_THAT(mgr->CopyPlaylist("B P1", "B P2", scenario_mgr.get(), opts), Optional(StrEq("B P2")));
+  EXPECT_THAT(playlist_manager_->CopyPlaylist("B P1", "B P2", opts), Optional(StrEq("B P2")));
 
-  auto playlist1 = mgr->GetPlaylist("B P1");
-  auto playlist2 = mgr->GetPlaylist("B P2");
+  auto playlist1 = playlist_manager_->GetPlaylist("B P1");
+  auto playlist2 = playlist_manager_->GetPlaylist("B P2");
   ASSERT_TRUE(playlist1.has_value());
   ASSERT_TRUE(playlist2.has_value());
 
-  ASSERT_THAT(playlist2->items(),
+  ASSERT_THAT(playlist2->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(item1), EqualsProto(item2), EqualsProto(item3)));
 
   // Creates playlist with non conflicting new name
-  EXPECT_THAT(mgr->CopyPlaylist("B P1", "B P2", scenario_mgr.get(), opts),
-              Optional(StrEq("B P2 (1)")));
+  EXPECT_THAT(playlist_manager_->CopyPlaylist("B P1", "B P2", opts), Optional(StrEq("B P2 (1)")));
 
-  auto playlist2_dup = mgr->GetPlaylist("B P2 (1)");
+  auto playlist2_dup = playlist_manager_->GetPlaylist("B P2 (1)");
   ASSERT_TRUE(playlist2_dup.has_value());
 
-  ASSERT_THAT(playlist2_dup->items(),
+  ASSERT_THAT(playlist2_dup->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(item1), EqualsProto(item2), EqualsProto(item3)));
 
   opts.deep_copy = true;
-  EXPECT_THAT(mgr->CopyPlaylist("B P1", "B P3", scenario_mgr.get(), opts), Optional(StrEq("B P3")));
+  EXPECT_THAT(playlist_manager_->CopyPlaylist("B P1", "B P3", opts), Optional(StrEq("B P3")));
 
-  auto playlist3 = mgr->GetPlaylist("B P3");
-  ASSERT_THAT(playlist3->items(),
+  auto playlist3 = playlist_manager_->GetPlaylist("B P3");
+  ASSERT_THAT(playlist3->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 (1)", 1)),
                           EqualsProto(MakeItem("B S2 (1)", 2)),
                           EqualsProto(MakeItem("B S3 (1)", 3))));
 }
 
-TEST(PlaylistManagerTest, CopyPlaylist_DeepCopy_ToNewBundle) {
+TEST_F(PlaylistManagerTest, CopyPlaylist_DeepCopy_ToNewBundle) {
   ScenarioDef scenario_def1 = MakeScenario(1);
   ScenarioDef scenario_def2 = MakeScenario(1);
   ScenarioDef scenario_def3 = MakeScenario(1);
 
-  auto scenario_mgr = CreateScenarioManager();
-  scenario_mgr->UpdateScenario("B S1", scenario_def1);
-  scenario_mgr->UpdateScenario("B S2", scenario_def2);
-  scenario_mgr->UpdateScenario("B S3", scenario_def3);
+  scenario_manager_->UpdateScenario("B S1", scenario_def1);
+  scenario_manager_->UpdateScenario("B S2", scenario_def2);
+  scenario_manager_->UpdateScenario("B S3", scenario_def3);
 
   PlaylistDef def;
   auto item1 = MakeItem("B S1", 1);
@@ -378,35 +382,32 @@ TEST(PlaylistManagerTest, CopyPlaylist_DeepCopy_ToNewBundle) {
   *def.add_items() = item3;
   *def.add_items() = item4;
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist("B P1", def);
+  playlist_manager_->UpdatePlaylist("B P1", def);
 
   CopyPlaylistOptions opts;
   opts.deep_copy = true;
-  EXPECT_THAT(mgr->CopyPlaylist("B P1", "B2 P2", scenario_mgr.get(), opts),
-              Optional(StrEq("B2 P2")));
+  EXPECT_THAT(playlist_manager_->CopyPlaylist("B P1", "B2 P2", opts), Optional(StrEq("B2 P2")));
 
-  auto playlist1 = mgr->GetPlaylist("B P1");
-  auto playlist2 = mgr->GetPlaylist("B2 P2");
+  auto playlist1 = playlist_manager_->GetPlaylist("B P1");
+  auto playlist2 = playlist_manager_->GetPlaylist("B2 P2");
   ASSERT_TRUE(playlist1.has_value());
   ASSERT_TRUE(playlist2.has_value());
 
-  ASSERT_THAT(playlist2->items(),
+  ASSERT_THAT(playlist2->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B2 S1", 1)),
                           EqualsProto(MakeItem("B2 S2", 2)),
                           EqualsProto(MakeItem("B2 S3", 3)),
                           EqualsProto(MakeItem("B2 S3", 2))));
 }
 
-TEST(PlaylistManagerTest, CopyPlaylist_DeepCopy_NewUniqueNames) {
+TEST_F(PlaylistManagerTest, CopyPlaylist_DeepCopy_NewUniqueNames) {
   ScenarioDef scenario_def1 = MakeScenario(1);
   ScenarioDef scenario_def2 = MakeScenario(1);
   ScenarioDef scenario_def3 = MakeScenario(1);
 
-  auto scenario_mgr = CreateScenarioManager();
-  scenario_mgr->UpdateScenario("B S1", scenario_def1);
-  scenario_mgr->UpdateScenario("B S2", scenario_def2);
-  scenario_mgr->UpdateScenario("B S3", scenario_def3);
+  scenario_manager_->UpdateScenario("B S1", scenario_def1);
+  scenario_manager_->UpdateScenario("B S2", scenario_def2);
+  scenario_manager_->UpdateScenario("B S3", scenario_def3);
 
   PlaylistDef def;
   auto item1 = MakeItem("B S1", 1);
@@ -419,28 +420,25 @@ TEST(PlaylistManagerTest, CopyPlaylist_DeepCopy_NewUniqueNames) {
   *def.add_items() = item3;
   *def.add_items() = item4;
 
-  auto mgr = CreatePlaylistManager();
-  mgr->UpdatePlaylist("B P1", def);
+  playlist_manager_->UpdatePlaylist("B P1", def);
 
   CopyPlaylistOptions opts;
   opts.deep_copy = true;
-  EXPECT_THAT(mgr->CopyPlaylist("B P1", "B P2", scenario_mgr.get(), opts), Optional(StrEq("B P2")));
+  EXPECT_THAT(playlist_manager_->CopyPlaylist("B P1", "B P2", opts), Optional(StrEq("B P2")));
 
-  auto playlist1 = mgr->GetPlaylist("B P1");
-  auto playlist2 = mgr->GetPlaylist("B P2");
+  auto playlist1 = playlist_manager_->GetPlaylist("B P1");
+  auto playlist2 = playlist_manager_->GetPlaylist("B P2");
   ASSERT_TRUE(playlist1.has_value());
   ASSERT_TRUE(playlist2.has_value());
 
-  ASSERT_THAT(playlist2->items(),
+  ASSERT_THAT(playlist2->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 (1)", 1)),
                           EqualsProto(MakeItem("B S2 (1)", 2)),
                           EqualsProto(MakeItem("B S3 (1)", 3)),
                           EqualsProto(MakeItem("B S3 (1)", 2))));
 }
 
-TEST(PlaylistManagerTest, RenameScenarioInAllPlaylists_BaseName) {
-  auto mgr = CreatePlaylistManager();
-
+TEST_F(PlaylistManagerTest, RenameScenarioInAllPlaylists_BaseName) {
   auto item1 = MakeItem("B S1", 1);
   auto item2 = MakeItem("B S2", 1);
   auto item3 = MakeItem("B S3", 1);
@@ -454,7 +452,7 @@ TEST(PlaylistManagerTest, RenameScenarioInAllPlaylists_BaseName) {
     *def.add_items() = item2;
     *def.add_items() = item3;
     *def.add_items() = item4;
-    mgr->UpdatePlaylist("B P1", def);
+    playlist_manager_->UpdatePlaylist("B P1", def);
   }
 
   {
@@ -463,40 +461,40 @@ TEST(PlaylistManagerTest, RenameScenarioInAllPlaylists_BaseName) {
     *def.add_items() = item2_cm;
     *def.add_items() = item3;
     *def.add_items() = item4;
-    mgr->UpdatePlaylist("B P2", def);
+    playlist_manager_->UpdatePlaylist("B P2", def);
   }
 
-  mgr->RenameScenarioInAllPlaylists("B S1 25cm", "B S1 New 24cm");
+  playlist_manager_->RenameScenarioInAllPlaylists("B S1 25cm", "B S1 New 24cm");
 
-  auto playlist1 = mgr->GetPlaylist("B P1");
-  auto playlist2 = mgr->GetPlaylist("B P2");
+  auto playlist1 = playlist_manager_->GetPlaylist("B P1");
+  auto playlist2 = playlist_manager_->GetPlaylist("B P2");
   ASSERT_TRUE(playlist1.has_value());
   ASSERT_TRUE(playlist2.has_value());
 
-  ASSERT_THAT(playlist1->items(),
+  ASSERT_THAT(playlist1->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 New")),
                           EqualsProto(item2),
                           EqualsProto(item3),
                           EqualsProto(item4)));
-  ASSERT_THAT(playlist2->items(),
+  ASSERT_THAT(playlist2->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 New")),
                           EqualsProto(item2_cm),
                           EqualsProto(item3),
                           EqualsProto(item4)));
 
-  mgr->RenameScenarioInAllPlaylists("B S2", "B NewS2");
+  playlist_manager_->RenameScenarioInAllPlaylists("B S2", "B NewS2");
 
-  playlist1 = mgr->GetPlaylist("B P1");
-  playlist2 = mgr->GetPlaylist("B P2");
+  playlist1 = playlist_manager_->GetPlaylist("B P1");
+  playlist2 = playlist_manager_->GetPlaylist("B P2");
   ASSERT_TRUE(playlist1.has_value());
   ASSERT_TRUE(playlist2.has_value());
 
-  ASSERT_THAT(playlist1->items(),
+  ASSERT_THAT(playlist1->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 New")),
                           EqualsProto(MakeItem("B NewS2")),
                           EqualsProto(item3),
                           EqualsProto(item4)));
-  ASSERT_THAT(playlist2->items(),
+  ASSERT_THAT(playlist2->items(scenario_manager_.get()),
               ElementsAre(EqualsProto(MakeItem("B S1 New")),
                           EqualsProto(MakeItem("B NewS2 35cm")),
                           EqualsProto(item3),

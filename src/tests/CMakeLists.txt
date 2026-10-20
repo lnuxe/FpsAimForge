@@ -34,10 +34,8 @@ target_compile_definitions(${NAME} PRIVATE
     TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/testdata"
 )
 
-if(MSVC)
-    # Disables warnings from protobuf lib
-    target_compile_options(${NAME} PRIVATE /wd4091)
-endif()
+include(../aim/warnings.cmake)
+target_compile_options(${NAME} PRIVATE ${PROJECT_WARNING_FLAGS})
 
 include(GoogleTest)
 gtest_discover_tests(${NAME})

@@ -45,7 +45,7 @@ struct Playlist {
     return def_;
   }
 
-  std::vector<PlaylistItem> items() const;
+  std::vector<PlaylistItem> items(ScenarioManager* scenario_manager) const;
 
  private:
   PlaylistDef def_;
@@ -127,12 +127,12 @@ class PlaylistManager {
 
   virtual std::optional<std::string> CopyPlaylist(const std::string& source_playlist_name,
                                                   const std::string& target_playlist_name,
-                                                  ScenarioManager* scenario_manager,
                                                   CopyPlaylistOptions options) = 0;
 
   virtual void RegisterRenameListener(
       std::function<void(const std::string& old_name, const std::string& new_name)> listener) = 0;
-  virtual void RegisterSetttingManager(SettingsManager* settings_manager) = 0;
+  virtual void RegisterDependencies(SettingsManager* settings_manager,
+                                    ScenarioManager* scenario_manager) = 0;
 };
 
 std::unique_ptr<PlaylistManager> CreatePlaylistManager();
