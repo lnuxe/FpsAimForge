@@ -5,7 +5,6 @@
 #include "aim/common/files.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
-#include "aim/common/proto_util.h"
 #include "aim/common/system.h"
 #include "aim/core/application.h"
 #include "aim/core/bundle_manager.h"
@@ -340,6 +339,7 @@ class BundleUiComponentImpl : public BundleUiComponent {
     if (!pack) {
       return;
     }
+    const bool is_default_pack = selected_bundle_pack_name_ == kDefaultBundlePackName;
     BundlePackInfo info = *pack;
     bool open_edit = false;
     ImGui::AlignTextToFramePadding();
@@ -390,7 +390,21 @@ class BundleUiComponentImpl : public BundleUiComponent {
 
     ImGui::SpacedSeparator();
 
-    if (info.bundle_pack_name() != kDefaultBundlePackName) {
+    if (is_default_pack) {
+      if (ImGui::Button(std::format("{} Reset default pack", icons::kRefresh))) {
+        auto src_pack_path =
+            app_.file_system().GetBasePath("resources/bundles") / kDefaultBundlePackFilename;
+        auto dest_pack_path =
+            app_.file_system().GetUserDataPath("bundles") / kDefaultBundlePackFilename;
+        if (std::filesystem::exists(src_pack_path)) {
+          std::filesystem::copy(
+              src_pack_path, dest_pack_path, std::filesystem::copy_options::overwrite_existing);
+          app_.bundle_manager().LoadBundlesFromDisk();
+        }
+      }
+      ImGui::SameLine();
+      ImGui::HelpMarker("Reset Default.pack.bin to version shipped with application binary.");
+    } else {
       if (ImGui::Button(std::format("{} Delete", icons::kDelete))) {
         delete_pack_confirmation_dialog_.NotifyOpen(
             std::format("Delete \"{}\"?", info.bundle_pack_name()), info.bundle_pack_name());
