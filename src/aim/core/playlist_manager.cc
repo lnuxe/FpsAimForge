@@ -221,10 +221,16 @@ class PlaylistManagerImpl : public PlaylistManager {
     visited->insert(playlist_name);
     NameInfo name_info = GetNameInfo(playlist_name);
 
+    if (name_info.is_cm360_variations && name_info.is_level_variations) {
+      // Cannot be both Levels and cm360 for a playlist.
+      return {};
+    }
+
     if (name_info.is_cm360_variations) {
       NameInfo stripped_name_info;
       stripped_name_info.base_name = name_info.base_name;
-      stripped_name_info.is_level_variations = name_info.is_level_variations;
+      stripped_name_info.is_level_variations = false;
+      stripped_name_info.is_cm360_variations = false;
 
       // TODO: confirm it is a real scenario name?
       Playlist playlist;
@@ -255,7 +261,8 @@ class PlaylistManagerImpl : public PlaylistManager {
     if (name_info.is_level_variations) {
       NameInfo stripped_name_info;
       stripped_name_info.base_name = name_info.base_name;
-      stripped_name_info.is_cm360_variations = name_info.is_level_variations;
+      stripped_name_info.is_level_variations = false;
+      stripped_name_info.is_cm360_variations = false;
 
       // TODO: confirm it is a real scenario name?
       Playlist playlist;
@@ -686,6 +693,8 @@ std::vector<PlaylistItem> Playlist::items(ScenarioManager* scenario_manager) con
         }
       }
       scenario_name_info.MergeDynamicSuffixes(playlist_name_info);
+      scenario_name_info.is_cm360_variations = false;
+      scenario_name_info.is_level_variations = false;
       item.set_scenario(scenario_name_info.GetFullName());
     }
   }

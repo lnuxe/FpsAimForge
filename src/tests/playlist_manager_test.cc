@@ -115,6 +115,74 @@ TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems) {
                           EqualsProto(MakeItem("Base Scenario L5"))));
 }
 
+TEST_F(PlaylistManagerTest, GetAutoLevelsPlaylist) {
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  auto p = playlist_manager_->GetPlaylist("Base Scenario Levels");
+  ASSERT_TRUE(p.has_value());
+
+  auto items = p->items(scenario_manager_.get());
+  ASSERT_THAT(items.size(), Eq(40));
+  EXPECT_THAT(items[0], EqualsProto(MakeItem("Base Scenario L1")));
+  EXPECT_THAT(items[1], EqualsProto(MakeItem("Base Scenario L2")));
+  EXPECT_THAT(items[39], EqualsProto(MakeItem("Base Scenario L40")));
+}
+
+TEST_F(PlaylistManagerTest, GetAutoLevelsPlaylist_WithDynamicSuffix) {
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  auto p = playlist_manager_->GetPlaylist("Base Scenario 80fov Levels");
+  ASSERT_TRUE(p.has_value());
+
+  auto items = p->items(scenario_manager_.get());
+  ASSERT_THAT(items.size(), Eq(40));
+  EXPECT_THAT(items[0], EqualsProto(MakeItem("Base Scenario L1 80fov")));
+  EXPECT_THAT(items[1], EqualsProto(MakeItem("Base Scenario L2 80fov")));
+  EXPECT_THAT(items[39], EqualsProto(MakeItem("Base Scenario L40 80fov")));
+}
+
+TEST_F(PlaylistManagerTest, GetAutoCm360Playlist) {
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  auto p = playlist_manager_->GetPlaylist("Base Scenario cm360");
+  ASSERT_TRUE(p.has_value());
+
+  auto items = p->items(scenario_manager_.get());
+  EXPECT_THAT(items,
+              ElementsAre(EqualsProto(MakeItem("Base Scenario 10cm")),
+                          EqualsProto(MakeItem("Base Scenario 15cm")),
+                          EqualsProto(MakeItem("Base Scenario 20cm")),
+                          EqualsProto(MakeItem("Base Scenario 25cm")),
+                          EqualsProto(MakeItem("Base Scenario 30cm")),
+                          EqualsProto(MakeItem("Base Scenario 35cm")),
+                          EqualsProto(MakeItem("Base Scenario 40cm")),
+                          EqualsProto(MakeItem("Base Scenario 45cm")),
+                          EqualsProto(MakeItem("Base Scenario 50cm")),
+                          EqualsProto(MakeItem("Base Scenario 55cm")),
+                          EqualsProto(MakeItem("Base Scenario 60cm")),
+                          EqualsProto(MakeItem("Base Scenario 65cm")),
+                          EqualsProto(MakeItem("Base Scenario 70cm")),
+                          EqualsProto(MakeItem("Base Scenario 75cm")),
+                          EqualsProto(MakeItem("Base Scenario 80cm")),
+                          EqualsProto(MakeItem("Base Scenario 85cm")),
+                          EqualsProto(MakeItem("Base Scenario 90cm"))));
+}
+
+TEST_F(PlaylistManagerTest, GetInvalidLevelsCm360) {
+  ScenarioDef scenario;
+  scenario.mutable_level_overrides()->set_level_offset(20);
+  scenario_manager_->UpdateScenario("Base Scenario", scenario);
+
+  auto p = playlist_manager_->GetPlaylist("Base Scenario Levels cm360");
+  ASSERT_FALSE(p.has_value());
+}
+
 TEST_F(PlaylistManagerTest, GetLevelsPlaylistItems_MergePlaylistNameLevel) {
   PlaylistDef playlist;
   auto& levels = *playlist.mutable_levels();
