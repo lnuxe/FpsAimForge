@@ -322,6 +322,10 @@ class ScenarioEditorScreen : public UiScreen {
         current_level_ = 20;
       }
       ImGui::SameLine();
+      if (ImGui::Button("30")) {
+        current_level_ = 30;
+      }
+      ImGui::SameLine();
       if (ImGui::Button("40")) {
         current_level_ = 40;
       }
