@@ -28,7 +28,13 @@ class BarrelMovementController : public BasicWallMovementController {
           0,
           FirstNonZero(def_.barrel_def().direction_radius_percent(), 0.45f) * room_radius,
           app_.rand());
-      direction_ = glm::normalize(new_direction_pos - *t.wall_position);
+      direction_ = new_direction_pos - *t.wall_position;
+      if (glm::length(direction_) == 0) {
+        // New direction point is same as current point. Just initialize to a random direction.
+        direction_ = RotateDegrees(glm::vec2(1.0f, 0.0f), app_.rand().GetInRange(0, 360));
+      } else {
+        direction_ = glm::normalize(direction_);
+      }
       direction_initialized_ = true;
     }
   }
