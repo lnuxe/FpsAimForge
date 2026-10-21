@@ -433,6 +433,7 @@ void Scenario::OnWaitingForClickTick() {
   }
   ImGui::Text("theme: %s", settings_.theme_name().c_str());
   ImGui::Text("cm/360: %.0f", effective_cm_per_360_);
+  ImGui::TextFmt("duration: {}s", MaybeIntToString(def_.duration_seconds(), 1));
 
   {
     auto bold = app_.font_manager().UseLargeBold();
