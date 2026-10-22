@@ -39,6 +39,7 @@ SoundSettings GetDefaultSoundSettings() {
   sounds.mutable_tracking_hit()->set_name("apa-hit-4.ogg");
   sounds.mutable_tracking_kill()->set_name("kill.ogg");
 
+  sounds.mutable_target_expired()->set_name("8Bit3.ogg");
   sounds.mutable_reload()->set_name("reload.ogg");
   sounds.mutable_metronome()->set_name("metronome.ogg");
   return sounds;
