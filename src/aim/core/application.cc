@@ -98,6 +98,14 @@ constexpr const int kMaxEventsToProcessPerFrame = 500;
 
 const char* kImguiIniFile = "imgui.ini";
 
+void CopyBundleFileIfNotExists(const char* file_name, FileSystem* fs) {
+  auto src = fs->GetBasePath("resources/bundles") / file_name;
+  auto dest = fs->GetUserDataPath("bundles") / file_name;
+  if (!std::filesystem::exists(dest) && std::filesystem::exists(src)) {
+    std::filesystem::copy(src, dest);
+  }
+}
+
 void CopyInitialDirIfNotExists(const std::string& dir_name,
                                const std::string& dest_dir,
                                FileSystem* fs) {
@@ -134,12 +142,7 @@ std::optional<std::string> InitializeAimForgeFolder(FileSystem* fs) {
   }
 
   // Copy Default.pack.bin to bundles folder if it does not exist.
-  auto default_pack_path = bundles_path / kDefaultBundlePackFilename;
-  auto bin_default_pack_path = fs->GetBasePath("resources/bundles") / kDefaultBundlePackFilename;
-  if (!std::filesystem::exists(default_pack_path) &&
-      std::filesystem::exists(bin_default_pack_path)) {
-    std::filesystem::copy(bin_default_pack_path, default_pack_path);
-  }
+  CopyBundleFileIfNotExists(kDefaultBundlePackFilename, fs);
 
   CopyInitialDirIfNotExists("themes", "resources/themes", fs);
   CopyInitialDirIfNotExists("textures", "resources/textures", fs);
@@ -630,6 +633,8 @@ class ApplicationImpl : public Application {
     GlobalInitializeHttp();
     http_initialized_ = true;
 
+    bool is_new_user = !std::filesystem::exists(file_system_->GetUserDataPath());
+
     auto maybe_error = InitializeAimForgeFolder(file_system_.get());
     if (maybe_error) {
       logger_->warn("Failed to initialize aim forge folder. {}", *maybe_error);
@@ -641,6 +646,17 @@ class ApplicationImpl : public Application {
       return maybe_error;
     }
     replay_manager_ = CreateReplayManager();
+
+    std::string ca_bundle_copied_key = "_caBundleCopied";
+    if (is_new_user) {
+      // Never copy bundle for new users.
+      local_store().PutBool(ca_bundle_copied_key, true);
+    } else {
+      if (!local_store().GetBool(ca_bundle_copied_key)) {
+        CopyBundleFileIfNotExists("cA.bundle.json", file_system_.get());
+        local_store().PutBool(ca_bundle_copied_key, true);
+      }
+    }
 
     play_time_manager_ = std::make_unique<PlayTimeManager>(db_.get());
     bundle_manager_ = CreateBundleManager(
