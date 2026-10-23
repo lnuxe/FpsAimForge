@@ -107,6 +107,11 @@ void CrosshairRenderer::DrawLayer(const CrosshairLayer& layer,
   }
   ImU32 main_color = ToImCol32(main_rgb, alpha);
   ImU32 outline_color = ToImCol32(outline_rgb, alpha);
+  if (layer.use_outline_color() || layer.circle().use_outline_color()) {
+    main_color = outline_color;
+    main_rgb = outline_rgb;
+  }
+
 
   glm::vec3 main_color3 = ToVec3(main_rgb);
   ImVec4 main_color4(main_color3.r, main_color3.g, main_color3.b, alpha / 255.0f);
@@ -132,7 +137,7 @@ void CrosshairRenderer::DrawLayer(const CrosshairLayer& layer,
     float thickness = FirstGreaterThanZero(layer.circle().thickness(), 1.5);
     draw_list->AddCircle(center,
                          radius,
-                         layer.circle().use_outline_color() ? outline_color : main_color,
+                         main_color,
                          0,
                          thickness);
     return;

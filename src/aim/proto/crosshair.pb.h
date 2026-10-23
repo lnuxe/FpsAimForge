@@ -1326,6 +1326,7 @@ class CrosshairLayer final : public ::google::protobuf::Message
     kOverrideOutlineColorFieldNumber = 2,
     kScaleFieldNumber = 3,
     kAlphaFieldNumber = 4,
+    kUseOutlineColorFieldNumber = 5,
     kDotFieldNumber = 10,
     kPlusFieldNumber = 11,
     kImageFieldNumber = 12,
@@ -1382,6 +1383,17 @@ class CrosshairLayer final : public ::google::protobuf::Message
   private:
   float _internal_alpha() const;
   void _internal_set_alpha(float value);
+
+  public:
+  // bool use_outline_color = 5;
+  bool has_use_outline_color() const;
+  void clear_use_outline_color() ;
+  bool use_outline_color() const;
+  void set_use_outline_color(bool value);
+
+  private:
+  bool _internal_use_outline_color() const;
+  void _internal_set_use_outline_color(bool value);
 
   public:
   // .aim.DotCrosshair dot = 10;
@@ -1492,7 +1504,7 @@ class CrosshairLayer final : public ::google::protobuf::Message
   inline bool has_type() const;
   inline void clear_has_type();
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<2, 9,
+  static const ::google::protobuf::internal::TcParseTable<3, 10,
                                    7, 0,
                                    2>
       _table_;
@@ -1518,6 +1530,7 @@ class CrosshairLayer final : public ::google::protobuf::Message
     ::aim::StoredColor* PROTOBUF_NULLABLE override_outline_color_;
     float scale_;
     float alpha_;
+    bool use_outline_color_;
     union TypeUnion {
       constexpr TypeUnion() : _constinit_{} {}
       ::google::protobuf::internal::ConstantInitialized _constinit_;
@@ -2457,6 +2470,35 @@ inline float CrosshairLayer::_internal_alpha() const {
 inline void CrosshairLayer::_internal_set_alpha(float value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.alpha_ = value;
+}
+
+// bool use_outline_color = 5;
+inline bool CrosshairLayer::has_use_outline_color() const {
+  bool value = CheckHasBit(_impl_._has_bits_[0], 0x00000010U);
+  return value;
+}
+inline void CrosshairLayer::clear_use_outline_color() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.use_outline_color_ = false;
+  ClearHasBit(_impl_._has_bits_[0],
+                  0x00000010U);
+}
+inline bool CrosshairLayer::use_outline_color() const {
+  // @@protoc_insertion_point(field_get:aim.CrosshairLayer.use_outline_color)
+  return _internal_use_outline_color();
+}
+inline void CrosshairLayer::set_use_outline_color(bool value) {
+  _internal_set_use_outline_color(value);
+  SetHasBit(_impl_._has_bits_[0], 0x00000010U);
+  // @@protoc_insertion_point(field_set:aim.CrosshairLayer.use_outline_color)
+}
+inline bool CrosshairLayer::_internal_use_outline_color() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.use_outline_color_;
+}
+inline void CrosshairLayer::_internal_set_use_outline_color(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.use_outline_color_ = value;
 }
 
 // .aim.DotCrosshair dot = 10;

@@ -1,0 +1,21 @@
+{
+ "layers": [
+  {
+   "scale": 0.55,
+   "alpha": 1,
+   "useOutlineColor": true,
+   "image": {
+    "fileName": "ascended_solid.png"
+   }
+  },
+  {
+   "scale": 0.55,
+   "alpha": 1,
+   "useOutlineColor": false,
+   "image": {
+    "fileName": "ascended_inner.png"
+   }
+  }
+ ]
+}
+

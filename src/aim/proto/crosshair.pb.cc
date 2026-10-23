@@ -169,6 +169,7 @@ inline constexpr CrosshairLayer::Impl_::Impl_(
         override_outline_color_{nullptr},
         scale_{0},
         alpha_{0},
+        use_outline_color_{false},
         type_{},
         _oneof_case_{} {}
 
@@ -270,11 +271,12 @@ const ::uint32_t
         0x085, // bitmap
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_._oneof_case_[0]),
-        14, // hasbit index offset
+        15, // hasbit index offset
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.override_color_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.override_outline_color_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.scale_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.alpha_),
+        PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.use_outline_color_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::aim::CrosshairLayer, _impl_.type_),
@@ -285,6 +287,7 @@ const ::uint32_t
         1,
         2,
         3,
+        4,
         ~0u,
         ~0u,
         ~0u,
@@ -305,7 +308,7 @@ static const ::_pbi::MigrationSchema
         {29, sizeof(::aim::DiamondCrosshair)},
         {38, sizeof(::aim::ImageCrosshair)},
         {43, sizeof(::aim::CrosshairLayer)},
-        {66, sizeof(::aim::Crosshair)},
+        {68, sizeof(::aim::Crosshair)},
 };
 static const ::_pb::Message* PROTOBUF_NONNULL const file_default_instances[] = {
     &::aim::_DotCrosshair_default_instance_._instance,
@@ -329,17 +332,18 @@ const char descriptor_table_protodef_crosshair_2eproto[] ABSL_ATTRIBUTE_SECTION_
     "olor\030\002 \001(\010\"]\n\020DiamondCrosshair\022\027\n\017horizo"
     "ntal_size\030\001 \001(\002\022\025\n\rvertical_size\030\002 \001(\002\022\031"
     "\n\021outline_thickness\030\003 \001(\002\"#\n\016ImageCrossh"
-    "air\022\021\n\tfile_name\030\001 \001(\t\"\320\002\n\016CrosshairLaye"
+    "air\022\021\n\tfile_name\030\001 \001(\t\"\353\002\n\016CrosshairLaye"
     "r\022(\n\016override_color\030\001 \001(\0132\020.aim.StoredCo"
     "lor\0220\n\026override_outline_color\030\002 \001(\0132\020.ai"
     "m.StoredColor\022\r\n\005scale\030\003 \001(\002\022\r\n\005alpha\030\004 "
-    "\001(\002\022 \n\003dot\030\n \001(\0132\021.aim.DotCrosshairH\000\022\"\n"
-    "\004plus\030\013 \001(\0132\022.aim.PlusCrosshairH\000\022$\n\005ima"
-    "ge\030\014 \001(\0132\023.aim.ImageCrosshairH\000\022&\n\006circl"
-    "e\030\r \001(\0132\024.aim.CircleCrosshairH\000\022(\n\007diamo"
-    "nd\030\016 \001(\0132\025.aim.DiamondCrosshairH\000B\006\n\004typ"
-    "e\"0\n\tCrosshair\022#\n\006layers\030\001 \003(\0132\023.aim.Cro"
-    "sshairLayerb\010editionsp\350\007"
+    "\001(\002\022\031\n\021use_outline_color\030\005 \001(\010\022 \n\003dot\030\n "
+    "\001(\0132\021.aim.DotCrosshairH\000\022\"\n\004plus\030\013 \001(\0132\022"
+    ".aim.PlusCrosshairH\000\022$\n\005image\030\014 \001(\0132\023.ai"
+    "m.ImageCrosshairH\000\022&\n\006circle\030\r \001(\0132\024.aim"
+    ".CircleCrosshairH\000\022(\n\007diamond\030\016 \001(\0132\025.ai"
+    "m.DiamondCrosshairH\000B\006\n\004type\"0\n\tCrosshai"
+    "r\022#\n\006layers\030\001 \003(\0132\023.aim.CrosshairLayerb\010"
+    "editionsp\350\007"
 };
 static const ::_pbi::DescriptorTable* PROTOBUF_NONNULL const
     descriptor_table_crosshair_2eproto_deps[1] = {
@@ -349,7 +353,7 @@ static ::absl::once_flag descriptor_table_crosshair_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_crosshair_2eproto = {
     false,
     false,
-    864,
+    891,
     descriptor_table_protodef_crosshair_2eproto,
     "crosshair.proto",
     &descriptor_table_crosshair_2eproto_once,
@@ -1904,9 +1908,9 @@ CrosshairLayer::CrosshairLayer(
                offsetof(Impl_, scale_),
            reinterpret_cast<const char*>(&from._impl_) +
                offsetof(Impl_, scale_),
-           offsetof(Impl_, alpha_) -
+           offsetof(Impl_, use_outline_color_) -
                offsetof(Impl_, scale_) +
-               sizeof(Impl_::alpha_));
+               sizeof(Impl_::use_outline_color_));
   switch (type_case()) {
     case TYPE_NOT_SET:
       break;
@@ -1941,9 +1945,9 @@ inline void CrosshairLayer::SharedCtor(::_pb::Arena* PROTOBUF_NULLABLE arena) {
   ::memset(reinterpret_cast<char*>(&_impl_) +
                offsetof(Impl_, override_color_),
            0,
-           offsetof(Impl_, alpha_) -
+           offsetof(Impl_, use_outline_color_) -
                offsetof(Impl_, override_color_) +
-               sizeof(Impl_::alpha_));
+               sizeof(Impl_::use_outline_color_));
 }
 CrosshairLayer::~CrosshairLayer() {
   // @@protoc_insertion_point(destructor:aim.CrosshairLayer)
@@ -2059,16 +2063,16 @@ CrosshairLayer::GetClassData() const {
   return CrosshairLayer_class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 9, 7, 0, 2>
+const ::_pbi::TcParseTable<3, 10, 7, 0, 2>
 CrosshairLayer::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_._has_bits_),
     0, // no _extensions_
-    14, 24,  // max_field_number, fast_idx_mask
+    14, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294951408,  // skipmap
+    4294951392,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    9,  // num_field_entries
+    10,  // num_field_entries
     7,  // num_aux_entries
     offsetof(decltype(_table_), aux_entries),
     CrosshairLayer_class_data_.base(),
@@ -2078,10 +2082,7 @@ CrosshairLayer::_table_ = {
     ::_pbi::TcParser::GetTable<::aim::CrosshairLayer>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // float alpha = 4;
-    {::_pbi::TcParser::FastF32S1,
-     {37, 3, 0,
-      PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.alpha_)}},
+    {::_pbi::TcParser::MiniParse, {}},
     // .aim.StoredColor override_color = 1;
     {::_pbi::TcParser::FastMtS1,
      {10, 0, 0,
@@ -2094,6 +2095,16 @@ CrosshairLayer::_table_ = {
     {::_pbi::TcParser::FastF32S1,
      {29, 2, 0,
       PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.scale_)}},
+    // float alpha = 4;
+    {::_pbi::TcParser::FastF32S1,
+     {37, 3, 0,
+      PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.alpha_)}},
+    // bool use_outline_color = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(CrosshairLayer, _impl_.use_outline_color_), 4>(),
+     {40, 4, 0,
+      PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.use_outline_color_)}},
+    {::_pbi::TcParser::MiniParse, {}},
+    {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
@@ -2105,6 +2116,8 @@ CrosshairLayer::_table_ = {
     {PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.scale_), _Internal::kHasBitsOffset + 2, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
     // float alpha = 4;
     {PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.alpha_), _Internal::kHasBitsOffset + 3, 0, (0 | ::_fl::kFcOptional | ::_fl::kFloat)},
+    // bool use_outline_color = 5;
+    {PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.use_outline_color_), _Internal::kHasBitsOffset + 4, 0, (0 | ::_fl::kFcOptional | ::_fl::kBool)},
     // .aim.DotCrosshair dot = 10;
     {PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.type_.dot_), _Internal::kOneofCaseOffset + 0, 2, (0 | ::_fl::kFcOneof | ::_fl::kMessage | ::_fl::kTvTable)},
     // .aim.PlusCrosshair plus = 11;
@@ -2146,10 +2159,10 @@ PROTOBUF_NOINLINE void CrosshairLayer::Clear() {
       _impl_.override_outline_color_->Clear();
     }
   }
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000cU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000001cU)) {
     ::memset(&_impl_.scale_, 0, static_cast<::size_t>(
-        reinterpret_cast<char*>(&_impl_.alpha_) -
-        reinterpret_cast<char*>(&_impl_.scale_)) + sizeof(_impl_.alpha_));
+        reinterpret_cast<char*>(&_impl_.use_outline_color_) -
+        reinterpret_cast<char*>(&_impl_.scale_)) + sizeof(_impl_.use_outline_color_));
   }
   clear_type();
   _impl_._has_bits_.Clear();
@@ -2201,6 +2214,13 @@ PROTOBUF_NOINLINE void CrosshairLayer::Clear() {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteFloatToArray(
         4, this_._internal_alpha(), target);
+  }
+
+  // bool use_outline_color = 5;
+  if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(
+        5, this_._internal_use_outline_color(), target);
   }
 
   switch (this_.type_case()) {
@@ -2263,6 +2283,7 @@ PROTOBUF_NOINLINE void CrosshairLayer::Clear() {
   ::_pbi::Prefetch5LinesFrom7Lines(&this_);
   cached_has_bits = this_._impl_._has_bits_[0];
   total_size += ::absl::popcount(0x0000000cU & cached_has_bits) * 5;
+  total_size += static_cast<bool>(0x00000010U & cached_has_bits) * 2;
   if (BatchCheckHasBit(cached_has_bits, 0x00000003U)) {
     // .aim.StoredColor override_color = 1;
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
@@ -2329,7 +2350,7 @@ void CrosshairLayer::MergeImpl(::google::protobuf::MessageLite& to_msg,
   (void)cached_has_bits;
 
   cached_has_bits = from._impl_._has_bits_[0];
-  if (BatchCheckHasBit(cached_has_bits, 0x0000000fU)) {
+  if (BatchCheckHasBit(cached_has_bits, 0x0000001fU)) {
     if (CheckHasBit(cached_has_bits, 0x00000001U)) {
       ABSL_DCHECK(from._impl_.override_color_ != nullptr);
       if (_this->_impl_.override_color_ == nullptr) {
@@ -2351,6 +2372,9 @@ void CrosshairLayer::MergeImpl(::google::protobuf::MessageLite& to_msg,
     }
     if (CheckHasBit(cached_has_bits, 0x00000008U)) {
       _this->_impl_.alpha_ = from._impl_.alpha_;
+    }
+    if (CheckHasBit(cached_has_bits, 0x00000010U)) {
+      _this->_impl_.use_outline_color_ = from._impl_.use_outline_color_;
     }
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
@@ -2427,8 +2451,8 @@ void CrosshairLayer::InternalSwap(CrosshairLayer* PROTOBUF_RESTRICT PROTOBUF_NON
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.alpha_)
-      + sizeof(CrosshairLayer::_impl_.alpha_)
+      PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.use_outline_color_)
+      + sizeof(CrosshairLayer::_impl_.use_outline_color_)
       - PROTOBUF_FIELD_OFFSET(CrosshairLayer, _impl_.override_color_)>(
           reinterpret_cast<char*>(&_impl_.override_color_),
           reinterpret_cast<char*>(&other->_impl_.override_color_));

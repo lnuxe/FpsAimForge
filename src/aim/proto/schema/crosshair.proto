@@ -45,6 +45,8 @@ message CrosshairLayer {
   float scale = 3;
   float alpha = 4;
 
+  bool use_outline_color = 5;
+
   oneof type {
     DotCrosshair dot = 10;
     PlusCrosshair plus = 11;

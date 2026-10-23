@@ -330,6 +330,15 @@ class CrosshairEditorScreen : public UiScreen {
                             .set_range(0.01, 1),
                         PROTO_FLOAT_FIELD(CrosshairLayer, &l, alpha));
 
+      bool use_outline_color = l.use_outline_color() || l.circle().use_outline_color() ;
+      ImGui::AlignTextToFramePadding();
+      ImGui::Text("Use outline color");
+      ImGui::SameLine();
+      ImGui::Checkbox("##UseOutline", &use_outline_color);
+      l.set_use_outline_color(use_outline_color);
+      ImGui::SameLine();
+      ImGui::HelpMarker("Replace the layer's color with the outline color from the theme.");
+
       ImGui::AlignTextToFramePadding();
       ImGui::Text("Color");
       bool has_color = l.has_override_color();
@@ -402,20 +411,13 @@ class CrosshairEditorScreen : public UiScreen {
                           .set_default(1.5)
                           .set_min(0.1),
                       PROTO_FLOAT_FIELD(CircleCrosshair, c, thickness));
-
-    bool use_outline_color = c->use_outline_color();
-    ImGui::AlignTextToFramePadding();
-    ImGui::Text("Use outline color");
-    ImGui::SameLine();
-    ImGui::Checkbox("##UseOutline", &use_outline_color);
-    c->set_use_outline_color(use_outline_color);
   }
 
   void DrawCrosshairImageEditor(ImageCrosshair* c) {
     ImGui::IdGuard cid("ImageCrosshair");
     ImGui::Text("File name");
     ImGui::SameLine();
-    ImGui::InputText("##FileNameINput", c->mutable_file_name());
+    ImGui::InputText("##FileNameInput", c->mutable_file_name());
   }
 
   void DrawCrosshairPlusEditor(PlusCrosshair* c) {
