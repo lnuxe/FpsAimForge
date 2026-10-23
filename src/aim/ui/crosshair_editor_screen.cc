@@ -330,7 +330,7 @@ class CrosshairEditorScreen : public UiScreen {
                             .set_range(0.01, 1),
                         PROTO_FLOAT_FIELD(CrosshairLayer, &l, alpha));
 
-      bool use_outline_color = l.use_outline_color() || l.circle().use_outline_color() ;
+      bool use_outline_color = l.use_outline_color() || l.circle().use_outline_color();
       ImGui::AlignTextToFramePadding();
       ImGui::Text("Use outline color");
       ImGui::SameLine();

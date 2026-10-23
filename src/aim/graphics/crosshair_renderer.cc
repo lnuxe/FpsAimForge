@@ -112,7 +112,6 @@ void CrosshairRenderer::DrawLayer(const CrosshairLayer& layer,
     main_rgb = outline_rgb;
   }
 
-
   glm::vec3 main_color3 = ToVec3(main_rgb);
   ImVec4 main_color4(main_color3.r, main_color3.g, main_color3.b, alpha / 255.0f);
 
@@ -135,11 +134,7 @@ void CrosshairRenderer::DrawLayer(const CrosshairLayer& layer,
   if (layer.has_circle()) {
     float radius = crosshair_size / 4.0f;
     float thickness = FirstGreaterThanZero(layer.circle().thickness(), 1.5);
-    draw_list->AddCircle(center,
-                         radius,
-                         main_color,
-                         0,
-                         thickness);
+    draw_list->AddCircle(center, radius, main_color, 0, thickness);
     return;
   }
 

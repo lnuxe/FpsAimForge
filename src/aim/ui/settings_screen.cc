@@ -30,7 +30,7 @@ inline const std::vector<std::pair<ScenarioSettingsStoreType, std::string>>
     kScenarioSettingsStoreTypes{
         {ScenarioSettingsStoreType::STORE_GLOBALLY, "Global"},
         {ScenarioSettingsStoreType::STORE_PER_SCENARIO, "Scenario"},
-};
+    };
 
 class SoundInputDialog {
  public:
