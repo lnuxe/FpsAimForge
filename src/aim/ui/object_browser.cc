@@ -515,6 +515,9 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (!playlist->def().has_levels()) {
       return false;
     }
+    if (playlist->def().levels().target_score() > 0) {
+      return true;
+    }
     return ScenarioHasTargetScore(playlist->def().levels().base_scenario());
   }
 
