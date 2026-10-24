@@ -7,9 +7,7 @@
 #include "aim/common/times.h"
 #include "aim/core/application.h"
 #include "aim/scenario/scenario.h"
-#include "glm/gtc/constants.hpp"  // IWYU pragma: keep
 #include "glm/mat4x4.hpp"         // IWYU pragma: keep
-#include "glm/trigonometric.hpp"  // IWYU pragma: keep
 #include "glm/vec3.hpp"           // IWYU pragma: keep
 
 namespace aim {
