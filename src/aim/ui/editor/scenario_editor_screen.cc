@@ -2,6 +2,7 @@
 
 #include <absl/cleanup/cleanup.h>
 #include <aim/ui/search_selector.h>
+#include <aim/ui/select_object_dialog.h>
 
 #include <format>
 #include <optional>
@@ -709,6 +710,24 @@ class ScenarioEditorScreen : public UiScreen {
       if (ImGui::Button(std::format("{} Back to editor", icons::kArrowBack))) {
         editing_room_ = false;
       }
+      ImGui::SameLine();
+      SelectObjectDialog::Result import_result;
+      if (import_room_dialog_->Draw(&import_result)) {
+        if (import_result.selected_objects.size() > 0) {
+          auto import_scenario =
+              app_.scenario_manager().GetEvaluatedScenarioDef(import_result.selected_objects[0]);
+          if (import_scenario) {
+            *def_.mutable_room() = import_scenario->room();
+          } else {
+            SetErrorMessage(
+                std::format("Could not read room for \"{}\".", import_result.selected_objects[0]));
+          }
+        }
+      }
+      if (ImGui::Button(std::format("{} Import", icons::kDownload))) {
+        import_room_dialog_->NotifyOpen();
+      }
+      ImGui::HelpTooltip("Import room from another scenario.");
       ImGui::SpacedSeparator();
       if (def_.has_reference_def()) {
         DrawRoomEditorInputs(*def_.mutable_reference_def()->mutable_room(), &camera_updates_);
@@ -814,6 +833,8 @@ class ScenarioEditorScreen : public UiScreen {
   ImGui::MultilineTextEntryDialog view_json_dialog_{"ViewJsonDialog"};
   CameraUpdates camera_updates_;
   std::string comparison_scenario_;
+  std::unique_ptr<SelectObjectDialog> import_room_dialog_ =
+      CreateSelectObjectDialog("ImportRoomDialog", ObjectType::SCENARIO);
 };
 
 }  // namespace
