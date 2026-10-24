@@ -1,5 +1,8 @@
 #include "scenario_editor_screen.h"
 
+#include <absl/cleanup/cleanup.h>
+#include <aim/ui/search_selector.h>
+
 #include <format>
 #include <optional>
 
@@ -517,14 +520,15 @@ class ScenarioEditorScreen : public UiScreen {
         }
       } else {
         DrawScenarioTypeTabs(def_, &app_);
-        DrawInitialTargetLocationTab();
+        DrawInitialTargetLocationTab(def_);
       }
+      DrawComparisonTab();
       ImGui::EndTabBar();
     }
   }
 
-  void DrawInitialTargetLocationTab() {
-    std::optional<PtrField<TargetPlacementStrategy>> strat = GetTargetPlacementStrategyField(&def_);
+  void DrawInitialTargetLocationTab(ScenarioDef& def) {
+    std::optional<PtrField<TargetPlacementStrategy>> strat = GetTargetPlacementStrategyField(&def);
     if (!strat) {
       return;
     }
@@ -590,8 +594,42 @@ class ScenarioEditorScreen : public UiScreen {
         DrawOverridesTab();
       } else {
         DrawTargetTab();
-        DrawInitialTargetLocationTab();
+        DrawInitialTargetLocationTab(def_);
       }
+      DrawComparisonTab();
+      ImGui::EndTabBar();
+    }
+  }
+
+  void DrawComparisonTab() {
+    ImGui::IdGuard cid("ComparisonTab");
+    if (!ImGui::BeginTabItem("Compare")) {
+      return;
+    }
+    ImGui::BeginChild("CompareContainer", ImVec2(0, 0));
+    auto cleanup = absl::MakeCleanup([=]() {
+      ImGui::EndChild();
+      ImGui::EndTabItem();
+    });
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Scenario");
+    ImGui::SameLine();
+    ScenarioSearchInput(app_, &comparison_scenario_);
+    auto maybe_compare_def = app_.scenario_manager().GetEvaluatedScenarioDef(comparison_scenario_);
+    if (!maybe_compare_def) {
+      if (comparison_scenario_.empty()) {
+        ImGui::BeginDisabled();
+        ImGui::Text("Enter name of a different scenario to view definition and compare.");
+        ImGui::EndDisabled();
+      }
+      return;
+    }
+
+    if (ImGui::BeginTabBar("CompareTabBar")) {
+      ScenarioDef compare_def = *maybe_compare_def;
+      DrawScenarioTypeTabs(compare_def, &app_);
+      DrawInitialTargetLocationTab(compare_def);
       ImGui::EndTabBar();
     }
   }
@@ -774,6 +812,7 @@ class ScenarioEditorScreen : public UiScreen {
   ImGui::MultilineTextEntryDialog import_from_json_dialog_{"ImportFromJsonDialog"};
   ImGui::MultilineTextEntryDialog view_json_dialog_{"ViewJsonDialog"};
   CameraUpdates camera_updates_;
+  std::string comparison_scenario_;
 };
 
 }  // namespace
