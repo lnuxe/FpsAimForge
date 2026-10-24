@@ -4,6 +4,7 @@
 #include "absl/strings/ascii.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
+#include "aim/common/name_util.h"
 #include "aim/common/object_type.h"
 #include "aim/common/resource_name.h"
 #include "aim/common/search.h"
@@ -25,6 +26,14 @@
 
 namespace aim {
 namespace {
+
+enum TargetScoreFilter { NO_FILTER, HAS_TARGET_SCORE, MISSING_TARGET_SCORE };
+
+inline const std::vector<std::pair<TargetScoreFilter, std::string>> kTargetScoreFilters{
+    {TargetScoreFilter::NO_FILTER, ""},
+    {TargetScoreFilter::HAS_TARGET_SCORE, "Has target score"},
+    {TargetScoreFilter::MISSING_TARGET_SCORE, "No target score"},
+};
 
 struct AllNames {
   std::shared_ptr<std::vector<std::string>> names1 = std::make_shared<std::vector<std::string>>();
@@ -52,7 +61,10 @@ struct AllNames {
     return (*names3)[i];
   }
 
-  bool operator==(const AllNames&) const = default;
+  bool operator==(const AllNames& other) const {
+    return names1.get() == other.names1.get() && names2.get() == other.names2.get() ||
+           names3.get() == other.names3.get();
+  }
 };
 
 enum class ViewType : int {
@@ -174,20 +186,12 @@ class ObjectBrowserImpl : public ObjectBrowser {
       }
 
       ImGui::AlignTextToFramePadding();
-      ImGui::Text("%s", icons::kRemove);
+      ImGui::Text("Target score");
       ImGui::SameLine();
-      float available_width = ImGui::GetContentRegionAvail().x;
-      ImGui::SetNextItemWidth(available_width - search_icon_right_size);
-      ImGui::InputTextWithHint("##ExcludeSearchInput", "Exclude matches", &exclude_search_text_);
-
-      ImGui::SameLine();
-      if (exclude_search_text_.size() > 0) {
-        if (ImGui::ClearButton("ClearExcludeSearchText")) {
-          exclude_search_text_ = "";
-        }
-      } else {
-        ImGui::HelpMarker("Filter out results that match the search text entered.");
-      }
+      ImGui::SimpleTypeDropdown("TargetScoreFilterDropdown",
+                                &target_score_filter_,
+                                kTargetScoreFilters,
+                                char_size.x * 15);
 
       ImGui::TreePop();
     } else {
@@ -220,7 +224,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
       UpdateFilteredNames();
     } else if (search_text_ != handled_search_text_ ||
                bundle_name_filter_ != handled_bundle_name_filter_ ||
-               exclude_search_text_ != handled_exclude_search_text_) {
+               target_score_filter_ != handled_target_score_filter_) {
       UpdateFilteredNames();
     }
 
@@ -427,18 +431,18 @@ class ObjectBrowserImpl : public ObjectBrowser {
   }
 
   bool HasAdvancedFilters() {
-    return !bundle_name_filter_.empty() || !exclude_search_text_.empty();
+    return !bundle_name_filter_.empty() || target_score_filter_ != TargetScoreFilter::NO_FILTER;
   }
 
   void ClearAdvancedFilters() {
     bundle_name_filter_ = "";
-    exclude_search_text_ = "";
+    target_score_filter_ = TargetScoreFilter::NO_FILTER;
   }
 
   void UpdateFilteredNames() {
     handled_search_text_ = search_text_;
-    handled_exclude_search_text_ = exclude_search_text_;
     handled_bundle_name_filter_ = bundle_name_filter_;
+    handled_target_score_filter_ = target_score_filter_;
     if (search_text_.empty() && !HasAdvancedFilters()) {
       // All match. Clear the filter.
       filtered_names_indices_ = {};
@@ -447,7 +451,6 @@ class ObjectBrowserImpl : public ObjectBrowser {
     }
 
     auto search_words = GetSearchWords(search_text_);
-    auto exclude_search_words = GetSearchWords(exclude_search_text_);
     if (!filtered_names_indices_) {
       filtered_names_indices_ = std::vector<int>{};
     }
@@ -463,8 +466,11 @@ class ObjectBrowserImpl : public ObjectBrowser {
       if (!bundle_name_filter_.empty() && !name.starts_with(bundle_name_filter_ + " ")) {
         continue;
       }
-      if (!exclude_search_text_.empty()) {
-        if (StringMatchesSearch(name, exclude_search_words)) {
+      if (target_score_filter_ != TargetScoreFilter::NO_FILTER) {
+        bool has_target_score = HasTargetScore(name);
+        bool expected_has =
+            target_score_filter_ == TargetScoreFilter::HAS_TARGET_SCORE ? true : false;
+        if (has_target_score != expected_has) {
           continue;
         }
       }
@@ -474,12 +480,50 @@ class ObjectBrowserImpl : public ObjectBrowser {
     num_matches_ = indices.size();
   }
 
+  bool HasTargetScore(const std::string& name) {
+    if (type_ == ObjectType::SCENARIO) {
+      return ScenarioHasTargetScore(name);
+    }
+    if (type_ == ObjectType::PLAYLIST) {
+      return PlaylistHasTargetScore(name);
+    }
+    if (type_ == ObjectType::GUIDE) {
+      NameInfo name_info = GetNameInfo(name);
+      if (name_info.is_cm360_variations && name_info.is_level_variations) {
+        name_info.is_cm360_variations = false;
+        return PlaylistHasTargetScore(name_info.GetFullName());
+      }
+      return false;
+    }
+
+    return true;
+  }
+
+  bool ScenarioHasTargetScore(const std::string& name) {
+    auto scenario = app_.scenario_manager().GetEvaluatedScenarioDef(name);
+    if (!scenario) {
+      return false;
+    }
+    return scenario->score_targets().target_score() > 0;
+  }
+
+  bool PlaylistHasTargetScore(const std::string& name) {
+    auto playlist = app_.playlist_manager().GetPlaylist(name);
+    if (!playlist) {
+      return false;
+    }
+    if (!playlist->def().has_levels()) {
+      return false;
+    }
+    return ScenarioHasTargetScore(playlist->def().levels().base_scenario());
+  }
+
   Application& app_ = GetUiApp();
   bool is_selector_;
   std::string search_text_;
-  std::string exclude_search_text_;
   std::string handled_search_text_;
-  std::string handled_exclude_search_text_;
+  TargetScoreFilter target_score_filter_ = TargetScoreFilter::NO_FILTER;
+  TargetScoreFilter handled_target_score_filter_ = TargetScoreFilter::NO_FILTER;
   const ObjectType type_;
   const std::string type_name_ = ObjectTypeToString(type_);
   ViewType view_type_ = ViewType::ALL;
