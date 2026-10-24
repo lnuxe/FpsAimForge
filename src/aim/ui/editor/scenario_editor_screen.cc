@@ -552,11 +552,11 @@ class ScenarioEditorScreen : public UiScreen {
     }
   }
 
-  void DrawTargetTab() {
+  void DrawTargetTab(ScenarioDef& def) {
     if (ImGui::BeginTabItem("Target")) {
       ImGui::BeginChild("TargetContent");
       ImGui::Spacing();
-      DrawTargetEditor(def_);
+      DrawTargetEditor(def);
 
       ImGui::EndChild();
       ImGui::EndTabItem();
@@ -593,7 +593,7 @@ class ScenarioEditorScreen : public UiScreen {
       if (def_.has_reference_def()) {
         DrawOverridesTab();
       } else {
-        DrawTargetTab();
+        DrawTargetTab(def_);
         DrawInitialTargetLocationTab(def_);
       }
       DrawComparisonTab();
@@ -630,6 +630,7 @@ class ScenarioEditorScreen : public UiScreen {
       ScenarioDef compare_def = *maybe_compare_def;
       DrawScenarioTypeTabs(compare_def, &app_);
       DrawInitialTargetLocationTab(compare_def);
+      DrawTargetTab(compare_def);
       ImGui::EndTabBar();
     }
   }
