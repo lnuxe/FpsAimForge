@@ -86,6 +86,8 @@ bool Button(const std::string& label, const ImVec2& size = ImVec2(0, 0));
 
 bool Selectable(const std::string& label, bool selected = false);
 
+float GetDefaultDropdownWidth(const std::string& value);
+
 bool SimpleDropdown(const std::string& id,
                     std::string* value,
                     const std::vector<std::string>& values,
@@ -99,15 +101,17 @@ bool SimpleTypeDropdown(const std::string& id,
                         const std::vector<std::pair<T, std::string>>& values,
                         float input_width = -1) {
   ImGui::IdGuard cid(id);
-  if (input_width > 0) {
-    ImGui::PushItemWidth(input_width);
-  }
   std::string initial_value;
   for (auto& v : values) {
     if (v.first == *value) {
       initial_value = v.second;
       break;
     }
+  }
+  if (input_width > 0) {
+    ImGui::PushItemWidth(input_width);
+  } else {
+    ImGui::PushItemWidth(GetDefaultDropdownWidth(initial_value));
   }
 
   bool item_was_selected = false;
@@ -127,9 +131,7 @@ bool SimpleTypeDropdown(const std::string& id,
     }
     ImGui::EndCombo();
   }
-  if (input_width > 0) {
-    ImGui::PopItemWidth();
-  }
+  ImGui::PopItemWidth();
   return item_was_selected;
 }
 

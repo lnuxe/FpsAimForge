@@ -176,8 +176,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
       ImGui::AlignTextToFramePadding();
       ImGui::Text("Bundle");
       ImGui::SameLine();
-      ImGui::SimpleDropdown(
-          "BundlePicker", &bundle_name_filter_, bundle_names_.value(), ImGui::GetFrameHeight() * 7);
+      ImGui::SimpleDropdown("BundlePicker", &bundle_name_filter_, bundle_names_.value());
       if (!bundle_name_filter_.empty()) {
         ImGui::SameLine();
         if (ImGui::ClearButton("ClearBundle")) {
@@ -188,10 +187,14 @@ class ObjectBrowserImpl : public ObjectBrowser {
       ImGui::AlignTextToFramePadding();
       ImGui::Text("Target score");
       ImGui::SameLine();
-      ImGui::SimpleTypeDropdown("TargetScoreFilterDropdown",
-                                &target_score_filter_,
-                                kTargetScoreFilters,
-                                char_size.x * 15);
+      ImGui::SimpleTypeDropdown(
+          "TargetScoreFilterDropdown", &target_score_filter_, kTargetScoreFilters);
+      if (target_score_filter_ != TargetScoreFilter::NO_FILTER) {
+        ImGui::SameLine();
+        if (ImGui::ClearButton("ClearTargetScore")) {
+          target_score_filter_ = TargetScoreFilter::NO_FILTER;
+        }
+      }
 
       ImGui::TreePop();
     } else {

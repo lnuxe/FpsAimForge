@@ -128,6 +128,8 @@ bool SimpleDropdown(const std::string& id,
   ImGui::IdGuard cid(id);
   if (input_width > 0) {
     ImGui::PushItemWidth(input_width);
+  } else {
+    ImGui::PushItemWidth(GetDefaultDropdownWidth(*value));
   }
   bool item_was_selected = false;
   ImGuiComboFlags combo_flags = ImGuiComboFlags_HeightLarge;
@@ -155,9 +157,7 @@ bool SimpleDropdown(const std::string& id,
     }
     ImGui::EndCombo();
   }
-  if (input_width > 0) {
-    ImGui::PopItemWidth();
-  }
+  ImGui::PopItemWidth();
   return item_was_selected;
 }
 
@@ -573,6 +573,12 @@ void NewSdlFrame() {
   ImGui_ImplSDLGPU3_NewFrame();
   ImGui_ImplSDL3_NewFrame();
   ImGui::NewFrame();
+}
+
+float GetDefaultDropdownWidth(const std::string& value) {
+  float char_x = ImGui::GetDefaultCharSizeX();
+  float size = std::max(ImGui::CalcTextSize(value.c_str()).x, char_x * 2);
+  return  size + char_x * 3;
 }
 
 }  // namespace ImGui
