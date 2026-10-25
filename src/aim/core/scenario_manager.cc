@@ -378,34 +378,44 @@ class ScenarioManagerImpl : public ScenarioManager {
 
       for (auto& entry : scenario_map_) {
         new_names->push_back(entry.second.name);
+        auto shot_type = entry.second.def.shot_type().type_case();
+        if (entry.second.def.has_reference_def()) {
+          auto scenario = GetEvaluatedScenarioDef(entry.second.name);
+          if (scenario) {
+            shot_type = scenario->shot_type().type_case();
+          }
+        }
+        bool add_poke = shot_type == ShotType::kClickSingle;
+        if (add_poke) {
+          new_names->push_back(entry.second.name + " Poke");
+        }
       }
       SortScenarioNames(new_names.get());
 
       scenario_names_ = new_names;
     }
 
-    {
-      // Add the default playlists that exist for every scenario.
-      auto new_names = std::make_shared<std::vector<std::string>>();
-      new_names->reserve(scenario_names_->size() * 2);
+    // Add the default playlists/guides that exist for every scenario.
+    auto new_playlist_names = std::make_shared<std::vector<std::string>>();
+    new_playlist_names->reserve(scenario_names_->size() * 2);
 
-      for (const std::string& scenario_name : *scenario_names_) {
-        new_names->push_back(std::format("{} cm360", scenario_name));
-        new_names->push_back(std::format("{} Levels", scenario_name));
+    auto new_guide_names = std::make_shared<std::vector<std::string>>();
+    new_guide_names->reserve(scenario_names_->size());
+
+    for (const std::string& scenario_name : *scenario_names_) {
+      new_playlist_names->push_back(std::format("{} cm360", scenario_name));
+
+      auto scenario = GetEvaluatedScenarioDef(scenario_name);
+      if (!scenario) {
+        continue;
       }
-      scenario_playlist_names_ = new_names;
-    }
-
-    {
-      // Add level/cm360 guides for all scenarios.
-      auto new_names = std::make_shared<std::vector<std::string>>();
-      new_names->reserve(scenario_names_->size());
-
-      for (const std::string& scenario_name : *scenario_names_) {
-        new_names->push_back(std::format("{} Levels cm360", scenario_name));
+      if (scenario->has_level_overrides()) {
+        new_playlist_names->push_back(std::format("{} Levels", scenario_name));
+        new_guide_names->push_back(std::format("{} Levels cm360", scenario_name));
       }
-      scenario_guide_names_ = new_names;
     }
+    scenario_playlist_names_ = new_playlist_names;
+    scenario_guide_names_ = new_guide_names;
   }
 
   std::shared_ptr<std::vector<std::string>> scenario_names_;
