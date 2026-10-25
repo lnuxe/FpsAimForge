@@ -22,6 +22,7 @@
 #include "aim/ui/select_variation_dialog.h"
 #include "aim/ui/stats/stats_screen.h"
 #include "aim/ui/ui_app.h"
+#include "editor/scenario_editor_common.h"
 #include "imgui.h"
 
 namespace aim {
@@ -101,6 +102,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (maybe_initial_view_type) {
       view_type_ = static_cast<ViewType>(*maybe_initial_view_type);
     }
+
+    shot_types_.insert(shot_types_.end(), kShotTypes.begin(), kShotTypes.end());
   }
 
   // std::function<void(const std::string& name, ObjectBrowserResult*)> draw_item,
@@ -185,6 +188,17 @@ class ObjectBrowserImpl : public ObjectBrowser {
       }
 
       ImGui::AlignTextToFramePadding();
+      ImGui::Text("Shot type");
+      ImGui::SameLine();
+      ImGui::SimpleTypeDropdown("ShotTypeFilterDropdown", &shot_type_filter_, shot_types_);
+      if (shot_type_filter_ != ShotType::TYPE_NOT_SET) {
+        ImGui::SameLine();
+        if (ImGui::ClearButton("ClearShotType")) {
+          shot_type_filter_ = ShotType::TYPE_NOT_SET;
+        }
+      }
+
+      ImGui::AlignTextToFramePadding();
       ImGui::Text("Target score");
       ImGui::SameLine();
       ImGui::SimpleTypeDropdown(
@@ -225,9 +239,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (new_names != all_names_) {
       all_names_ = new_names;
       UpdateFilteredNames();
-    } else if (search_text_ != handled_search_text_ ||
-               bundle_name_filter_ != handled_bundle_name_filter_ ||
-               target_score_filter_ != handled_target_score_filter_) {
+    } else if (search_text_ != handled_search_text_ || !AdvancedFiltersHandled()) {
       UpdateFilteredNames();
     }
 
@@ -434,18 +446,31 @@ class ObjectBrowserImpl : public ObjectBrowser {
   }
 
   bool HasAdvancedFilters() {
-    return !bundle_name_filter_.empty() || target_score_filter_ != TargetScoreFilter::NO_FILTER;
+    return !bundle_name_filter_.empty() || HasAdvancedScenarioFilters();
+  }
+
+  // Filters that require reading the scenario definition.
+  bool HasAdvancedScenarioFilters() {
+    return target_score_filter_ != TargetScoreFilter::NO_FILTER || shot_type_filter_;
+  }
+
+  bool AdvancedFiltersHandled() {
+    return bundle_name_filter_ == handled_bundle_name_filter_ &&
+           target_score_filter_ == handled_target_score_filter_ &&
+           shot_type_filter_ == handled_shot_type_filter_;
   }
 
   void ClearAdvancedFilters() {
     bundle_name_filter_ = "";
     target_score_filter_ = TargetScoreFilter::NO_FILTER;
+    shot_type_filter_ = ShotType::TYPE_NOT_SET;
   }
 
   void UpdateFilteredNames() {
     handled_search_text_ = search_text_;
     handled_bundle_name_filter_ = bundle_name_filter_;
     handled_target_score_filter_ = target_score_filter_;
+    handled_shot_type_filter_ = shot_type_filter_;
     if (search_text_.empty() && !HasAdvancedFilters()) {
       // All match. Clear the filter.
       filtered_names_indices_ = {};
@@ -466,16 +491,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
       if (!search_text_.empty() && !StringMatchesSearch(name, search_words)) {
         continue;
       }
-      if (!bundle_name_filter_.empty() && !name.starts_with(bundle_name_filter_ + " ")) {
+      if (!MatchesAdvancedFilter(name)) {
         continue;
-      }
-      if (target_score_filter_ != TargetScoreFilter::NO_FILTER) {
-        bool has_target_score = HasTargetScore(name);
-        bool expected_has =
-            target_score_filter_ == TargetScoreFilter::HAS_TARGET_SCORE ? true : false;
-        if (has_target_score != expected_has) {
-          continue;
-        }
       }
       indices.push_back(i);
     }
@@ -483,18 +500,25 @@ class ObjectBrowserImpl : public ObjectBrowser {
     num_matches_ = indices.size();
   }
 
-  bool HasTargetScore(const std::string& name) {
+  bool MatchesAdvancedFilter(const std::string& name) {
+    if (!bundle_name_filter_.empty() && !name.starts_with(bundle_name_filter_ + " ")) {
+      return false;
+    }
+    if (!HasAdvancedScenarioFilters()) {
+      return true;
+    }
+
     if (type_ == ObjectType::SCENARIO) {
-      return ScenarioHasTargetScore(name);
+      return ScenarioMatchesAdvancedFilter(name);
     }
     if (type_ == ObjectType::PLAYLIST) {
-      return PlaylistHasTargetScore(name);
+      return PlaylistMatchesAdvancedFilter(name);
     }
     if (type_ == ObjectType::GUIDE) {
       NameInfo name_info = GetNameInfo(name);
       if (name_info.is_cm360_variations && name_info.is_level_variations) {
         name_info.is_cm360_variations = false;
-        return PlaylistHasTargetScore(name_info.GetFullName());
+        return PlaylistMatchesAdvancedFilter(name_info.GetFullName());
       }
       return false;
     }
@@ -502,15 +526,7 @@ class ObjectBrowserImpl : public ObjectBrowser {
     return true;
   }
 
-  bool ScenarioHasTargetScore(const std::string& name) {
-    auto scenario = app_.scenario_manager().GetEvaluatedScenarioDef(name);
-    if (!scenario) {
-      return false;
-    }
-    return scenario->score_targets().target_score() > 0;
-  }
-
-  bool PlaylistHasTargetScore(const std::string& name) {
+  bool PlaylistMatchesAdvancedFilter(const std::string& name) {
     auto playlist = app_.playlist_manager().GetPlaylist(name);
     if (!playlist) {
       return false;
@@ -518,10 +534,36 @@ class ObjectBrowserImpl : public ObjectBrowser {
     if (!playlist->def().has_levels()) {
       return false;
     }
-    if (playlist->def().levels().target_score() > 0) {
+    return ScenarioMatchesAdvancedFilter(playlist->def().levels().base_scenario(),
+                                         playlist->def().levels().target_score());
+  }
+
+  bool ScenarioMatchesAdvancedFilter(const std::string& name, float playlist_target_score = 0.0f) {
+    auto scenario = app_.scenario_manager().GetEvaluatedScenarioDef(name);
+    if (!scenario) {
+      return false;
+    }
+
+    if (!TargetScoreFilterMatches(
+            std::max(scenario->score_targets().target_score(), playlist_target_score))) {
+      return false;
+    }
+
+    if (shot_type_filter_ != ShotType::TYPE_NOT_SET) {
+      if (scenario->shot_type().type_case() != shot_type_filter_) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool TargetScoreFilterMatches(float target_score) {
+    if (target_score_filter_ == TargetScoreFilter::NO_FILTER) {
       return true;
     }
-    return ScenarioHasTargetScore(playlist->def().levels().base_scenario());
+    bool expected_has_target_score =
+        target_score_filter_ == TargetScoreFilter::HAS_TARGET_SCORE ? true : false;
+    return expected_has_target_score == (target_score > 0);
   }
 
   Application& app_ = GetUiApp();
@@ -530,6 +572,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
   std::string handled_search_text_;
   TargetScoreFilter target_score_filter_ = TargetScoreFilter::NO_FILTER;
   TargetScoreFilter handled_target_score_filter_ = TargetScoreFilter::NO_FILTER;
+  ShotType::TypeCase shot_type_filter_ = ShotType::TYPE_NOT_SET;
+  ShotType::TypeCase handled_shot_type_filter_ = ShotType::TYPE_NOT_SET;
   const ObjectType type_;
   const std::string type_name_ = ObjectTypeToString(type_);
   ViewType view_type_ = ViewType::ALL;
@@ -541,6 +585,8 @@ class ObjectBrowserImpl : public ObjectBrowser {
   std::string bundle_name_filter_;
   std::string handled_bundle_name_filter_;
   i64 num_matches_ = 0;
+
+  std::vector<std::pair<ShotType::TypeCase, std::string>> shot_types_{{ShotType::TYPE_NOT_SET, ""}};
 };
 
 }  // namespace

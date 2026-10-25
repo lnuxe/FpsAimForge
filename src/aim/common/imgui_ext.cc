@@ -578,7 +578,7 @@ void NewSdlFrame() {
 float GetDefaultDropdownWidth(const std::string& value) {
   float char_x = ImGui::GetDefaultCharSizeX();
   float size = std::max(ImGui::CalcTextSize(value.c_str()).x, char_x * 2);
-  return  size + char_x * 3;
+  return size + char_x * 3;
 }
 
 }  // namespace ImGui
