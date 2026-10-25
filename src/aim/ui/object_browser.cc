@@ -1,6 +1,5 @@
 #include "object_browser.h"
 
-#include "absl/cleanup/cleanup.h"
 #include "absl/strings/ascii.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
@@ -63,7 +62,7 @@ struct AllNames {
   }
 
   bool operator==(const AllNames& other) const {
-    return names1.get() == other.names1.get() && names2.get() == other.names2.get() ||
+    return names1.get() == other.names1.get() && names2.get() == other.names2.get() &&
            names3.get() == other.names3.get();
   }
 };
