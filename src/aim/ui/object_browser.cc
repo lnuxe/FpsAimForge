@@ -1,5 +1,6 @@
 #include "object_browser.h"
 
+#include "absl/cleanup/cleanup.h"
 #include "absl/strings/ascii.h"
 #include "aim/common/imgui_ext.h"
 #include "aim/common/mat_icons.h"
