@@ -542,7 +542,8 @@ class SettingsScreen : public UiScreen {
                            0.4);
 
         ImGui::TableNextColumn();
-        ImGui::InputText("##UrlInput", &url);
+        ImGui::InputText("##UrlInput", &url, ImGuiInputTextFlags_ReadOnly);
+        ;
       }
 
       ImGui::EndTable();
