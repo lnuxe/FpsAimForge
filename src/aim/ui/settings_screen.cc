@@ -521,7 +521,7 @@ class SettingsScreen : public UiScreen {
         {"Github", "https://github.com/mjohns/FpsAimForge"},
         {"Reddit", "https://www.reddit.com/r/FpsAimForge/"},
         {"Youtube", "https://www.youtube.com/@FpsAimForge"},
-        {"Discord", "https://discord.gg/CbUt6rWYQ"},
+        {"Discord", "https://discord.gg/R8Bsf8y8T"},
     };
 
     if (ImGui::BeginTable("ContactTable", 2)) {
